@@ -1,7 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:projekaganebey/ilan_ozellikleri2.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class IlanOzellikleriPage extends StatefulWidget {
+  final List<XFile?> images;
+
+  IlanOzellikleriPage({required this.images});
   @override
   _IlanOzellikleriPageState createState() => _IlanOzellikleriPageState();
 }
@@ -44,6 +51,14 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
   final List<String> patternOptions = ['Desen Yok', 'Desenli', 'Diğer Desen'];
 
   final List<String> materialOptions = ['PANEL', 'MDF LAM', 'SUNTA', "OSB"];
+  bool isInputValid = true; // Track whether input values are valid
+
+  void _validateInputs() {
+    setState(() {
+      // Check if all necessary inputs have been filled in to enable the button
+      // Example: set isInputValid to true when all fields have values
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +82,43 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Yüklenen Fotoğraflar",
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                SizedBox(height: 10),
+                SizedBox(
+                  height: 80, // Fotoğrafların listeleneceği alanın yüksekliği
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: widget.images.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            image: DecorationImage(
+                              image:
+                                  FileImage(File(widget.images[index]!.path)),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 13),
             _buildMaterialSelectionField(),
             SizedBox(height: 8), _buildProducerSelectionField(),
+            SizedBox(height: 8),
 
             _buildDesenSelectionField(),
             SizedBox(height: 8), _buildColorSelectionField(),
@@ -80,6 +130,69 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
             ),
             SizedBox(height: 12),
             // Diğer bileşenler
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  'Birim Adet Fiyatı:',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(width: 8),
+                SizedBox(
+                  width: 100, // Set to your desired width
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: '0',
+                      hintStyle: TextStyle(
+                          fontSize: 17), // Larger font for the hint text
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.grey.shade400),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 8), // Adjusted padding to center text
+                    ),
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.center, // Center-align the input text
+                    style: TextStyle(
+                        fontSize: 12), // Larger font for input text as well
+                    onChanged: (value) {
+                      _validateInputs(); // Validate inputs on each change
+                    },
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+
+            // Devam et Button
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isInputValid ? Colors.orange : Colors.grey,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                ),
+                onPressed: isInputValid
+                    ? () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    ProductPage(images: widget.images)));
+                      }
+                    // Action when button is active
+
+                    : null, // Disable button when isInputValid is false
+                child: Text(
+                  'Devam et',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -335,7 +448,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

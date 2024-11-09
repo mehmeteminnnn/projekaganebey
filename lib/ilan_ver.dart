@@ -61,8 +61,7 @@ class _IlanVerPageState extends State<IlanVerPage> {
                 SizedBox(width: 10),
                 Expanded(
                   child: SizedBox(
-                    height:
-                        60, // Set a fixed height for the horizontal ListView
+                    height: 60,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: 5,
@@ -131,12 +130,13 @@ class _IlanVerPageState extends State<IlanVerPage> {
               onPressed: _images.isNotEmpty
                   ? () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => IlanOzellikleriPage()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              IlanOzellikleriPage(images: _images),
+                        ),
+                      );
                     }
-                  // Proceed to the next step
-
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor:

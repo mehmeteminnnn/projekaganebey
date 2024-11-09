@@ -70,7 +70,16 @@ class _FilterClosedPageState extends State<FilterClosedPage> {
             ),
             children: List.generate(manufacturers.length, (index) {
               return CheckboxListTile(
-                title: Text(manufacturers[index]),
+                title: Text(
+                  manufacturers[index],
+                  style: TextStyle(
+                    color: Color(0xFF404040),
+                    fontSize: 16,
+                    fontFamily: 'Satoshi',
+                    fontWeight: FontWeight.w500,
+                    height: 0,
+                  ),
+                ),
                 value: manufacturerSelections[index],
                 onChanged: (bool? value) {
                   setState(() {
@@ -101,36 +110,69 @@ class _FilterClosedPageState extends State<FilterClosedPage> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 8),
-                    // Height
+
+                    // Height Row
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Yükseklik'),
+                        Text('Yükseklik',
+                            style: TextStyle(fontWeight: FontWeight.w500)),
+                        SizedBox(height: 4),
                         Row(
                           children: [
                             Expanded(
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  hintText: 'min',
-                                  border: OutlineInputBorder(),
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 8),
-                                ),
-                                style: TextStyle(fontSize: 14),
-                                keyboardType: TextInputType.number,
+                              child: Column(
+                                children: [
+                                  TextField(
+                                    decoration: InputDecoration(
+                                      hintText: 'min',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey.shade400),
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 8),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 16),
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text('min',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey)),
+                                ],
                               ),
                             ),
-                            SizedBox(width: 8),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text('-', style: TextStyle(fontSize: 18)),
+                            ),
                             Expanded(
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  hintText: 'max',
-                                  border: OutlineInputBorder(),
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 8),
-                                ),
-                                style: TextStyle(fontSize: 14),
-                                keyboardType: TextInputType.number,
+                              child: Column(
+                                children: [
+                                  TextField(
+                                    decoration: InputDecoration(
+                                      hintText: 'max',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey.shade400),
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 8),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 16),
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text('max',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey)),
+                                ],
                               ),
                             ),
                           ],
@@ -138,36 +180,69 @@ class _FilterClosedPageState extends State<FilterClosedPage> {
                       ],
                     ),
                     SizedBox(height: 16),
-                    // Width
+
+                    // Width Row
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Genişlik'),
+                        Text('Genişlik',
+                            style: TextStyle(fontWeight: FontWeight.w500)),
+                        SizedBox(height: 4),
                         Row(
                           children: [
                             Expanded(
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  hintText: 'min',
-                                  border: OutlineInputBorder(),
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 8),
-                                ),
-                                style: TextStyle(fontSize: 14),
-                                keyboardType: TextInputType.number,
+                              child: Column(
+                                children: [
+                                  TextField(
+                                    decoration: InputDecoration(
+                                      hintText: 'min',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey.shade400),
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 8),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 16),
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text('min',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey)),
+                                ],
                               ),
                             ),
-                            SizedBox(width: 8),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text('-', style: TextStyle(fontSize: 18)),
+                            ),
                             Expanded(
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  hintText: 'max',
-                                  border: OutlineInputBorder(),
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 8),
-                                ),
-                                style: TextStyle(fontSize: 14),
-                                keyboardType: TextInputType.number,
+                              child: Column(
+                                children: [
+                                  TextField(
+                                    decoration: InputDecoration(
+                                      hintText: 'max',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey.shade400),
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 8),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 16),
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text('max',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey)),
+                                ],
                               ),
                             ),
                           ],
@@ -175,6 +250,8 @@ class _FilterClosedPageState extends State<FilterClosedPage> {
                       ],
                     ),
                     SizedBox(height: 16),
+
+                    // Pattern Direction
                     Text(
                       'Desen yönü',
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -183,8 +260,13 @@ class _FilterClosedPageState extends State<FilterClosedPage> {
                     Row(
                       children: [
                         ChoiceChip(
-                          label: Text('Yatay'),
+                          label: Text('Yatay',
+                              style: TextStyle(
+                                  color: selectedDesenYonu == 'Yatay'
+                                      ? Colors.orange
+                                      : Colors.black)),
                           selected: selectedDesenYonu == 'Yatay',
+                          selectedColor: Colors.orange.withOpacity(0.2),
                           onSelected: (selected) {
                             setState(() {
                               selectedDesenYonu = selected ? 'Yatay' : null;
@@ -193,8 +275,13 @@ class _FilterClosedPageState extends State<FilterClosedPage> {
                         ),
                         SizedBox(width: 8),
                         ChoiceChip(
-                          label: Text('Dikey'),
+                          label: Text('Dikey',
+                              style: TextStyle(
+                                  color: selectedDesenYonu == 'Dikey'
+                                      ? Colors.orange
+                                      : Colors.black)),
                           selected: selectedDesenYonu == 'Dikey',
+                          selectedColor: Colors.orange.withOpacity(0.2),
                           onSelected: (selected) {
                             setState(() {
                               selectedDesenYonu = selected ? 'Dikey' : null;
@@ -235,7 +322,9 @@ class _FilterClosedPageState extends State<FilterClosedPage> {
                           child: TextField(
                             decoration: InputDecoration(
                               hintText: 'min',
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                               contentPadding: EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 8),
                             ),
@@ -248,7 +337,9 @@ class _FilterClosedPageState extends State<FilterClosedPage> {
                           child: TextField(
                             decoration: InputDecoration(
                               hintText: 'max',
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                               contentPadding: EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 8),
                             ),
