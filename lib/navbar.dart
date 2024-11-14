@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:projekaganebey/ana_ekran.dart';
 import 'package:projekaganebey/ilan_ver.dart';
+import 'package:projekaganebey/profilim.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,7 +26,7 @@ class MainScreen extends StatelessWidget {
       Center(child: Text("Bildirim")),
       IlanVerPage(),
       Center(child: Text("İlanlarım")),
-      Center(child: Text("Profil")),
+      ProfileScreen(),
     ];
   }
 

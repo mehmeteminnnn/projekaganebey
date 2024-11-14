@@ -1,11 +1,102 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pin_code_fields/flutter_pin_code_fields.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:projekaganebey/navbar.dart';
 
-class SmsVerificationScreen extends StatelessWidget {
+class SmsVerificationScreen extends StatefulWidget {
   final String phoneNumber;
+  final String name;
+  final String email;
+  final String password;
 
-  SmsVerificationScreen({required this.phoneNumber});
+  SmsVerificationScreen(
+      {required this.phoneNumber,
+      required this.name,
+      required this.email,
+      required this.password});
+
+  @override
+  State<SmsVerificationScreen> createState() => _SmsVerificationScreenState();
+}
+
+class _SmsVerificationScreenState extends State<SmsVerificationScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String _verificationId = '';
+  final TextEditingController _smsController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _verifyPhoneNumber();
+  }
+
+  // Firebase telefon numarası doğrulama
+  Future<void> _verifyPhoneNumber() async {
+    await _auth.verifyPhoneNumber(
+      phoneNumber: widget.phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        // Otomatik doğrulama başarılıysa giriş yap
+        await _auth.signInWithCredential(credential);
+        _registerUser(); // Kullanıcıyı sisteme kaydet
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        Fluttertoast.showToast(msg: "Doğrulama başarısız: ${e.message}");
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        setState(() {
+          _verificationId = verificationId;
+        });
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        setState(() {
+          _verificationId = verificationId;
+        });
+      },
+    );
+  }
+
+  // SMS doğrulama kodu ile giriş
+  Future<void> _signInWithPhoneNumber() async {
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: _verificationId,
+        smsCode: _smsController.text,
+      );
+
+      await _auth.signInWithCredential(credential);
+      _registerUser(); // Kullanıcıyı sisteme kaydet
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Doğrulama hatası: $e");
+    }
+  }
+
+  // Kullanıcıyı Firestore'a kaydetme işlemi
+  Future<void> _registerUser() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      try {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'name': widget.name,
+          'password': widget
+              .password, // Şifreyi kaydetmek genellikle güvenlik için önerilmez.
+          'phone': widget.phoneNumber,
+          'uid': user.uid,
+          'createdAt': Timestamp.now(),
+        });
+
+        Fluttertoast.showToast(msg: "Kayıt başarılı!");
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MainScreen()),
+        );
+      } catch (e) {
+        Fluttertoast.showToast(msg: "Kayıt sırasında hata oluştu: $e");
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +136,7 @@ class SmsVerificationScreen extends StatelessWidget {
               ),
               SizedBox(height: 10),
               Text(
-                '$phoneNumber numarasına bir doğrulama kodu gönderildi.',
+                '${widget.phoneNumber} numarasına bir doğrulama kodu gönderildi.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
@@ -56,6 +147,7 @@ class SmsVerificationScreen extends StatelessWidget {
 
               // Pin Kodu Girişi
               PinCodeFields(
+                controller: _smsController,
                 length: 6,
                 fieldBorderStyle: FieldBorderStyle.square,
                 responsive: true,
@@ -68,18 +160,8 @@ class SmsVerificationScreen extends StatelessWidget {
                 keyboardType: TextInputType.number,
                 onComplete: (output) {
                   // Doğrulama Kodu Tamamlanınca Çalışacak
-                  if (output == '123456') {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Doğrulama başarılı')),
-                    );
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => MainScreen()),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Geçersiz kod')),
-                    );
+                  if (output.isNotEmpty) {
+                    _signInWithPhoneNumber(); // Kod doğrulandıysa işlemi başlat
                   }
                 },
               ),
@@ -97,6 +179,7 @@ class SmsVerificationScreen extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   // Kod yeniden gönderme işlemi
+                  _verifyPhoneNumber(); // Yeni kod gönderme
                 },
                 child: Text(
                   'Tekrar Gönder',

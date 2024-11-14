@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:projekaganebey/sms.dart';
 
 class RegisterScreen extends StatelessWidget {
-  final _phoneController =
-      TextEditingController(); // Sadece numara kısmı için controller
+  final _phoneController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +23,7 @@ class RegisterScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
+              controller: _nameController,
               decoration: InputDecoration(
                 labelText: 'Ad Soyad',
                 labelStyle: TextStyle(color: Colors.grey),
@@ -32,6 +38,7 @@ class RegisterScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
             TextField(
+              controller: _emailController,
               decoration: InputDecoration(
                 labelText: 'E-posta',
                 labelStyle: TextStyle(color: Colors.grey),
@@ -47,6 +54,7 @@ class RegisterScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
             TextField(
+              controller: _passwordController,
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Şifre',
@@ -62,6 +70,7 @@ class RegisterScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
             TextField(
+              controller: _confirmPasswordController,
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Şifreyi Doğrula',
@@ -76,11 +85,8 @@ class RegisterScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-
-            // Telefon Numarası TextField
             Row(
               children: [
-                // +90 Prefix
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
@@ -93,8 +99,6 @@ class RegisterScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 10),
-
-                // Numara Girişi
                 Expanded(
                   child: TextField(
                     controller: _phoneController,
@@ -115,18 +119,58 @@ class RegisterScreen extends StatelessWidget {
               ],
             ),
             SizedBox(height: 20),
-
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  String fullPhoneNumber = '+90${_phoneController.text}';
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
+                onPressed: () async {
+                  String phoneNumber = _phoneController.text;
+                  String name = _nameController.text;
+                  String email = _emailController.text;
+                  String password = _passwordController.text;
+                  String confirmPassword = _confirmPasswordController.text;
+
+                  // Alanların boş olmadığını kontrol et
+                  if (name.isEmpty ||
+                      email.isEmpty ||
+                      password.isEmpty ||
+                      confirmPassword.isEmpty ||
+                      phoneNumber.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Lütfen tüm alanları doldurun.')),
+                    );
+                    return;
+                  }
+
+                  // Şifre doğrulaması
+                  if (password != confirmPassword) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Şifreler uyuşmuyor!')),
+                    );
+                    return;
+                  }
+
+                  // Telefon numarasını başına +90 ekle
+                  phoneNumber = '+90' + phoneNumber;
+
+                  try {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
                         builder: (context) => SmsVerificationScreen(
-                            phoneNumber: fullPhoneNumber)),
-                  );
+                          name: name,
+                          email: email,
+                          password: password,
+                          phoneNumber: phoneNumber,
+                        ),
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text('Kayıt sırasında bir hata oluştu: $e')),
+                    );
+                    print(e);
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,

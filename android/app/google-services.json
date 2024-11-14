@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "13916903195",
+    "project_id": "kaganbey",
+    "storage_bucket": "kaganbey.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:13916903195:android:9de2cf7076e27b74bd65be",
+        "android_client_info": {
+          "package_name": "com.kaganbey"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHdqmp68lBv6nDBkYK5I7XY0cHDEAI7J4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
