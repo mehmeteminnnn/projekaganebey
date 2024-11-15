@@ -23,7 +23,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Profilim'),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.white,
         actions: [
           IconButton(
             icon: Icon(Icons.settings),
@@ -34,13 +34,7 @@ class ProfileScreen extends StatelessWidget {
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.blueAccent, Colors.lightBlueAccent],
-          ),
-        ),
+        decoration: BoxDecoration(color: Colors.blue),
         child: Padding(
           padding: EdgeInsets.all(20),
           child: SingleChildScrollView(

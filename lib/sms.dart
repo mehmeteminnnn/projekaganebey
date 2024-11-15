@@ -84,6 +84,7 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen> {
               .password, // Şifreyi kaydetmek genellikle güvenlik için önerilmez.
           'phone': widget.phoneNumber,
           'uid': user.uid,
+          "email": widget.email,
           'createdAt': Timestamp.now(),
         });
 
@@ -102,8 +103,13 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('SMS Doğrulaması',
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          'SMS Doğrulaması',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.black),

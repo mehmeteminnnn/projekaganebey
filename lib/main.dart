@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:projekaganebey/firebase_options.dart';
 import 'package:projekaganebey/kayit_ol.dart';
 import 'package:projekaganebey/navbar.dart';
@@ -14,13 +16,54 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+          scaffoldBackgroundColor: Colors.white,
+          appBarTheme: AppBarTheme(backgroundColor: Colors.white)),
       debugShowCheckedModeBanner: false,
       home: LoginScreen(),
     );
   }
 }
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  // Kullanıcı giriş işlemini kontrol eden fonksiyon
+  Future<void> _loginUser() async {
+    try {
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+
+      // Firestore'da `users` koleksiyonunu sorgula
+      final QuerySnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: email)
+          .where('password', isEqualTo: password)
+          .get();
+
+      if (userSnapshot.docs.isNotEmpty) {
+        // Kullanıcı bilgileri doğruysa
+        Fluttertoast.showToast(msg: "Giriş başarılı!");
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MainScreen()),
+        );
+      } else {
+        // E-posta veya şifre yanlış
+        Fluttertoast.showToast(msg: "E-posta veya şifre hatalı.");
+      }
+    } catch (e) {
+      // Hata durumunda mesaj göster
+      Fluttertoast.showToast(msg: "Hata: ${e.toString()}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,16 +73,16 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Mimari temalı logo veya ikon
             Icon(
-              Icons.architecture, // Mimariyi temsil eden bir ikon
+              Icons.architecture,
               size: 100,
               color: Colors.blueAccent,
             ),
             SizedBox(height: 40),
 
-            // Giriş formu
+            // E-posta alanı
             TextField(
+              controller: _emailController,
               decoration: InputDecoration(
                 labelText: 'E-posta',
                 labelStyle: TextStyle(color: Colors.grey),
@@ -54,7 +97,10 @@ class LoginScreen extends StatelessWidget {
               keyboardType: TextInputType.emailAddress,
             ),
             SizedBox(height: 20),
+
+            // Şifre alanı
             TextField(
+              controller: _passwordController,
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Şifre',
@@ -74,14 +120,7 @@ class LoginScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MainScreen()),
-                  );
-                },
-                // Giriş işlemi yapılacak
-
+                onPressed: _loginUser, // Giriş işlemini başlatır
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
                   shape: RoundedRectangleBorder(
@@ -97,18 +136,13 @@ class LoginScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
 
-            // Alt bağlantılar
-
+            // Kayıt ol bağlantısı
             TextButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          RegisterScreen()), // Kayıt ekranına yönlendirme
+                  MaterialPageRoute(builder: (context) => RegisterScreen()),
                 );
-
-                // Kayıt ekranına yönlendirme
               },
               child: Text(
                 'Hesabınız yok mu? Kayıt olun',

@@ -27,6 +27,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Container(
           decoration: BoxDecoration(
             color: Colors.white,

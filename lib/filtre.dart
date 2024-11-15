@@ -5,6 +5,7 @@ class FilterOpenPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text('Filtreler'),
         leading: IconButton(
           icon: Icon(Icons.close),
@@ -64,9 +65,12 @@ class FilterOpenPage extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.view_list), label: 'İlanlar'),
-          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Bildirim'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline), label: 'İlan ver'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.view_list), label: 'İlanlar'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.notifications), label: 'Bildirim'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.add_circle_outline), label: 'İlan ver'),
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'İlanlarım'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
         ],
