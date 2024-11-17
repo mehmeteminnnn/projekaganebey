@@ -1,18 +1,57 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:projekaganebey/ilan_hazir.dart';
 
+import 'package:projekaganebey/models/ilan.dart';
+
 class ProductPage extends StatefulWidget {
   final List<XFile?> images;
-  ProductPage({required this.images});
+  final IlanModel ilan;
+  ProductPage({required this.images, required this.ilan});
 
   @override
   State<ProductPage> createState() => _ProductPageState();
 }
 
 class _ProductPageState extends State<ProductPage> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final TextEditingController _descriptionController = TextEditingController();
+
+  Future<void> saveIlanToFirestore() async {
+    try {
+      // TextField'den alınan açıklama metnini IlanModel'e ekleyelim
+      String description = _descriptionController.text;
+
+      widget.ilan.aciklama = description;
+
+      // Firestore koleksiyonuna yeni ilan ekleme
+      await _firestore.collection('ilanlar').add(widget.ilan.toMap());
+
+      // Kaydın başarılı olduğunu gösteren bir mesaj
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('İlan başarıyla kaydedildi!')),
+      );
+
+      // Başka bir sayfaya yönlendirme (örneğin ilanlar sayfası)
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProductDetailPage(
+              images: widget
+                  .images), // IlanlarPage yerine uygun sayfa adını kullanın
+        ),
+      );
+    } catch (e) {
+      // Hata durumu
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Bir hata oluştu: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +74,6 @@ class _ProductPageState extends State<ProductPage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          // Wrap in SingleChildScrollView for scrollable content
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -94,6 +132,7 @@ class _ProductPageState extends State<ProductPage> {
               ),
               SizedBox(height: 8),
               TextField(
+                controller: _descriptionController,
                 maxLines: 4,
                 maxLength: 140,
                 decoration: InputDecoration(
@@ -141,23 +180,12 @@ class _ProductPageState extends State<ProductPage> {
                   ),
                 ],
               ),
-              SizedBox(
-                  height: 20), // Add spacing before the button at the bottom
+              SizedBox(height: 20),
 
               // Devam Et Butonu
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProductDetailPage(
-                          images: widget.images,
-                        ),
-                      ),
-                    );
-                    // Devam et butonu işlevi
-                  },
+                  onPressed: saveIlanToFirestore, // Firestore'a kaydetme işlemi
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey,
                     shape: RoundedRectangleBorder(

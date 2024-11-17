@@ -1,7 +1,11 @@
 import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:projekaganebey/ilan_ozellikleri.dart';
+import 'package:projekaganebey/models/ilan.dart';
 
 class IlanVerPage extends StatefulWidget {
   @override
@@ -11,6 +15,7 @@ class IlanVerPage extends StatefulWidget {
 class _IlanVerPageState extends State<IlanVerPage> {
   final List<XFile?> _images = [];
   final ImagePicker _picker = ImagePicker();
+  final List<String> _imageUrls = []; // Yüklenen resimlerin URL'leri
 
   Future<void> _pickImage() async {
     final XFile? pickedFile =
@@ -22,16 +27,75 @@ class _IlanVerPageState extends State<IlanVerPage> {
     }
   }
 
+  Future<void> _uploadImages() async {
+    final String? uid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (uid == null) {
+      print("Kullanıcı oturum açmamış.");
+      return;
+    }
+
+    for (var image in _images) {
+      if (image != null) {
+        File file = File(image.path);
+        String fileName = '$uid-${DateTime.now().millisecondsSinceEpoch}.jpg';
+        Reference storageRef =
+            FirebaseStorage.instance.ref().child('ilanlar/$fileName');
+        UploadTask uploadTask = storageRef.putFile(file);
+
+        final TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
+        String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+
+        // URL eklenmeden önce print ile kontrol edelim
+        print("Yüklenen resmin URL'si: $downloadUrl");
+        _imageUrls.add(downloadUrl);
+      }
+    }
+    // Yüklenen URL'leri kontrol etmek için bir print
+    print("Yüklenen resimlerin URL'leri: $_imageUrls");
+  }
+
+  Future<void> _onContinue() async {
+    if (_images.isNotEmpty) {
+      // Resimleri yükle
+      await _uploadImages(); // Resimler yüklendikten sonra devam et
+
+      // Yüklenen resimlerin URL'lerini kontrol et
+      if (_imageUrls.isEmpty) {
+        print("Resimler yüklenmedi.");
+        return;
+      }
+
+      // İlan modelini oluştur
+      IlanModel ilan = IlanModel(
+        resimler: _imageUrls, // Yüklenen URL'ler doğru şekilde eklenmiş olmalı
+        // Diğer alanları burada doldurabilirsiniz.
+      );
+
+      // Yüklenen resimler varsa, ilan sayfasına yönlendirme işlemi
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => IlanOzellikleriPage(
+            ilan: ilan,
+            images: _images,
+          ),
+        ),
+      );
+    } else {
+      print("Resim yüklenmemiş.");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Fotoğraf",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            )),
+        title: Text(
+          "Fotoğraf",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -41,7 +105,6 @@ class _IlanVerPageState extends State<IlanVerPage> {
       ),
       body: Column(
         children: [
-          // Image upload row
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -103,7 +166,6 @@ class _IlanVerPageState extends State<IlanVerPage> {
               ],
             ),
           ),
-          // Upload instruction text
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 30.0),
             child: Column(
@@ -123,21 +185,10 @@ class _IlanVerPageState extends State<IlanVerPage> {
             ),
           ),
           Spacer(),
-          // Continue button
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
-              onPressed: _images.isNotEmpty
-                  ? () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              IlanOzellikleriPage(images: _images),
-                        ),
-                      );
-                    }
-                  : null,
+              onPressed: _images.isNotEmpty ? _onContinue : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor:
                     _images.isNotEmpty ? Colors.orange : Colors.grey,

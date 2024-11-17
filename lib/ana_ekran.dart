@@ -1,19 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projekaganebey/filtre_kapali.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: AdsMDFLamPage(),
-    );
-  }
-}
+import 'package:projekaganebey/models/ilan.dart';
+import 'package:projekaganebey/services/firestore_services.dart';
 
 class AdsMDFLamPage extends StatefulWidget {
   @override
@@ -21,6 +9,7 @@ class AdsMDFLamPage extends StatefulWidget {
 }
 
 class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
+  final FirestoreService _firestoreService = FirestoreService();
   String? selectedChip;
 
   @override
@@ -56,6 +45,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                 _buildFilterChip('OSB'),
                 GestureDetector(
                   onTap: () {
+                    // Filtre sayfasına yönlendirme
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -68,41 +58,67 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
             ),
           ),
           Expanded(
-            child: GridView.builder(
-              padding: EdgeInsets.all(8.0),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 8.0,
-                crossAxisSpacing: 8.0,
-                childAspectRatio: 1,
-              ),
-              itemCount: 8, // Örnek veri sayısı
-              itemBuilder: (context, index) {
-                return Card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Image.network(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQawqtJhPwEwraVo1blPjWFfYOccejfriHRKw&s', // Örnek resim URL'si
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Ürün Adı',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            SizedBox(height: 4),
-                            Text('Fiyat: 1.345 TL',
-                                style: TextStyle(color: Colors.grey)),
-                          ],
-                        ),
-                      ),
-                    ],
+            child: FutureBuilder<List<IlanModel>>(
+              future: _firestoreService.fetchIlanlar(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Hata: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(child: Text('Henüz ilan bulunmuyor.'));
+                }
+
+                final ilanlar = snapshot.data!;
+
+                return GridView.builder(
+                  padding: EdgeInsets.all(8.0),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 8.0,
+                    crossAxisSpacing: 8.0,
+                    childAspectRatio: 1,
                   ),
+                  itemCount: ilanlar.length,
+                  itemBuilder: (context, index) {
+                    final ilan = ilanlar[index];
+                    return Card(
+                      color: Colors.white,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Image.network(
+                              ilan.resimler?.isNotEmpty == true
+                                  ? ilan.resimler![0]
+                                  : 'https://ideacdn.net/idea/ar/16/myassets/products/353/pr_01_353.jpg?revision=1697143329',
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  ilan.baslik ?? 'Ürün Adı',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'Fiyat: ${ilan.fiyat} TL',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 );
               },
             ),
@@ -123,14 +139,14 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
         ),
       ),
       selected: selectedChip == label,
-      selectedColor: Colors.blue, // Background color when selected
-      backgroundColor: Colors.transparent, // Always transparent background
+      selectedColor: Colors.blue,
+      backgroundColor: Colors.white,
+      side: BorderSide.none,
       onSelected: (isSelected) {
         setState(() {
           selectedChip = isSelected ? label : null;
         });
       },
-      side: BorderSide.none, // Remove border for all chips
     );
   }
 }

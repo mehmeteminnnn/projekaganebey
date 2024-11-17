@@ -2,13 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:projekaganebey/constants/constants.dart';
 import 'package:projekaganebey/ilan_ozellikleri2.dart';
+import 'package:projekaganebey/models/ilan.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class IlanOzellikleriPage extends StatefulWidget {
   final List<XFile?> images;
+  final IlanModel ilan;
 
-  IlanOzellikleriPage({required this.images});
+  IlanOzellikleriPage({required this.images, required this.ilan});
+
   @override
   _IlanOzellikleriPageState createState() => _IlanOzellikleriPageState();
 }
@@ -18,45 +22,28 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
   String? selectedProducer;
   String? selectedColor;
   String? selectedDesenYonu;
-  String selectedSize = 'Küçük';
-  String selectedPattern = 'Desen Yok';
-  int selectedQuantity = 1;
+  final TextEditingController _FiyatController = TextEditingController();
 
-  final List<String> manufacturers = [
-    'Yıldız Entegre',
-    'Kastamonu Entegre',
-    'Çamsan Entegre',
-    'Starwood',
-    'Yıldız Sunta MDF',
-    'AGT',
-    'Teverpan',
-    'Çamsan Poyraz',
-    'Vezirağaç',
-    'SFC (Kronospan)',
-    'Beypan',
-    'SBS',
-    'Balkanlar MDF',
-    'Seloit'
-  ];
+  String boyutYukseklik = "?";
+  String boyutGenislik = "?";
+  String miktar = "?";
+  bool isInputValid = false;
 
-  final List<String> colorOptions = [
-    'Doğal Ahşap',
-    'Beyaz ve Açık',
-    'Koyu Renkler',
-    'Metalik ve Beton Efekti',
-    'Canlı ve Renkli'
-  ];
-
-  final List<String> sizeOptions = ['Küçük', 'Orta', 'Büyük'];
-  final List<String> patternOptions = ['Desen Yok', 'Desenli', 'Diğer Desen'];
-
-  final List<String> materialOptions = ['PANEL', 'MDF LAM', 'SUNTA', "OSB"];
-  bool isInputValid = true; // Track whether input values are valid
+  // Lists of options
+  final List<String> manufacturers = AppConstants.manufacturers;
+  final List<String> colorOptions = AppConstants.colorOptions;
+  final List<String> materialOptions = AppConstants.materialOptions;
+  //final List<String> sizeOptions = AppConstants.sizeOptions;
 
   void _validateInputs() {
     setState(() {
-      // Check if all necessary inputs have been filled in to enable the button
-      // Example: set isInputValid to true when all fields have values
+      // Tüm alanlar için geçerlilik kontrolü
+      isInputValid = selectedMaterial != null &&
+          selectedProducer != null &&
+          selectedColor != null &&
+          boyutYukseklik.isNotEmpty &&
+          boyutGenislik.isNotEmpty &&
+          miktar.isNotEmpty;
     });
   }
 
@@ -82,6 +69,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Photo section
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -90,7 +78,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                         TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 SizedBox(height: 10),
                 SizedBox(
-                  height: 80, // Fotoğrafların listeleneceği alanın yüksekliği
+                  height: 80,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: widget.images.length,
@@ -116,20 +104,64 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
               ],
             ),
             SizedBox(height: 13),
-            _buildMaterialSelectionField(),
-            SizedBox(height: 8), _buildProducerSelectionField(),
+
+            // Material selection
+            _buildSelectionField(
+              label: "Malzeme",
+              selectedValue: selectedMaterial,
+              onChanged: (value) {
+                setState(() {
+                  selectedMaterial = value;
+                });
+                _validateInputs();
+              },
+              items: materialOptions,
+              isMaterial: true,
+            ),
             SizedBox(height: 8),
 
-            _buildDesenSelectionField(),
-            SizedBox(height: 8), _buildColorSelectionField(),
+            // Producer selection
+            _buildSelectionField(
+              label: "Üretici",
+              selectedValue: selectedProducer,
+              onChanged: (value) {
+                setState(() {
+                  selectedProducer = value;
+                });
+                _validateInputs();
+              },
+              items: manufacturers,
+              isProducer: true,
+            ),
+            SizedBox(height: 8),
 
+            // Desen selection
+            _buildDesenSelectionField(),
+            SizedBox(height: 8),
+
+            // Color selection
+            _buildSelectionField(
+              label: "Renk",
+              selectedValue: selectedColor,
+              onChanged: (value) {
+                setState(() {
+                  selectedColor = value;
+                });
+                _validateInputs();
+              },
+              items: colorOptions,
+              isColor: true,
+            ),
             SizedBox(height: 12),
+
+            // Price information
             Text(
               'Değerleri girdikten sonra ürün fiyatınız belirlenecektir',
               style: TextStyle(fontSize: 10, color: Colors.orange),
             ),
             SizedBox(height: 12),
-            // Diğer bileşenler
+
+            // Price input field
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -139,26 +171,24 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                 ),
                 SizedBox(width: 8),
                 SizedBox(
-                  width: 100, // Set to your desired width
+                  width: 100,
                   child: TextField(
+                    controller: _FiyatController,
                     decoration: InputDecoration(
                       hintText: '0',
-                      hintStyle: TextStyle(
-                          fontSize: 17), // Larger font for the hint text
+                      hintStyle: TextStyle(fontSize: 17),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide(color: Colors.grey.shade400),
                       ),
-                      contentPadding: EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 8), // Adjusted padding to center text
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                     ),
                     keyboardType: TextInputType.number,
-                    textAlign: TextAlign.center, // Center-align the input text
-                    style: TextStyle(
-                        fontSize: 12), // Larger font for input text as well
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12),
                     onChanged: (value) {
-                      _validateInputs(); // Validate inputs on each change
+                      _validateInputs();
                     },
                   ),
                 ),
@@ -166,7 +196,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
             ),
             SizedBox(height: 20),
 
-            // Devam et Button
+            // Continue button
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -178,15 +208,24 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                 ),
                 onPressed: isInputValid
                     ? () {
+                        widget.ilan.yukseklik = double.tryParse(boyutYukseklik);
+                        widget.ilan.genislik = double.tryParse(boyutGenislik);
+                        widget.ilan.miktar = int.tryParse(miktar);
+                        widget.ilan.kategori = selectedMaterial;
+                        widget.ilan.uretici = selectedProducer;
+                        widget.ilan.renk = selectedColor;
+                        widget.ilan.desenYonu = selectedDesenYonu;
+                        widget.ilan.fiyat =
+                            double.tryParse(_FiyatController.text);
+                        widget.ilan.olusturulmaTarihi = DateTime.now();
+
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    ProductPage(images: widget.images)));
+                                builder: (context) => ProductPage(
+                                    images: widget.images, ilan: widget.ilan)));
                       }
-                    // Action when button is active
-
-                    : null, // Disable button when isInputValid is false
+                    : null,
                 child: Text(
                   'Devam et',
                   style: TextStyle(color: Colors.white),
@@ -199,86 +238,15 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
     );
   }
 
-  /* Widget _buildMaterialSelectionField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Malzeme',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        ),
-        SizedBox(height: 4),
-        GestureDetector(
-          onTap: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (BuildContext context) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'Malzeme',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: materialOptions.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ListTile(
-                          title: Text(materialOptions[index]),
-                          onTap: () {
-                            setState(() {
-                              selectedMaterial = materialOptions[index];
-                            });
-                            Navigator.pop(context);
-                          },
-                        );
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text('Vazgeç'),
-                    ),
-                    SizedBox(height: 10),
-                  ],
-                );
-              },
-            );
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  selectedMaterial ?? 'Seçim yapınız',
-                  style: TextStyle(fontSize: 12),
-                ),
-                Icon(Icons.arrow_drop_down),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }*/
-
-  Widget _buildDropdownField({
+  Widget _buildSelectionField({
     required String label,
-    required String? value,
+    required String? selectedValue,
     required ValueChanged<String?> onChanged,
     required List<String> items,
+    String hint = 'Seçim yapınız',
+    bool isMaterial = false,
+    bool isProducer = false,
+    bool isColor = false,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,65 +254,14 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
         Text(label,
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
         SizedBox(height: 4),
-        DropdownButtonFormField<String>(
-          value: value,
-          onChanged: onChanged,
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6),
-            ),
-          ),
-          items: items.map((item) {
-            return DropdownMenuItem(
-              value: item,
-              child: Text(item, style: TextStyle(fontSize: 12)),
-            );
-          }).toList(),
-          hint: Text('Seçim yapınız', style: TextStyle(fontSize: 12)),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNumberInputField({
-    required String label,
-    required String value,
-    required ValueChanged<String> onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-        SizedBox(height: 4),
-        TextFormField(
-          initialValue: value,
-          keyboardType: TextInputType.number,
-          onChanged: onChanged,
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6),
-            ),
-          ),
-          style: TextStyle(fontSize: 12),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMaterialSelectionField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Malzeme',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        ),
-        SizedBox(height: 4),
         GestureDetector(
-          onTap: _malzemeSec, // Malzeme seçim modalini açar
+          onTap: () => isMaterial
+              ? _malzemeSec()
+              : isProducer
+                  ? _ureticiSec()
+                  : isColor
+                      ? _renkSec()
+                      : null,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
@@ -354,109 +271,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  selectedMaterial ?? 'Seçim yapınız',
-                  style: TextStyle(fontSize: 12),
-                ),
-                Icon(Icons.arrow_drop_down),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildProducerSelectionField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Üretici',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        ),
-        SizedBox(height: 4),
-        GestureDetector(
-          onTap: _ureticiSec, // Üretici seçim modalini açar
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  selectedProducer ?? 'Seçim yapınız',
-                  style: TextStyle(fontSize: 12),
-                ),
-                Icon(Icons.arrow_drop_down),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildColorSelectionField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Renk',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        ),
-        SizedBox(height: 4),
-        GestureDetector(
-          onTap: _renkSec, // Renk seçim modalini açar
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  selectedColor ?? 'Seçim yapınız',
-                  style: TextStyle(fontSize: 12),
-                ),
-                Icon(Icons.arrow_drop_down),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDesenSelectionField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Boyut, Miktar, Desen',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        ),
-        SizedBox(height: 4),
-        GestureDetector(
-          onTap: _boyutMiktarDesenSec, // Renk seçim modalini açar
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  selectedColor ?? 'Seçim yapınız',
-                  style: TextStyle(fontSize: 12),
-                ),
+                Text(selectedValue ?? hint, style: TextStyle(fontSize: 12)),
                 Icon(Icons.arrow_drop_down),
               ],
             ),
@@ -514,7 +329,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text('Vazgeç'),
+                  child: Text('Vazgeç', style: TextStyle(color: Colors.red)),
                 ),
               ),
               SizedBox(height: 8),
@@ -522,6 +337,42 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildDesenSelectionField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Boyut, Miktar, Desen',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+        ),
+        SizedBox(height: 4),
+        GestureDetector(
+          onTap: _boyutMiktarDesenSec, // Renk seçim modalini açar
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  // Eğer boyutGenislik, boyutYukseklik ve miktar null değilse, bunları yazdır
+                  //boyutGenislik != null && boyutYukseklik != null && miktar != null
+                  "[$boyutGenislik][$boyutYukseklik]*$miktar",
+                  // : selectedColor ?? 'Seçim yapınız', // Eğer herhangi biri null ise sadece selectedColor yazdır
+                  style: TextStyle(fontSize: 12),
+                ),
+                Icon(Icons.arrow_drop_down),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -572,6 +423,9 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                           ),
                           keyboardType: TextInputType.number,
                           style: TextStyle(fontSize: 14),
+                          onChanged: (value) {
+                            boyutYukseklik = value; // Değeri kaydet
+                          },
                         ),
                       ),
                       SizedBox(width: 8),
@@ -585,6 +439,9 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                           ),
                           keyboardType: TextInputType.number,
                           style: TextStyle(fontSize: 14),
+                          onChanged: (value) {
+                            boyutGenislik = value; // Değeri kaydet
+                          },
                         ),
                       ),
                     ],
@@ -608,6 +465,9 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                     ),
                     keyboardType: TextInputType.number,
                     style: TextStyle(fontSize: 14),
+                    onChanged: (value) {
+                      miktar = value; // Değeri kaydet
+                    },
                   ),
 
                   SizedBox(height: 16),
@@ -653,23 +513,12 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
 
                   // Vazgeç Butonu
                   Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        side: BorderSide(color: Colors.grey),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                      ),
+                    child: TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text(
-                        'Vazgeç',
-                        style: TextStyle(color: Colors.black),
-                      ),
+                      child:
+                          Text('Vazgeç', style: TextStyle(color: Colors.red)),
                     ),
                   ),
                 ],
@@ -722,12 +571,12 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                   },
                 ),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: 6),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('Vazgeç'),
+                child: Text('Vazgeç', style: TextStyle(color: Colors.red)),
               ),
               SizedBox(height: 8),
             ],
@@ -783,7 +632,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('Vazgeç'),
+                child: Text('Vazgeç', style: TextStyle(color: Colors.red)),
               ),
               SizedBox(height: 8),
             ],

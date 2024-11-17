@@ -26,7 +26,7 @@ class ProfileScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         actions: [
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: Icon(Icons.settings, color: Colors.black),
             onPressed: () {
               // Ayarlar sayfasına yönlendirme
             },
@@ -34,7 +34,7 @@ class ProfileScreen extends StatelessWidget {
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(color: Colors.blue),
+        decoration: BoxDecoration(color: Colors.white),
         child: Padding(
           padding: EdgeInsets.all(20),
           child: SingleChildScrollView(
@@ -47,21 +47,21 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 50,
-                        backgroundImage: AssetImage(
-                            'assets/profile_placeholder.png'), // Profil resmi
+                        backgroundImage:
+                            AssetImage('assets/profile_placeholder.png'),
                       ),
                       SizedBox(height: 10),
                       Text(
                         'Mehmet Emin Tok',
                         style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                            color: Colors.black),
                       ),
                       SizedBox(height: 5),
                       Text(
                         'mehmet.emin@ornek.com',
-                        style: TextStyle(fontSize: 18, color: Colors.white70),
+                        style: TextStyle(fontSize: 16, color: Colors.black87),
                       ),
                     ],
                   ),
@@ -78,7 +78,6 @@ class ProfileScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(builder: (context) => EditInfoScreen()),
                     );
-                    // Bilgileri düzenleme ekranına yönlendirme
                   },
                 ),
                 ProfileListItem(
@@ -91,7 +90,6 @@ class ProfileScreen extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) => ChangePasswordScreen()),
                     );
-                    // Şifre değiştirme ekranına yönlendirme
                   },
                 ),
                 ProfileListItem(
@@ -104,9 +102,13 @@ class ProfileScreen extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) => AccountSettingsScreen()),
                     );
-                    // Hesap ayarlarına yönlendirme
                   },
                 ),
+                ProfileListItem(
+                    icon: Icons.report_problem,
+                    title: "Sorun/Öneri Bildirme",
+                    color: Colors.blue,
+                    onTap: () {}),
                 ProfileListItem(
                   icon: Icons.exit_to_app,
                   title: 'Çıkış Yap',
@@ -142,17 +144,19 @@ class ProfileListItem extends StatelessWidget {
       onTap: onTap,
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(10), // Kenarları yuvarlatma
         ),
-        margin: EdgeInsets.symmetric(vertical: 10),
-        elevation: 5,
+        margin: EdgeInsets.symmetric(vertical: 8), // Margin azaltıldı
+        elevation: 3, // Elevation düşürüldü
         child: ListTile(
-          leading: Icon(icon, color: color),
+          leading: Icon(icon, color: color, size: 20), // Küçük ikon
           title: Text(
             title,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
           ),
-          trailing: Icon(Icons.arrow_forward_ios),
+          trailing: Icon(Icons.arrow_forward_ios,
+              color: Colors.black, size: 18), // Küçük ok ikonu
         ),
       ),
     );
