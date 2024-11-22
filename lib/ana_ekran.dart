@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projekaganebey/filtre_kapali.dart';
+import 'package:projekaganebey/filtre.dart';
 import 'package:projekaganebey/models/ilan.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
 
@@ -48,8 +48,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                     // Filtre sayfasına yönlendirme
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => FilterClosedPage()),
+                      MaterialPageRoute(builder: (context) => FilterPage()),
                     );
                   },
                   child: Icon(Icons.filter_list, color: Colors.blueAccent),

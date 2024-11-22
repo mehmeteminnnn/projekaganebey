@@ -1,15 +1,16 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:projekaganebey/ilan_hazir.dart';
-
 import 'package:projekaganebey/models/ilan.dart';
 
 class ProductPage extends StatefulWidget {
   final List<XFile?> images;
   final IlanModel ilan;
+
   ProductPage({required this.images, required this.ilan});
 
   @override
@@ -18,34 +19,45 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance; // Firebase Auth için referans
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _titleController =
+      TextEditingController(); // Ürün Başlığı için Controller
 
   Future<void> saveIlanToFirestore() async {
     try {
-      // TextField'den alınan açıklama metnini IlanModel'e ekleyelim
+      // Oturum açan kullanıcının UID'sini al
+      final User? user = _auth.currentUser;
+      if (user == null) {
+        throw Exception("Kullanıcı oturumu açık değil!");
+      }
+
+      String userId = user.uid;
+
+      // TextField'den alınan açıklama ve başlık metinlerini IlanModel'e ekleyelim
       String description = _descriptionController.text;
+      String title = _titleController.text;
 
       widget.ilan.aciklama = description;
+      widget.ilan.baslik = title;
+      widget.ilan.id = userId; // Kullanıcı UID'sini IlanModel'e ekle
 
       // Firestore koleksiyonuna yeni ilan ekleme
       await _firestore.collection('ilanlar').add(widget.ilan.toMap());
 
-      // Kaydın başarılı olduğunu gösteren bir mesaj
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('İlan başarıyla kaydedildi!')),
       );
 
-      // Başka bir sayfaya yönlendirme (örneğin ilanlar sayfası)
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => ProductDetailPage(
-              images: widget
-                  .images), // IlanlarPage yerine uygun sayfa adını kullanın
+            images: widget.images,
+          ),
         ),
       );
     } catch (e) {
-      // Hata durumu
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Bir hata oluştu: $e')),
       );
@@ -81,12 +93,13 @@ class _ProductPageState extends State<ProductPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Yüklenen Fotoğraflar",
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                  Text(
+                    "Yüklenen Fotoğraflar",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
                   SizedBox(height: 10),
                   SizedBox(
-                    height: 80, // Fotoğrafların listeleneceği alanın yüksekliği
+                    height: 80,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: widget.images.length,
@@ -112,6 +125,7 @@ class _ProductPageState extends State<ProductPage> {
                 ],
               ),
               SizedBox(height: 16),
+              SizedBox(height: 16),
 
               // Seçilenler Bölümü
               Text(
@@ -120,10 +134,27 @@ class _ProductPageState extends State<ProductPage> {
               ),
               SizedBox(height: 4),
               Text(
-                'PANEL > Beypan > 72 X 78, Yatay > Doğal Ahşap',
+                '${widget.ilan.kategori} > ${widget.ilan.uretici} > [${widget.ilan.yukseklik?.toInt()}][${widget.ilan.genislik?.toInt()}]*${widget.ilan.miktar} > ${widget.ilan.renk}',
                 style: TextStyle(color: Colors.grey[700]),
               ),
               Divider(thickness: 1, color: Colors.grey[300]),
+
+              // Ürün Başlığı Bölümü
+              Text(
+                'Ürün Başlığı',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              ),
+              SizedBox(height: 8),
+              TextField(
+                controller: _titleController,
+                maxLength: 50,
+                decoration: InputDecoration(
+                  hintText: 'Ürün başlığını girin',
+                  border: OutlineInputBorder(),
+                  counterText: '',
+                ),
+              ),
+              SizedBox(height: 16),
 
               // Ürün Açıklaması Bölümü
               Text(
@@ -171,7 +202,7 @@ class _ProductPageState extends State<ProductPage> {
                     style: TextStyle(color: Colors.grey[700]),
                   ),
                   Text(
-                    '1.356 TL',
+                    '${widget.ilan.fiyat} ₺',
                     style: TextStyle(
                       color: Colors.orange,
                       fontSize: 20,
