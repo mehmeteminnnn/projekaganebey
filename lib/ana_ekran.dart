@@ -58,7 +58,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
           ),
           Expanded(
             child: FutureBuilder<List<IlanModel>>(
-              future: _firestoreService.fetchIlanlar(),
+              future: _firestoreService.fetchIlanlarByCategory(selectedChip),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());

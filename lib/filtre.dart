@@ -99,58 +99,66 @@ class _FilterPageState extends State<FilterPage> {
                         SizedBox(height: 4),
                         Row(
                           children: [
-                            Expanded(
+                            Flexible(
                               child: Column(
                                 children: [
                                   TextField(
                                     decoration: InputDecoration(
+                                      hintStyle: TextStyle(
+                                          fontSize: 12, color: Colors.grey),
                                       hintText: 'min',
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(
+                                            8), // Küçük radius
                                         borderSide: BorderSide(
-                                            color: Colors.grey.shade400),
+                                          color: Colors.grey.shade400,
+                                        ),
                                       ),
                                       contentPadding: EdgeInsets.symmetric(
-                                          vertical: 12, horizontal: 8),
+                                        vertical: 6, // Daha dar boşluk
+                                        horizontal: 6,
+                                      ),
                                     ),
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(
+                                        fontSize: 14), // Daha küçük yazı boyutu
                                     keyboardType: TextInputType.number,
                                   ),
                                   SizedBox(height: 4),
-                                  Text('min',
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey)),
                                 ],
                               ),
                             ),
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text('-', style: TextStyle(fontSize: 18)),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 4.0), // Daha dar aralık
+                              child: Text('-',
+                                  style: TextStyle(
+                                      fontSize: 14)), // Daha küçük tire
                             ),
-                            Expanded(
+                            Flexible(
                               child: Column(
                                 children: [
                                   TextField(
                                     decoration: InputDecoration(
+                                      hintStyle: TextStyle(
+                                          fontSize: 12, color: Colors.grey),
                                       hintText: 'max',
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(8),
                                         borderSide: BorderSide(
-                                            color: Colors.grey.shade400),
+                                          color: Colors.grey.shade400,
+                                        ),
                                       ),
                                       contentPadding: EdgeInsets.symmetric(
-                                          vertical: 12, horizontal: 8),
+                                        vertical: 6,
+                                        horizontal: 6,
+                                      ),
                                     ),
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(fontSize: 14),
                                     keyboardType: TextInputType.number,
                                   ),
                                   SizedBox(height: 4),
-                                  Text('max',
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey)),
                                 ],
                               ),
                             ),
@@ -174,6 +182,8 @@ class _FilterPageState extends State<FilterPage> {
                                 children: [
                                   TextField(
                                     decoration: InputDecoration(
+                                      hintStyle: TextStyle(
+                                          fontSize: 12, color: Colors.grey),
                                       hintText: 'min',
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
@@ -188,9 +198,6 @@ class _FilterPageState extends State<FilterPage> {
                                     keyboardType: TextInputType.number,
                                   ),
                                   SizedBox(height: 4),
-                                  Text('min',
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey)),
                                 ],
                               ),
                             ),
@@ -204,6 +211,8 @@ class _FilterPageState extends State<FilterPage> {
                                 children: [
                                   TextField(
                                     decoration: InputDecoration(
+                                      hintStyle: TextStyle(
+                                          fontSize: 12, color: Colors.grey),
                                       hintText: 'max',
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
@@ -218,9 +227,6 @@ class _FilterPageState extends State<FilterPage> {
                                     keyboardType: TextInputType.number,
                                   ),
                                   SizedBox(height: 4),
-                                  Text('max',
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey)),
                                 ],
                               ),
                             ),
@@ -299,6 +305,8 @@ class _FilterPageState extends State<FilterPage> {
                         Expanded(
                           child: TextField(
                             decoration: InputDecoration(
+                              hintStyle:
+                                  TextStyle(fontSize: 12, color: Colors.grey),
                               hintText: 'min',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -308,12 +316,16 @@ class _FilterPageState extends State<FilterPage> {
                             ),
                             style: TextStyle(fontSize: 14),
                             keyboardType: TextInputType.number,
+                            textAlign: TextAlign.center,
                           ),
                         ),
                         SizedBox(width: 8),
                         Expanded(
                           child: TextField(
+                            textAlign: TextAlign.center,
                             decoration: InputDecoration(
+                              hintStyle:
+                                  TextStyle(fontSize: 12, color: Colors.grey),
                               hintText: 'max',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
