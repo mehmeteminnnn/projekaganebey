@@ -96,12 +96,7 @@ class _IlanVerPageState extends State<IlanVerPage> {
           "Fotoğraf",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+      
       ),
       body: Column(
         children: [

@@ -71,13 +71,13 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PersistentTabView(
+      handleAndroidBackButtonPress: true,
       context,
       controller: _controller,
       screens: _buildScreens(),
       items: _navBarsItems(),
       confineToSafeArea: true,
       backgroundColor: Colors.white,
-      handleAndroidBackButtonPress: true,
       resizeToAvoidBottomInset: true,
       stateManagement: true,
       navBarHeight: 60,

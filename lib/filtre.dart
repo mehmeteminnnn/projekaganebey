@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:projekaganebey/ana_ekran.dart';
 import 'package:projekaganebey/constants/constants.dart';
+import 'package:projekaganebey/services/firestore_services.dart';
 
 class FilterPage extends StatefulWidget {
   @override
@@ -12,11 +14,25 @@ class _FilterPageState extends State<FilterPage> {
   final List<String> manufacturers = AppConstants.manufacturers;
   final List<String> colorOptions = AppConstants.colorOptions;
   final List<String> materialOptions = AppConstants.materialOptions;
+  TextEditingController minpriceController = TextEditingController();
+  TextEditingController maxpriceController = TextEditingController();
 
   List<bool> manufacturerSelections = List.generate(14, (_) => false);
   String? selectedDesenYonu;
-  RangeValues priceRange = RangeValues(0, 10000); // Price range
+  RangeValues fiyatRange = RangeValues(0, 10000); // Price range
   String? selectedColor;
+  void updatePriceRange() {
+    double? minPrice = double.tryParse(minpriceController.text);
+    double? maxPrice = double.tryParse(maxpriceController.text);
+
+    // Değerlerin geçerli olup olmadığını kontrol et
+    if (minPrice != null && maxPrice != null) {
+      setState(() {
+        // Min ve max fiyatları priceRange'e ata
+        fiyatRange = RangeValues(minPrice, maxPrice);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -304,6 +320,10 @@ class _FilterPageState extends State<FilterPage> {
                       children: [
                         Expanded(
                           child: TextField(
+                            controller: minpriceController,
+                            onChanged: (value) {
+                              updatePriceRange(); // Fiyat değiştiğinde aralığı güncelle
+                            },
                             decoration: InputDecoration(
                               hintStyle:
                                   TextStyle(fontSize: 12, color: Colors.grey),
@@ -322,6 +342,10 @@ class _FilterPageState extends State<FilterPage> {
                         SizedBox(width: 8),
                         Expanded(
                           child: TextField(
+                            controller: maxpriceController,
+                            onChanged: (value) {
+                              updatePriceRange(); // Fiyat değiştiğinde aralığı güncelle
+                            },
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
                               hintStyle:
@@ -480,9 +504,58 @@ class _FilterPageState extends State<FilterPage> {
                 ),
               ),
             ],
-          )
+          ),
+          SizedBox(height: 16),
+          Center(
+            child: SizedBox(
+              width: 150,
+              child: ElevatedButton(
+                onPressed: applyFilters,
+                child: Text('Filtrele', style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  void applyFilters() {
+    // Burada filtreler Firestore'a gönderilir veya veriler filtrelenir.
+    final filters = {
+      'selectedIl': selectedIl,
+      'selectedIlce': selectedIlce,
+      'manufacturers': manufacturers
+          .asMap()
+          .entries
+          .where((entry) => manufacturerSelections[entry.key])
+          .map((entry) => entry.value)
+          .toList(),
+      'selectedDesenYonu': selectedDesenYonu,
+      'fiyat': {
+        'min': double.tryParse(minpriceController.text),
+        'max': double.tryParse(maxpriceController.text)
+      },
+      'selectedColor': selectedColor,
+    };
+    print(filters); // Test için filtre değerlerini konsola yazdırıyoruz.
+
+    // FirestoreService'de filtrelere uygun fonksiyon çağırma
+    FirestoreService().getFilteredAds(filters).then((ads) {
+      // AdsMdfLamPage sayfasını filtrelenmiş ilanlarla güncelleyin.
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AdsMDFLamPage(
+              filteredAds: ads,
+            ),
+          ));
+    });
   }
 }
