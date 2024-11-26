@@ -573,6 +573,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
+  turkish:
+    dependency: "direct main"
+    description:
+      name: turkish
+      sha256: "0714c37839942fb6fc52e639abf258a171a85052461e2ca20322eb75f83944f3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
   typed_data:
     dependency: transitive
     description:

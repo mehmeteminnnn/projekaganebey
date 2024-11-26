@@ -25,12 +25,6 @@ class AppConstants {
     'Canlı ve Renkli'
   ];
 
-  //static const List<String> sizeOptions = ['Küçük', 'Orta', 'Büyük'];
-  static const List<String> patternOptions = [
-    'Desen Yok',
-    'Desenli',
-    'Diğer Desen'
-  ];
   static const List<String> materialOptions = [
     'PANEL',
     'MDF LAM',

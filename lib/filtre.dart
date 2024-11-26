@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:projekaganebey/ana_ekran.dart';
 import 'package:projekaganebey/constants/constants.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
+import 'package:turkish/turkish.dart';
 
 class FilterPage extends StatefulWidget {
   @override
@@ -21,6 +25,45 @@ class _FilterPageState extends State<FilterPage> {
   String? selectedDesenYonu;
   RangeValues fiyatRange = RangeValues(0, 10000); // Price range
   String? selectedColor;
+  String? selectedDistrictId;
+  //String? enteredNeighborhood;
+  String? selectedCityId;
+
+  List<dynamic> cities = [];
+  List<dynamic> districts = [];
+  @override
+  void initState() {
+    super.initState();
+    _loadCities();
+  }
+
+  Future<void> _loadCities() async {
+    // İl JSON dosyasını oku
+    String cityJson = await rootBundle.loadString('assets/il.json');
+    List<Map<String, dynamic>> cityList =
+        List<Map<String, dynamic>>.from(jsonDecode(cityJson));
+
+    // Şehirleri alfabetik sıraya göre sıralayın
+    cityList.sort((a, b) => turkish.comparator(a['name'], b['name']));
+
+    setState(() {
+      cities = cityList;
+    });
+  }
+
+  Future<void> _updateDistricts() async {
+    // İlçe JSON dosyasını oku
+    String districtJson = await rootBundle.loadString('assets/ilce.json');
+    List<dynamic> allDistricts = jsonDecode(districtJson);
+
+    // Seçili şehre ait ilçeleri filtrele
+    setState(() {
+      districts = allDistricts
+          .where((district) => district['il_id'] == selectedCityId)
+          .toList();
+    });
+  }
+
   void updatePriceRange() {
     double? minPrice = double.tryParse(minpriceController.text);
     double? maxPrice = double.tryParse(maxpriceController.text);
@@ -434,20 +477,17 @@ class _FilterPageState extends State<FilterPage> {
                         decoration: InputDecoration(
                           border: InputBorder.none,
                         ),
-                        items:
-                            ['İstanbul', 'Ankara', 'İzmir', 'Bursa', 'Antalya']
-                                .map((il) => DropdownMenuItem(
-                                      value: il,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0),
-                                        child: Text(il),
-                                      ),
-                                    ))
-                                .toList(),
+                        items: cities.map((city) {
+                          return DropdownMenuItem<String>(
+                            value: city['id'].toString(),
+                            child: Text(city['name']),
+                          );
+                        }).toList(),
                         onChanged: (value) {
                           setState(() {
-                            selectedIl = value;
+                            selectedCityId = value;
+                            selectedDistrictId = null; // İlçe seçimini sıfırla
+                            _updateDistricts(); // İlçeleri güncelle
                           });
                         },
                         value: selectedIl,
@@ -476,28 +516,18 @@ class _FilterPageState extends State<FilterPage> {
                         decoration: InputDecoration(
                           border: InputBorder.none,
                         ),
-                        items: [
-                          'Kadıköy',
-                          'Beşiktaş',
-                          'Üsküdar',
-                          'Çankaya',
-                          'Keçiören'
-                        ]
-                            .map((ilce) => DropdownMenuItem(
-                                  value: ilce,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0),
-                                    child: Text(ilce),
-                                  ),
-                                ))
-                            .toList(),
+                        value: selectedDistrictId,
                         onChanged: (value) {
                           setState(() {
-                            selectedIlce = value;
+                            selectedDistrictId = value;
                           });
                         },
-                        value: selectedIlce,
+                        items: districts.map((district) {
+                          return DropdownMenuItem<String>(
+                            value: district['id'].toString(),
+                            child: Text(district['name']),
+                          );
+                        }).toList(),
                       ),
                     ),
                   ],
@@ -529,8 +559,10 @@ class _FilterPageState extends State<FilterPage> {
   void applyFilters() {
     // Burada filtreler Firestore'a gönderilir veya veriler filtrelenir.
     final filters = {
-      'selectedIl': selectedIl,
-      'selectedIlce': selectedIlce,
+      'il': cities.firstWhere(
+          (city) => city['id'].toString() == selectedCityId)['name'],
+      'ilce': districts.firstWhere((district) =>
+          district['id'].toString() == selectedDistrictId)['name'],
       'manufacturers': manufacturers
           .asMap()
           .entries

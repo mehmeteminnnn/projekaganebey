@@ -1,11 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:projekaganebey/ilan_hazir.dart';
 import 'package:projekaganebey/models/ilan.dart';
+import 'package:turkish/turkish.dart';
 
 class ProductPage extends StatefulWidget {
   final List<XFile?> images;
@@ -19,10 +22,49 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance; // Firebase Auth için referans
+  final FirebaseAuth _auth =
+      FirebaseAuth.instance; // Firebase Auth için referans
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _titleController =
       TextEditingController(); // Ürün Başlığı için Controller
+  String? selectedDistrictId;
+  //String? enteredNeighborhood;
+  String? selectedCityId;
+
+  List<dynamic> cities = [];
+  List<dynamic> districts = [];
+  @override
+  void initState() {
+    super.initState();
+    _loadCities();
+  }
+
+  Future<void> _loadCities() async {
+    // İl JSON dosyasını oku
+    String cityJson = await rootBundle.loadString('assets/il.json');
+    List<Map<String, dynamic>> cityList =
+        List<Map<String, dynamic>>.from(jsonDecode(cityJson));
+
+    // Şehirleri alfabetik sıraya göre sıralayın
+    cityList.sort((a, b) => turkish.comparator(a['name'], b['name']));
+
+    setState(() {
+      cities = cityList;
+    });
+  }
+
+  Future<void> _updateDistricts() async {
+    // İlçe JSON dosyasını oku
+    String districtJson = await rootBundle.loadString('assets/ilce.json');
+    List<dynamic> allDistricts = jsonDecode(districtJson);
+
+    // Seçili şehre ait ilçeleri filtrele
+    setState(() {
+      districts = allDistricts
+          .where((district) => district['il_id'] == selectedCityId)
+          .toList();
+    });
+  }
 
   Future<void> saveIlanToFirestore() async {
     try {
@@ -37,10 +79,14 @@ class _ProductPageState extends State<ProductPage> {
       // TextField'den alınan açıklama ve başlık metinlerini IlanModel'e ekleyelim
       String description = _descriptionController.text;
       String title = _titleController.text;
-
+      widget.ilan.il = cities.firstWhere(
+          (city) => city['id'].toString() == selectedCityId)['name'];
+      widget.ilan.ilce = districts.firstWhere((district) =>
+          district['id'].toString() == selectedDistrictId)['name'];
       widget.ilan.aciklama = description;
       widget.ilan.baslik = title;
-      widget.ilan.id = userId; // Kullanıcı UID'sini IlanModel'e ekle
+      widget.ilan.olusturanKullaniciId =
+          userId; // Kullanıcı UID'sini IlanModel'e ekle
 
       // Firestore koleksiyonuna yeni ilan ekleme
       await _firestore.collection('ilanlar').add(widget.ilan.toMap());
@@ -183,14 +229,15 @@ class _ProductPageState extends State<ProductPage> {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text(
-                  'Küçükçekmece, İstanbul',
+                  selectedCityId != null && selectedDistrictId != null
+                      ? '${districts.firstWhere((d) => d['id'] == selectedDistrictId)['name']}, ${cities.firstWhere((c) => c['id'] == selectedCityId)['name']}'
+                      : 'Şehir ve İlçe Seçin',
                   style: TextStyle(color: Colors.black, fontSize: 14),
                 ),
                 trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {
-                  // Konum seçme işlemi
-                },
+                onTap: _showCityDistrictSelector, // Modal'ı açan fonksiyon
               ),
+
               Divider(thickness: 1, color: Colors.grey[300]),
 
               // Fiyat Bilgisi Bölümü
@@ -235,6 +282,114 @@ class _ProductPageState extends State<ProductPage> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showCityDistrictSelector() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 16,
+                right: 16,
+                top: 16,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Başlık
+                  Text(
+                    'Konum Seçin',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 16),
+
+                  // Şehir Dropdown
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Şehir Seçin',
+                      border: OutlineInputBorder(),
+                    ),
+                    value: selectedCityId,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedCityId = value;
+                        selectedDistrictId = null; // İlçe seçimini sıfırla
+                        _updateDistricts(); // İlçeleri güncelle
+                      });
+                    },
+                    items: cities.map((city) {
+                      return DropdownMenuItem<String>(
+                        value: city['id'].toString(),
+                        child: Text(city['name']),
+                      );
+                    }).toList(),
+                  ),
+                  SizedBox(height: 16),
+
+                  // İlçe Dropdown
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'İlçe Seçin',
+                      border: OutlineInputBorder(),
+                    ),
+                    value: selectedDistrictId,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedDistrictId = value;
+                      });
+                    },
+                    items: districts.map((district) {
+                      return DropdownMenuItem<String>(
+                        value: district['id'].toString(),
+                        child: Text(district['name']),
+                      );
+                    }).toList(),
+                  ),
+                  SizedBox(height: 16),
+
+                  // Onaylama Butonu
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (selectedCityId != null &&
+                            selectedDistrictId != null) {
+                          Navigator.pop(context); // Modal'ı kapat
+                          setState(() {});
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text('Lütfen hem şehir hem de ilçe seçin.'),
+                            ),
+                          );
+                        }
+                      },
+                      child: Text('Onayla'),
+                      style: ElevatedButton.styleFrom(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 100, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

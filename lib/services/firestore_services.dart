@@ -46,11 +46,11 @@ class FirestoreService {
       Map<String, dynamic> filters) async {
     Query query = _firestore.collection('ilanlar');
 
-    if (filters['selectedIl'] != null) {
-      query = query.where('il', isEqualTo: filters['selectedIl']);
+    if (filters['il'] != null) {
+      query = query.where('il', isEqualTo: filters['il']);
     }
-    if (filters['selectedIlce'] != null) {
-      query = query.where('ilce', isEqualTo: filters['selectedIlce']);
+    if (filters['ilce'] != null) {
+      query = query.where('ilce', isEqualTo: filters['ilce']);
     }
     if (filters['manufacturers'] != null &&
         filters['manufacturers'].isNotEmpty) {
