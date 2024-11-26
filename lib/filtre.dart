@@ -21,7 +21,7 @@ class _FilterPageState extends State<FilterPage> {
   TextEditingController minpriceController = TextEditingController();
   TextEditingController maxpriceController = TextEditingController();
 
-  List<bool> manufacturerSelections = List.generate(14, (_) => false);
+  List<bool> manufacturerSelections = List.generate(15, (_) => false);
   String? selectedDesenYonu;
   RangeValues fiyatRange = RangeValues(0, 10000); // Price range
   String? selectedColor;
@@ -559,10 +559,12 @@ class _FilterPageState extends State<FilterPage> {
   void applyFilters() {
     // Burada filtreler Firestore'a gönderilir veya veriler filtrelenir.
     final filters = {
-      'il': cities.firstWhere(
-          (city) => city['id'].toString() == selectedCityId)['name'],
-      'ilce': districts.firstWhere((district) =>
-          district['id'].toString() == selectedDistrictId)['name'],
+      if (selectedCityId != null)
+        'il': cities.firstWhere(
+            (city) => city['id'].toString() == selectedCityId)['name'],
+      if (selectedDistrictId != null)
+        'ilce': districts.firstWhere((district) =>
+            district['id'].toString() == selectedDistrictId)['name'],
       'manufacturers': manufacturers
           .asMap()
           .entries

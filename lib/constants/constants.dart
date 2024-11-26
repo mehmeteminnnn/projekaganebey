@@ -14,7 +14,8 @@ class AppConstants {
     'Beypan',
     'SBS',
     'Balkanlar MDF',
-    'Seloit'
+    'Seloit',
+    "Diğer"
   ];
 
   static const List<String> colorOptions = [
