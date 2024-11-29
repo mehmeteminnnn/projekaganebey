@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projekaganebey/filtre.dart';
+import 'package:projekaganebey/ilan_detay.dart';
 import 'package:projekaganebey/models/ilan.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
 
@@ -81,6 +82,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                         resimUrl: ilan['resimler']?.isNotEmpty == true
                             ? ilan['resimler'][0]
                             : null,
+                        ilanID: ilan['id'],
                       );
                     },
                   )
@@ -125,6 +127,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                 resimUrl: ilan.resimler?.isNotEmpty == true
                                     ? ilan.resimler![0]
                                     : null,
+                                ilanID: ilan.id,
                               );
                             },
                           );
@@ -136,44 +139,55 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
     );
   }
 
-  Widget _buildIlanCard({
-    String? baslik,
-    double? fiyat,
-    String? resimUrl,
-  }) {
-    return Card(
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Image.network(
-              resimUrl ??
-                  'https://ideacdn.net/idea/ar/16/myassets/products/353/pr_01_353.jpg?revision=1697143329',
-              fit: BoxFit.cover,
-              width: double.infinity,
+  Widget _buildIlanCard(
+      {String? baslik, double? fiyat, String? resimUrl, required ilanID}) {
+    return GestureDetector(
+      onTap: () {
+        // İlan detay sayfasına yönlendirme
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => IlanDetayPage(
+              ilanId: ilanID,
+              ilanbaslik: baslik,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  baslik ?? 'Ürün Adı',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
+        );
+      },
+      child: Card(
+        color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Image.network(
+                resimUrl ??
+                    'https://ideacdn.net/idea/ar/16/myassets/products/353/pr_01_353.jpg?revision=1697143329',
+                fit: BoxFit.cover,
+                width: double.infinity,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    baslik?.isNotEmpty == true ? baslik! : 'Başlık yok',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'Fiyat: ${fiyat ?? 'Bilinmiyor'} TL',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    'Fiyat: ${fiyat?.toStringAsFixed(2)} TL',
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
