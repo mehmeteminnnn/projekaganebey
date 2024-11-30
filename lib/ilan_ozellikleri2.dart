@@ -88,13 +88,22 @@ class _ProductPageState extends State<ProductPage> {
       widget.ilan.olusturanKullaniciId =
           userId; // Kullanıcı UID'sini IlanModel'e ekle
 
-      // Firestore koleksiyonuna yeni ilan ekleme
-      await _firestore.collection('ilanlar').add(widget.ilan.toMap());
+      // Yeni ilanı 'ilanlar' koleksiyonuna ekle ve ID'sini al
+      DocumentReference ilanDocRef =
+          await _firestore.collection('ilanlar').add(widget.ilan.toMap());
+      String ilanId = ilanDocRef.id;
 
+      // Kullanıcının 'users' koleksiyonundaki dökümanını güncelle
+      await _firestore.collection('users').doc(userId).set({
+        'ilanlar': FieldValue.arrayUnion([ilanId])
+      }, SetOptions(merge: true));
+
+      // Kullanıcıya başarı mesajı göster
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('İlan başarıyla kaydedildi!')),
       );
 
+      // İlan detay sayfasına yönlendir
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -104,6 +113,7 @@ class _ProductPageState extends State<ProductPage> {
         ),
       );
     } catch (e) {
+      // Hata durumunda kullanıcıya mesaj göster
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Bir hata oluştu: $e')),
       );

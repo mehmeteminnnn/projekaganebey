@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:projekaganebey/firebase_options.dart';
 import 'package:projekaganebey/giris_ekrani.dart';
 
-void main() async {
+void main() async { 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApp());

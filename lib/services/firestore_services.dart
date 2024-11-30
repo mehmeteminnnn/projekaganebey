@@ -13,35 +13,32 @@ class FirestoreService {
   Future<List<IlanModel>> fetchIlanlar() async {
     QuerySnapshot query = await _firestore.collection('ilanlar').get();
 
-    // Her bir döküman için dönüşüm işlemi
     return query.docs.map((doc) {
-      final data = doc.data() as Map<String,
-          dynamic>; // Veriyi doğru şekilde Map<String, dynamic> türüne dönüştürüyoruz
-      return IlanModel.fromMap(data, doc.id); // fromMap sırasını düzelttik
+      final data = doc.data() as Map<String, dynamic>;
+      return IlanModel.fromMap(data, doc.id);
     }).toList();
   }
 
+  // Kategoriye göre ilanları getirme
   Future<List<IlanModel>> fetchIlanlarByCategory(String? category) async {
     QuerySnapshot snapshot;
 
     if (category == null || category.isEmpty) {
-      // Eğer kategori seçilmemişse veya null ise, tüm ilanları getir
       snapshot = await _firestore.collection('ilanlar').get();
     } else {
-      // Kategori seçilmişse, o kategoriye göre ilanları filtrele
       snapshot = await _firestore
           .collection('ilanlar')
           .where('kategori', isEqualTo: category)
           .get();
     }
 
-    // Verileri çekerken 'fromMap' metodunu kullanarak liste oluşturuyoruz.
     return snapshot.docs
         .map((doc) => IlanModel.fromMap(
-            doc.data() as Map<String, dynamic>, doc.id)) // id'yi de dahil et
+            doc.data() as Map<String, dynamic>, doc.id))
         .toList();
   }
 
+  // Filtrelere göre ilanları getirme
   Future<List<Map<String, dynamic>>> getFilteredAds(
       Map<String, dynamic> filters) async {
     Query query = _firestore.collection('ilanlar');
@@ -72,5 +69,22 @@ class FirestoreService {
     return snapshot.docs
         .map((doc) => doc.data() as Map<String, dynamic>)
         .toList();
+  }
+
+  // Belirli bir listeye göre ilanları getirme
+  Future<List<IlanModel>> fetchIlanlarByIdList(List<String> ilanIdList) async {
+    if (ilanIdList.isEmpty) {
+      return []; // Liste boşsa boş bir liste döndür
+    }
+
+    QuerySnapshot snapshot = await _firestore
+        .collection('ilanlar')
+        .where(FieldPath.documentId, whereIn: ilanIdList)
+        .get();
+
+    return snapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      return IlanModel.fromMap(data, doc.id);
+    }).toList();
   }
 }

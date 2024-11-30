@@ -3,6 +3,7 @@ import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:projekaganebey/ana_ekran.dart';
 import 'package:projekaganebey/bildirimler.dart';
 import 'package:projekaganebey/ilan_ver.dart';
+import 'package:projekaganebey/ilanlar%C4%B1m.dart';
 import 'package:projekaganebey/profil_ekrani.dart';
 
 void main() => runApp(MyApp());
@@ -26,7 +27,7 @@ class MainScreen extends StatelessWidget {
       AdsMDFLamPage(),
       NotificationsPage(),
       IlanVerPage(),
-      Center(child: Text("İlanlarım")),
+      IlanlarimPage(),
       ProfileScreen(),
     ];
   }

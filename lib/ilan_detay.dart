@@ -14,11 +14,12 @@ class IlanDetayPage extends StatefulWidget {
 
 class _IlanDetayPageState extends State<IlanDetayPage> {
   final PageController _pageController = PageController();
-  int _currentPage = 0; // Aktif sayfayı tutar
+  int _currentPage = 0;
+  bool isFavorited = false;
 
   @override
   void dispose() {
-    _pageController.dispose();
+     _pageController.dispose();
     super.dispose();
   }
 
@@ -32,7 +33,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
         title: Text(
           '${widget.ilanbaslik}',
           style: const TextStyle(
-            fontSize: 16,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -49,12 +50,18 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.favorite_border),
+            icon: Icon(
+              isFavorited ? Icons.favorite : Icons.favorite_border,
+            ),
             onPressed: () {
+              setState(() {
+                isFavorited = !isFavorited;
+              });
               // Favorilere ekleme işlemi
             },
           ),
         ],
+        backgroundColor: Colors.orange,
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: ilanRef.get(),
@@ -70,7 +77,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
               child: Text("İlan bulunamadı."),
             );
           }
-
+         
           final ilanData = snapshot.data!.data() as Map<String, dynamic>;
           final resimler = List<String>.from(ilanData['resimler'] ?? []);
           final fiyat = ilanData['fiyat']?.toString() ?? '0';
@@ -81,6 +88,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
           final yukseklik = ilanData['yukseklik']?.toString() ?? '0';
           final genislik = ilanData['genislik']?.toString() ?? '0';
           final renk = ilanData['renk'] ?? 'Renk Yok';
+          final detay = ilanData['detay'] ?? 'Detay Yok';
 
           return SingleChildScrollView(
             child: Column(
@@ -91,7 +99,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                   alignment: Alignment.bottomCenter,
                   children: [
                     SizedBox(
-                      height: 300, // Sabit yükseklik
+                      height: 250,
                       child: PageView.builder(
                         controller: _pageController,
                         onPageChanged: (index) {
@@ -101,14 +109,14 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                         },
                         itemCount: resimler.length,
                         itemBuilder: (context, index) {
+                          debugPrint(
+                              "index: $index"); // Debugging: Hangi index'e gelindiğini yazdırıyoruz.
                           return Image.network(
                             resimler[index],
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) =>
-                                const Icon(
-                              Icons.image_not_supported,
-                              size: 100,
-                            ),
+                                const Icon(Icons.image_not_supported,
+                                    size: 100),
                           );
                         },
                       ),
@@ -122,8 +130,8 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                           (index) => AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
                             margin: const EdgeInsets.symmetric(horizontal: 4),
-                            width: _currentPage == index ? 12 : 8,
-                            height: _currentPage == index ? 12 : 8,
+                            width: 12,
+                            height: 12,
                             decoration: BoxDecoration(
                               color: _currentPage == index
                                   ? Colors.orange
@@ -136,17 +144,24 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 // Ürün detayları
                 Container(
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 6,
+                        offset: Offset(0, -2),
+                      ),
+                    ],
                   ),
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -154,7 +169,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                       Text(
                         "$fiyat TL",
                         style: const TextStyle(
-                          fontSize: 24,
+                          fontSize: 26,
                           fontWeight: FontWeight.bold,
                           color: Colors.orange,
                         ),
@@ -166,26 +181,47 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                           color: Colors.grey,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      // Ürün özellikleri
+                      const SizedBox(height: 20),
+                      // Ürün özellikleri başlığı
                       const Text(
                         "Ürün Özellikleri",
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildFeatureRow("İl", il, "İlçe", ilce),
+                      const SizedBox(height: 16),
+                      _buildFeatureRow("Miktar", "$miktar Adet", "Yükseklik",
+                          "$yukseklik cm"),
+                      const SizedBox(height: 16),
+                      _buildFeatureRow(
+                          "Genişlik", "$genislik cm", "Kategori", kategori),
+                      const SizedBox(height: 16),
+                      _buildFeature("Renk", renk),
+                      const SizedBox(height: 24),
+
+                      // İlan Detayı Başlığı
+                      const Text(
+                        "İlan Detayı",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      _buildFeatureRow("İl", il, "İlçe", ilce),
-                      const SizedBox(height: 8),
-                      _buildFeatureRow("Miktar", "$miktar Adet", "Yükseklik",
-                          "$yukseklik cm"),
-                      const SizedBox(height: 8),
-                      _buildFeatureRow(
-                          "Genişlik", "$genislik cm", "Kategori", kategori),
-                      const SizedBox(height: 8),
-                      _buildFeature("Renk", renk),
-                      const SizedBox(height: 16),
+                      Text(
+                        detay,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
                       // Satın al butonu
                       SizedBox(
                         width: double.infinity,
@@ -193,9 +229,9 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.orange,
-                            minimumSize: const Size(double.infinity, 50),
+                            minimumSize: const Size(double.infinity, 55),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
+                              borderRadius: BorderRadius.circular(30),
                             ),
                           ),
                           child: const Text('Satın Al',
@@ -230,6 +266,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
       ],
@@ -243,7 +280,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(child: _buildFeature(title1, value1)),
-        const SizedBox(width: 16),
+        const SizedBox(width: 20),
         Expanded(child: _buildFeature(title2, value2)),
       ],
     );
