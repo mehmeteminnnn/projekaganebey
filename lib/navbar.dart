@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:projekaganebey/ana_ekran.dart';
-import 'package:projekaganebey/bildirimler.dart';
+//import 'package:projekaganebey/bildirimler.dart';
+import 'package:projekaganebey/favorilerim.dart';
 import 'package:projekaganebey/ilan_ver.dart';
-import 'package:projekaganebey/ilanlar%C4%B1m.dart';
 import 'package:projekaganebey/profil_ekrani.dart';
+import 'package:projekaganebey/sepetim.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,9 +26,13 @@ class MainScreen extends StatelessWidget {
   List<Widget> _buildScreens() {
     return [
       AdsMDFLamPage(),
-      NotificationsPage(),
+      FavorilerimPage(
+        favoriler: [],
+      ),
       IlanVerPage(),
-      IlanlarimPage(),
+      SepetimPage(
+        urunler: [],
+      ),
       ProfileScreen(),
     ];
   }
@@ -41,22 +46,22 @@ class MainScreen extends StatelessWidget {
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.notifications),
-        title: ("Bildirim"),
+        icon: Icon(Icons.favorite),
+        title: ("Favorilerim"),
         activeColorPrimary: Colors.blue,
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.add_circle),
-        title: ("İlan Ver"),
+        title: ("Depoya Yükle"),
         activeColorPrimary: Colors.white,
         inactiveColorPrimary: Colors.grey,
         iconSize: 50,
         activeColorSecondary: Colors.blue,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.bookmarks),
-        title: ("İlanlarım"),
+        icon: Icon(Icons.shopping_bag),
+        title: ("Sepetim"),
         activeColorPrimary: Colors.blue,
         inactiveColorPrimary: Colors.grey,
       ),
@@ -81,7 +86,7 @@ class MainScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       stateManagement: true,
-      navBarHeight: 60,
+      navBarHeight: 58,
       decoration: NavBarDecoration(
         borderRadius: BorderRadius.circular(15.0),
         colorBehindNavBar: Colors.white,

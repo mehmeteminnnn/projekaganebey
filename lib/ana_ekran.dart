@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projekaganebey/filtre.dart';
 import 'package:projekaganebey/models/ilan.dart';
+import 'package:projekaganebey/sepetim.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
 import 'package:projekaganebey/widgets/ilan_card.dart';
 
@@ -21,6 +22,20 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.shopping_cart, color: Colors.blue),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SepetimPage(urunler: [])));
+
+              // debugPrint("Sepet ikonuna tıklandı");
+              // Sepet sayfasına yönlendirme yapılabilir
+            },
+          ),
+        ],
         backgroundColor: Colors.white,
         title: Container(
           decoration: BoxDecoration(

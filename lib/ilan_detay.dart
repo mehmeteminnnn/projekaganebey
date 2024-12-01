@@ -16,10 +16,11 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   bool isFavorited = false;
+  //int _selectedIndex = 0;
 
   @override
   void dispose() {
-     _pageController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -77,7 +78,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
               child: Text("İlan bulunamadı."),
             );
           }
-         
+
           final ilanData = snapshot.data!.data() as Map<String, dynamic>;
           final resimler = List<String>.from(ilanData['resimler'] ?? []);
           final fiyat = ilanData['fiyat']?.toString() ?? '0';
@@ -102,11 +103,11 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                       height: 250,
                       child: PageView.builder(
                         controller: _pageController,
-                        onPageChanged: (index) {
+                        /*onPageChanged: (index) {
                           setState(() {
                             _currentPage = index;
                           });
-                        },
+                        },*/
                         itemCount: resimler.length,
                         itemBuilder: (context, index) {
                           debugPrint(

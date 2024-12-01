@@ -11,7 +11,7 @@ class AyarlarPage extends StatelessWidget {
         title: Text(
           'Ayarlar',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -21,7 +21,7 @@ class AyarlarPage extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        flexibleSpace: Container(
+        /* flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [Colors.blue, Colors.purple],
@@ -29,7 +29,7 @@ class AyarlarPage extends StatelessWidget {
               end: Alignment.bottomRight,
             ),
           ),
-        ),
+        ),*/
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -39,6 +39,7 @@ class AyarlarPage extends StatelessWidget {
               context,
               title: 'Şifremi değiştir',
               icon: Icons.lock,
+              iconColor: Colors.blue,
               onTap: () {
                 _showPasswordChangeDialog(context);
               },
@@ -47,6 +48,7 @@ class AyarlarPage extends StatelessWidget {
               context,
               title: 'Adreslerim',
               icon: Icons.location_on,
+              iconColor: Colors.blue,
               onTap: () {
                 Navigator.push(
                   context,
@@ -56,21 +58,9 @@ class AyarlarPage extends StatelessWidget {
             ),
             _buildSettingsCard(
               context,
-              title: 'Fatura bilgilerim',
-              icon: Icons.receipt,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => FaturaBilgilerimPage()),
-                );
-              },
-            ),
-            _buildSettingsCard(
-              context,
               title: 'Hesabımı kapat',
               icon: Icons.delete_forever,
-              iconColor: Colors.red,
+              iconColor: Colors.redAccent,
               onTap: () {
                 _showDeleteAccountDialog(context);
               },
