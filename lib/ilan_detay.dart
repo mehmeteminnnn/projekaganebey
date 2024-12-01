@@ -298,25 +298,39 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
     );
   }
 
-  Widget _buildFeatureRow(
-      String label1, String value1, String label2, String value2) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  // Özellik widget'ı
+  Widget _buildFeature(String title, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildFeatureItem(label1, value1),
-        _buildFeatureItem(label2, value2),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            color: Colors.grey,
+          ),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildFeatureItem(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  // Yan yana iki özellik gösterimi
+  Widget _buildFeatureRow(
+      String title1, String value1, String title2, String value2) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(fontSize: 16, color: Colors.grey)),
-        const SizedBox(height: 5),
-        Text(value,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        Expanded(child: _buildFeature(title1, value1)),
+        const SizedBox(width: 20),
+        Expanded(child: _buildFeature(title2, value2)),
       ],
     );
   }
