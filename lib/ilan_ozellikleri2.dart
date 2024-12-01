@@ -87,6 +87,7 @@ class _ProductPageState extends State<ProductPage> {
       widget.ilan.baslik = title;
       widget.ilan.olusturanKullaniciId =
           userId; // Kullanıcı UID'sini IlanModel'e ekle
+         
 
       // Yeni ilanı 'ilanlar' koleksiyonuna ekle ve ID'sini al
       DocumentReference ilanDocRef =

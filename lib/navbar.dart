@@ -26,9 +26,7 @@ class MainScreen extends StatelessWidget {
   List<Widget> _buildScreens() {
     return [
       AdsMDFLamPage(),
-      FavorilerimPage(
-        favoriler: [],
-      ),
+      FavorilerimPage(),
       IlanVerPage(),
       SepetimPage(
         urunler: [],

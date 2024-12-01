@@ -1,5 +1,5 @@
 import 'dart:io';
-
+//import 'dart:nativewrappers/_internal/vm/lib/core_patch.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:projekaganebey/constants/constants.dart';
@@ -26,6 +26,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
 
   String boyutYukseklik = "?";
   String boyutGenislik = "?";
+  String boyutEn = "?";
   String miktar = "?";
   bool isInputValid = false;
 
@@ -218,6 +219,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                         widget.ilan.fiyat =
                             double.tryParse(_FiyatController.text);
                         widget.ilan.olusturulmaTarihi = DateTime.now();
+                        widget.ilan.en = double.tryParse(boyutEn);
 
                         Navigator.push(
                             context,
@@ -424,7 +426,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                           keyboardType: TextInputType.number,
                           style: TextStyle(fontSize: 14),
                           onChanged: (value) {
-                            boyutYukseklik = value; // Değeri kaydet
+                            boyutYukseklik = value; // Yükseklik değeri kaydet
                           },
                         ),
                       ),
@@ -440,7 +442,23 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                           keyboardType: TextInputType.number,
                           style: TextStyle(fontSize: 14),
                           onChanged: (value) {
-                            boyutGenislik = value; // Değeri kaydet
+                            boyutGenislik = value; // Genişlik değeri kaydet
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            labelText: 'En',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
+                          ),
+                          keyboardType: TextInputType.number,
+                          style: TextStyle(fontSize: 14),
+                          onChanged: (value) {
+                            boyutEn = value; // En değeri kaydet
                           },
                         ),
                       ),
@@ -466,7 +484,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                     keyboardType: TextInputType.number,
                     style: TextStyle(fontSize: 14),
                     onChanged: (value) {
-                      miktar = value; // Değeri kaydet
+                      miktar = value; // Miktar değeri kaydet
                     },
                   ),
 
@@ -511,15 +529,49 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
 
                   SizedBox(height: 24),
 
-                  // Vazgeç Butonu
-                  Center(
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child:
-                          Text('Vazgeç', style: TextStyle(color: Colors.red)),
-                    ),
+                  // Butonlar
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // Vazgeç Butonu
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Modalı kapat
+                        },
+                        child:
+                            Text('Vazgeç', style: TextStyle(color: Colors.red)),
+                      ),
+                      // Onayla Butonu
+                      TextButton(
+                        onPressed: () {
+                          // Girilen bilgileri doğrula ve kaydet
+                          if (boyutGenislik != null &&
+                              boyutYukseklik != null &&
+                              boyutEn != null &&
+                              miktar != null &&
+                              (isDesenSelected
+                                  ? selectedDesenYonu != null
+                                  : true)) {
+                            // Verileri kaydet (örnek olarak konsola yaz)
+                            setState(() {});
+                            print(
+                                'Seçimler: [$boyutGenislik][$boyutYukseklik][$boyutEn]*$miktar, Desen: $isDesenSelected, Yön: $selectedDesenYonu');
+                            Navigator.pop(context); // Modalı kapat
+                          } else {
+                            // Kullanıcıya eksik bilgi uyarısı
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Lütfen tüm bilgileri doldurun!'),
+                              ),
+                            );
+                          }
+                        },
+                        child: Text(
+                          'Onayla',
+                          style: TextStyle(color: Colors.green),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

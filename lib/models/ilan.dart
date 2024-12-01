@@ -14,12 +14,14 @@ class IlanModel {
   List<String>? resimler; // İlan için resim URL'leri
   String? uretici; // Üretici firma/marka
   double? yukseklik; // Ürün yüksekliği
+  double? en; // Ürün eni
   double? genislik; // Ürün genişliği
   int? miktar; // Ürün miktarı
   String? desenYonu; // Desen yönü (nullable)
   String? renk; // Ürünün rengi
 
   IlanModel({
+    this.en = 0.0, // Varsayılan değer
     this.id,
     this.baslik = "Başlık Yok", // Varsayılan değer
     this.aciklama = "Açıklama Yok", // Varsayılan değer
@@ -60,12 +62,14 @@ class IlanModel {
       miktar: map['miktar']?.toInt(),
       desenYonu: map['desenYonu'] ?? "",
       renk: map['renk'] ?? "",
+      en: map['en']?.toDouble(),
     );
   }
 
   // Firestore'a veri yazarken kullanılan `toMap` metodu
   Map<String, dynamic> toMap() {
     return {
+      "en": en,
       'baslik': baslik,
       'aciklama': aciklama,
       'kategori': kategori,

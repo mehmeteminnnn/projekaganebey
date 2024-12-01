@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -16,12 +17,40 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   bool isFavorited = false;
-  //int _selectedIndex = 0;
 
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfFavorited();
+  }
+
+  // Favorilerde olup olmadığını kontrol et
+  void _checkIfFavorited() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userRef =
+          FirebaseFirestore.instance.collection('users').doc(user.uid);
+      try {
+        final userDoc = await userRef.get();
+        if (userDoc.exists) {
+          final userData = userDoc.data() as Map<String, dynamic>;
+          final favorilerim = List<String>.from(userData['favorilerim'] ?? []);
+          setState(() {
+            isFavorited = favorilerim.contains(widget.ilanId);
+          });
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Bir hata oluştu: $e')),
+        );
+      }
+    }
   }
 
   @override
@@ -54,11 +83,61 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
             icon: Icon(
               isFavorited ? Icons.favorite : Icons.favorite_border,
             ),
-            onPressed: () {
+            onPressed: () async {
+              final user = FirebaseAuth.instance.currentUser;
+
+              if (user == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content:
+                          Text('Favorilere eklemek için giriş yapmalısınız.')),
+                );
+                return;
+              }
+
               setState(() {
                 isFavorited = !isFavorited;
               });
-              // Favorilere ekleme işlemi
+
+              final userRef =
+                  FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+              try {
+                final userDoc = await userRef.get();
+
+                if (userDoc.exists) {
+                  // Kullanıcı mevcutsa güncelle
+                  if (isFavorited) {
+                    // Favorilere ekle
+                    await userRef.update({
+                      'favorilerim': FieldValue.arrayUnion([widget.ilanId]),
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Favorilere eklendi!')),
+                    );
+                  } else {
+                    // Favorilerden çıkar
+                    await userRef.update({
+                      'favorilerim': FieldValue.arrayRemove([widget.ilanId]),
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Favorilerden çıkarıldı!')),
+                    );
+                  }
+                } else {
+                  // Kullanıcı dokümanı yoksa oluştur ve favorilerim alanını ekle
+                  await userRef.set({
+                    'favorilerim': [widget.ilanId],
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Favorilere eklendi!')),
+                  );
+                }
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Bir hata oluştu: $e')),
+                );
+              }
             },
           ),
         ],
@@ -103,15 +182,8 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                       height: 250,
                       child: PageView.builder(
                         controller: _pageController,
-                        /*onPageChanged: (index) {
-                          setState(() {
-                            _currentPage = index;
-                          });
-                        },*/
                         itemCount: resimler.length,
                         itemBuilder: (context, index) {
-                          debugPrint(
-                              "index: $index"); // Debugging: Hangi index'e gelindiğini yazdırıyoruz.
                           return Image.network(
                             resimler[index],
                             fit: BoxFit.cover,
@@ -198,47 +270,23 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                       _buildFeatureRow("Miktar", "$miktar Adet", "Yükseklik",
                           "$yukseklik cm"),
                       const SizedBox(height: 16),
-                      _buildFeatureRow(
-                          "Genişlik", "$genislik cm", "Kategori", kategori),
+                      _buildFeatureRow("Genişlik", "$genislik cm", "En",
+                          "${ilanData['en']} cm"),
                       const SizedBox(height: 16),
-                      _buildFeature("Renk", renk),
-                      const SizedBox(height: 24),
+                      _buildFeatureRow("Renk", renk, "Kategori", kategori),
 
-                      // İlan Detayı Başlığı
+                      const SizedBox(height: 20),
+                      // Ürün açıklama
                       const Text(
-                        "İlan Detayı",
+                        "Detaylı Açıklama",
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        detay,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-
-                      // Satın al butonu
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
-                            minimumSize: const Size(double.infinity, 55),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          child: const Text('Satın Al',
-                              style: TextStyle(color: Colors.white)),
-                        ),
-                      ),
+                      const SizedBox(height: 10),
+                      Text(detay, style: const TextStyle(fontSize: 16)),
                     ],
                   ),
                 ),
@@ -250,39 +298,25 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
     );
   }
 
-  // Özellik widget'ı
-  Widget _buildFeature(String title, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildFeatureRow(
+      String label1, String value1, String label2, String value2) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Colors.grey,
-          ),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
+        _buildFeatureItem(label1, value1),
+        _buildFeatureItem(label2, value2),
       ],
     );
   }
 
-  // Yan yana iki özellik gösterimi
-  Widget _buildFeatureRow(
-      String title1, String value1, String title2, String value2) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildFeatureItem(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(child: _buildFeature(title1, value1)),
-        const SizedBox(width: 20),
-        Expanded(child: _buildFeature(title2, value2)),
+        Text(label, style: const TextStyle(fontSize: 16, color: Colors.grey)),
+        const SizedBox(height: 5),
+        Text(value,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ],
     );
   }
