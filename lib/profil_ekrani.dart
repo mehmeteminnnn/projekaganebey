@@ -92,9 +92,15 @@ class BankInfoCard extends StatelessWidget {
   }
 }
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+class ProfileScreen extends StatefulWidget {
+  final String? id;
+   ProfileScreen({Key? key,this.id}) : super(key: key);
 
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -164,7 +170,7 @@ class ProfileScreen extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => IlanlarimPage()));
+                            builder: (context) => IlanlarimPage(id:widget.id)));
                     debugPrint("İlanlarım tıklandı");
                   },
                 ),

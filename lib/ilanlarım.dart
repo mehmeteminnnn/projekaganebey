@@ -6,6 +6,8 @@ import 'package:projekaganebey/services/firestore_services.dart';
 import 'package:projekaganebey/widgets/ilan_card.dart';
 
 class IlanlarimPage extends StatefulWidget {
+  final String? id;
+  const IlanlarimPage({Key? key, this.id}) : super(key: key);
   @override
   _IlanlarimPageState createState() => _IlanlarimPageState();
 }
@@ -19,7 +21,8 @@ class _IlanlarimPageState extends State<IlanlarimPage> {
   Future<void> fetchUserIlanlar() async {
     try {
       // Firebase Authentication'dan geçerli kullanıcının ID'sini alıyoruz
-      String? currentUserId = FirebaseAuth.instance.currentUser?.uid;
+      String? currentUserId =
+          widget.id; //?? FirebaseAuth.instance.currentUser?.uid;
 
       if (currentUserId == null) {
         setState(() {

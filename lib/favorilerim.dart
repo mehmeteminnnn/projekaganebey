@@ -3,9 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:projekaganebey/ilan_detay.dart';
 
-class FavorilerimPage extends StatelessWidget {
-  const FavorilerimPage({Key? key}) : super(key: key);
+class FavorilerimPage extends StatefulWidget {
+  final String? id;
+  const FavorilerimPage({Key? key, this.id}) : super(key: key);
 
+  @override
+  State<FavorilerimPage> createState() => _FavorilerimPageState();
+}
+
+class _FavorilerimPageState extends State<FavorilerimPage> {
   Stream<List<String>> _getFavorilerimStream(String userId) {
     return FirebaseFirestore.instance
         .collection('users')
@@ -31,24 +37,9 @@ class FavorilerimPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-
-    if (user == null) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text("Favorilerim"),
-        ),
-        body: const Center(
-          child: Text(
-            "Giriş yapmalısınız.",
-            style: TextStyle(fontSize: 18, color: Colors.red),
-          ),
-        ),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text(
           "Favorilerim",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -58,7 +49,7 @@ class FavorilerimPage extends StatelessWidget {
         foregroundColor: Colors.black,
       ),
       body: StreamBuilder<List<String>>(
-        stream: _getFavorilerimStream(user.uid),
+        stream: _getFavorilerimStream(widget.id!),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -141,7 +132,11 @@ class FavorilerimPage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => IlanDetayPage(ilanId: ilanId),
+                            builder: (context) => IlanDetayPage(
+                              id: widget.id,
+                              ilanId: ilanId,
+                              ilanbaslik: baslik,
+                            ),
                           ),
                         );
                       },
@@ -186,7 +181,7 @@ class FavorilerimPage extends StatelessWidget {
                               onPressed: () {
                                 FirebaseFirestore.instance
                                     .collection('users')
-                                    .doc(user.uid)
+                                    .doc(widget.id)
                                     .update({
                                   'favorilerim':
                                       FieldValue.arrayRemove([ilanId]),

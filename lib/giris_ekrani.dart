@@ -28,11 +28,13 @@ class _LoginScreenState extends State<LoginScreen> {
           .get();
 
       if (userSnapshot.docs.isNotEmpty) {
+        final id = userSnapshot.docs.first.id;
         // Kullanıcı bilgileri doğruysa
         Fluttertoast.showToast(msg: "Giriş başarılı!");
+        debugPrint('id: $id');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MainScreen()),
+          MaterialPageRoute(builder: (context) => MainScreen(id: id)),
         );
       } else {
         // E-posta veya şifre yanlış

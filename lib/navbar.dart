@@ -20,18 +20,22 @@ class MyApp extends StatelessWidget {
 }
 
 class MainScreen extends StatelessWidget {
+  String? id;
+
+  MainScreen({this.id});
   final PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
 
   List<Widget> _buildScreens() {
+    debugPrint("MainScreen id: $id");
     return [
-      AdsMDFLamPage(),
-      FavorilerimPage(),
+      AdsMDFLamPage(id: id),
+      FavorilerimPage(id: id),
       IlanVerPage(),
       SepetimPage(
-        urunler: [],
+        userId: id!,
       ),
-      ProfileScreen(),
+      ProfileScreen(id: id),
     ];
   }
 

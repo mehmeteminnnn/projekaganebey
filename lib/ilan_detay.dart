@@ -1,12 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:projekaganebey/services/user_services.dart';
 
 class IlanDetayPage extends StatefulWidget {
   final String ilanId;
   final String? ilanbaslik;
+  final String? id;
 
-  const IlanDetayPage({Key? key, required this.ilanId, this.ilanbaslik})
+  const IlanDetayPage(
+      {Key? key, required this.ilanId, this.ilanbaslik, this.id})
       : super(key: key);
 
   @override
@@ -25,31 +27,30 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _checkIfFavorited();
+    debugPrint('ilanId: ${widget.ilanId}, id: ${widget.id}');
   }
 
-  // Favorilerde olup olmadığını kontrol et
   void _checkIfFavorited() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final userRef =
-          FirebaseFirestore.instance.collection('users').doc(user.uid);
-      try {
-        final userDoc = await userRef.get();
-        if (userDoc.exists) {
-          final userData = userDoc.data() as Map<String, dynamic>;
-          final favorilerim = List<String>.from(userData['favorilerim'] ?? []);
-          setState(() {
-            isFavorited = favorilerim.contains(widget.ilanId);
-          });
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Bir hata oluştu: $e')),
-        );
+    try {
+      final favorited =
+          await UserService().isFavorited(widget.id!, widget.ilanId);
+      if (mounted) {
+        setState(() {
+          isFavorited = favorited;
+        });
       }
+    } catch (e) {
+      // ScaffoldMessenger çağrısını doğrudan burada değil, güvenli bir yerden yapmalısınız
+      Future.microtask(() {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Bir hata oluştu: $e')),
+          );
+        }
+      });
     }
   }
 
@@ -74,33 +75,17 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () {
-              // Paylaşım işlemi
-            },
-          ),
-          IconButton(
             icon: Icon(
               isFavorited ? Icons.favorite : Icons.favorite_border,
+              color: isFavorited ? Colors.red : null,
             ),
             onPressed: () async {
-              final user = FirebaseAuth.instance.currentUser;
-
-              if (user == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content:
-                          Text('Favorilere eklemek için giriş yapmalısınız.')),
-                );
-                return;
-              }
-
               setState(() {
                 isFavorited = !isFavorited;
               });
 
               final userRef =
-                  FirebaseFirestore.instance.collection('users').doc(user.uid);
+                  FirebaseFirestore.instance.collection('users').doc(widget.id);
 
               try {
                 final userDoc = await userRef.get();
@@ -141,7 +126,6 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
             },
           ),
         ],
-        backgroundColor: Colors.orange,
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: ilanRef.get(),
@@ -287,6 +271,33 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                       ),
                       const SizedBox(height: 10),
                       Text(detay, style: const TextStyle(fontSize: 16)),
+                      const SizedBox(height: 10),
+                      Text(detay, style: const TextStyle(fontSize: 16)),
+
+// Sepete Ekle Butonu
+                      const SizedBox(height: 20),
+                      Center(
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            await UserService().addToCart(
+                              context,
+                              widget.id!,
+                              widget.ilanId,
+                            );
+                          },
+                          icon: const Icon(Icons.shopping_cart),
+                          label: const Text("Sepete Ekle"),
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.orange,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 12),
+                            textStyle: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:projekaganebey/filtre.dart';
 import 'package:projekaganebey/models/ilan.dart';
@@ -10,8 +11,9 @@ class AdsMDFLamPage extends StatefulWidget {
   _AdsMDFLamPageState createState() => _AdsMDFLamPageState();
 
   final List<Map<String, dynamic>>? filteredAds;
+  final String? id;
 
-  AdsMDFLamPage({this.filteredAds});
+  AdsMDFLamPage({this.filteredAds, this.id});
 }
 
 class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
@@ -29,7 +31,9 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SepetimPage(urunler: [])));
+                      builder: (context) => SepetimPage(
+                            userId: widget.id!,
+                          )));
 
               // debugPrint("Sepet ikonuna tıklandı");
               // Sepet sayfasına yönlendirme yapılabilir
@@ -89,7 +93,9 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                     itemCount: widget.filteredAds!.length,
                     itemBuilder: (context, index) {
                       final ilan = widget.filteredAds![index];
+
                       return buildIlanCard(
+                        userId: widget.id,
                         baslik: ilan['baslik'],
                         fiyat: (ilan['fiyat'] != null
                             ? ilan['fiyat'].toDouble()
@@ -138,6 +144,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                             itemBuilder: (context, index) {
                               final ilan = ilanlar[index];
                               return buildIlanCard(
+                                  userId: widget.id,
                                   baslik: ilan.baslik,
                                   fiyat: ilan.fiyat,
                                   resimUrl: ilan.resimler?.isNotEmpty == true

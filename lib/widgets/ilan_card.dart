@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:projekaganebey/ilan_detay.dart';
 
 Widget buildIlanCard(
-    {String? baslik,
+    {String? userId,
+    String? baslik,
     double? fiyat,
     String? resimUrl,
     required ilanID,
     context}) {
   return GestureDetector(
     onTap: () {
+      debugPrint("ilanID: $ilanID,userıd: $userId");
       // İlan detay sayfasına yönlendirme
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => IlanDetayPage(
+            id: userId,
             ilanId: ilanID,
             ilanbaslik: baslik,
           ),
