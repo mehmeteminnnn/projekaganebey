@@ -12,15 +12,16 @@ class SepetimPage extends StatefulWidget {
 }
 
 class _SepetimPageState extends State<SepetimPage> {
-  late Future<List<IlanModel>> sepetListesi;
   double toplamTutar = 0.0;
 
+  // Sepet verisini anlık olarak almak için Stream kullanıyoruz.
   Future<List<IlanModel>> getSepetData(String userId) async {
     try {
       final userDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
           .get();
+
       if (userDoc.exists) {
         List<String> urunIds = List<String>.from(userDoc['sepetim'] ?? []);
         List<IlanModel> urunler = [];
@@ -68,12 +69,6 @@ class _SepetimPageState extends State<SepetimPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    sepetListesi = getSepetData(widget.userId);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -84,12 +79,13 @@ class _SepetimPageState extends State<SepetimPage> {
         ),
         elevation: 0,
       ),
-      body: FutureBuilder<List<IlanModel>>(
-        future: sepetListesi,
+      body: StreamBuilder<List<IlanModel>>(
+        stream: Stream.fromFuture(
+            getSepetData(widget.userId)), // Stream'i burada dinliyoruz
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          /*if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          }
+          }*/
 
           if (snapshot.hasError) {
             debugPrint('Hata: ${snapshot.error}');
