@@ -82,9 +82,7 @@ class _SepetimPageState extends State<SepetimPage> {
           "Sepetim",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.orange,
         elevation: 0,
-        foregroundColor: Colors.white,
       ),
       body: FutureBuilder<List<IlanModel>>(
         future: sepetListesi,
@@ -203,7 +201,8 @@ class _SepetimPageState extends State<SepetimPage> {
                               debugPrint("Ödeme işlemi başlatıldı");
                             },
                             child: const Text("Ödeme Yap",
-                                style: TextStyle(fontSize: 18)),
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white)),
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
