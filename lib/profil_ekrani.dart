@@ -94,7 +94,7 @@ class BankInfoCard extends StatelessWidget {
 
 class ProfileScreen extends StatefulWidget {
   final String? id;
-   ProfileScreen({Key? key,this.id}) : super(key: key);
+  ProfileScreen({Key? key, this.id}) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -155,7 +155,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => BankaHesapBilgileriPage()));
+                          builder: (context) => BankaHesapBilgileriPage(
+                                userId: widget.id!,
+                              )));
                   debugPrint("Banka hesap bilgileri tıklandı");
                 },
               ),
@@ -170,7 +172,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => IlanlarimPage(id:widget.id)));
+                            builder: (context) =>
+                                IlanlarimPage(id: widget.id)));
                     debugPrint("İlanlarım tıklandı");
                   },
                 ),
@@ -211,7 +214,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ProfilDetayPage()));
+                            builder: (context) =>
+                                ProfilDetayPage(userId: widget.id!)));
                     debugPrint("Profilim tıklandı");
                   },
                 ),

@@ -45,7 +45,7 @@ class _SepetimPageState extends State<SepetimPage> {
             }, ilanDoc.id);
             urunler.add(ilan);
             tempToplamTutar += ilan.fiyat ?? 0.0;
-            debugPrint("İlan Başlığı: ${ilan.baslik} - Fiyat: ${ilan.fiyat}");
+            //debugPrint("İlan Başlığı: ${ilan.baslik} - Fiyat: ${ilan.fiyat}");
           } else {
             debugPrint("İlan ID'si bulunamadı: $urunId");
           }
@@ -68,6 +68,28 @@ class _SepetimPageState extends State<SepetimPage> {
     }
   }
 
+  // Ürünü sepetten silme fonksiyonu
+  Future<void> _removeFromCart(
+      String productId, List<IlanModel> urunler) async {
+    try {
+      // Kullanıcının sepetindeki ürünler listesinde bu ürünü sil
+      final userRef =
+          FirebaseFirestore.instance.collection('users').doc(widget.userId);
+      await userRef.update({
+        'sepetim': FieldValue.arrayRemove([productId]), // Ürünü sil
+      });
+
+      setState(() {
+        toplamTutar -=
+            urunler.firstWhere((urun) => urun.id == productId).fiyat ?? 0.0;
+      });
+
+      debugPrint("Ürün silindi: $productId");
+    } catch (e) {
+      debugPrint('Ürün silinirken hata oluştu: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,10 +105,6 @@ class _SepetimPageState extends State<SepetimPage> {
         stream: Stream.fromFuture(
             getSepetData(widget.userId)), // Stream'i burada dinliyoruz
         builder: (context, snapshot) {
-          /*if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }*/
-
           if (snapshot.hasError) {
             debugPrint('Hata: ${snapshot.error}');
             return Center(child: Text('Hata: ${snapshot.error}'));
@@ -152,8 +170,10 @@ class _SepetimPageState extends State<SepetimPage> {
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () {
-                            // Ürün silme işlemi
-                            debugPrint("${urunler[index].baslik} silindi");
+                            // Silme işlemi
+                            if (urunler[index].id != null) {
+                              _removeFromCart(urunler[index].id!, urunler);
+                            }
                           },
                         ),
                       ),

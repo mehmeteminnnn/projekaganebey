@@ -64,7 +64,7 @@ class _FavorilerimPageState extends State<FavorilerimPage> {
             );
           }
 
-          final favoriler = snapshot.data ?? [];
+          final favoriler = (snapshot.data ?? []).reversed.toList();
 
           if (favoriler.isEmpty) {
             return Center(
