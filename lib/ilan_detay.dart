@@ -337,12 +337,25 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                       Center(
                         child: ElevatedButton.icon(
                           onPressed: () async {
-                            await UserService().addToCart(
-                              context,
-                              widget.id!,
-                              widget.ilanId,
-                              _quantity.toInt(),
-                            );
+                            // Sepette olup olmadığını kontrol et
+                            final isInCart = await UserService()
+                                .isProductInCart(widget.id!, widget.ilanId);
+
+                            if (isInCart) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Sepetinizde bu ürün zaten var!')),
+                              );
+                            } else {
+                              // Sepete ekle
+                              await UserService().addToCart(
+                                context,
+                                widget.id!,
+                                widget.ilanId,
+                                _quantity.toInt(),
+                              );
+                            }
                           },
                           icon: const Icon(Icons.shopping_cart),
                           label: const Text("Sepete Ekle"),

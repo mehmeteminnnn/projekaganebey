@@ -142,8 +142,14 @@ class _BankaHesapBilgileriPageState extends State<BankaHesapBilgileriPage> {
               SizedBox(height: 20),
               ElevatedButton.icon(
                 onPressed: _kaydet,
-                icon: Icon(Icons.save),
-                label: Text('Kaydet'),
+                icon: Icon(
+                  Icons.save,
+                  color: Colors.blue,
+                ),
+                label: Text(
+                  'Kaydet',
+                  style: TextStyle(color: Colors.blue),
+                ),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 16),
                   textStyle: TextStyle(fontSize: 16),
@@ -162,14 +168,31 @@ class _BankaHesapBilgileriPageState extends State<BankaHesapBilgileriPage> {
     TextInputType keyboardType = TextInputType.text,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding:
+          const EdgeInsets.symmetric(vertical: 12.0), // Daha rahat bir padding
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
+        style: const TextStyle(fontSize: 16), // Daha modern font boyutu
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+          labelStyle:
+              const TextStyle(color: Colors.grey, fontWeight: FontWeight.w500),
+          filled: true, // Arka planı doldur
+          fillColor: Colors.grey[200], // Arka plan rengi
+          contentPadding: const EdgeInsets.symmetric(
+              vertical: 16.0, horizontal: 20.0), // Daha büyük iç padding
+          border: InputBorder.none, // Kenarlık olmaması
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Colors.transparent), // Kenar çizgisi yok
+            borderRadius: BorderRadius.circular(25), // Daha yuvarlak köşeler
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+                color: Colors.blueAccent,
+                width: 2), // Focus olduğunda renk değişimi
+            borderRadius: BorderRadius.circular(25), // Yuvarlak köşeler
           ),
         ),
         validator: (value) {

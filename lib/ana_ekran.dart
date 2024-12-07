@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:projekaganebey/bildirimler.dart';
 import 'package:projekaganebey/filtre.dart';
 import 'package:projekaganebey/models/ilan.dart';
 import 'package:projekaganebey/sepetim.dart';
@@ -25,8 +26,8 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart, color: Colors.blue),
+          /* IconButton(
+            icon: const Icon(Icons.shoppin_bag, color: Colors.blue),
             onPressed: () {
               Navigator.push(
                   context,
@@ -37,6 +38,13 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
 
               // debugPrint("Sepet ikonuna tıklandı");
               // Sepet sayfasına yönlendirme yapılabilir
+            },
+          ),*/
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Colors.blue),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => NotificationsPage()));
             },
           ),
         ],

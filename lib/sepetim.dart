@@ -139,20 +139,26 @@ class _SepetimPageState extends State<SepetimPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Silme İşlemi'),
+        title: const Text(
+          'Silme İşlemi',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: const Text(
             'Bu ürünü sepetinizden silmek istediğinize emin misiniz?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(), // İptal
-            child: const Text('Hayır'),
+            child: const Text('Hayır', style: TextStyle(color: Colors.orange)),
           ),
           TextButton(
             onPressed: () {
               _removeFromCart(productId, urunler);
               Navigator.of(context).pop(); // Sil ve kapat
             },
-            child: const Text('Evet'),
+            child: const Text('Evet', style: TextStyle(color: Colors.orange)),
           ),
         ],
       ),
@@ -184,6 +190,57 @@ class _SepetimPageState extends State<SepetimPage> {
     } catch (e) {
       debugPrint('Ürün silinirken hata oluştu: $e');
     }
+  }
+
+  void _showDetailModal() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          height: 200,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Sepet Detayları',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Ürün Fiyatı:', style: TextStyle(fontSize: 16)),
+                  Text('₺${(toplamTutar).toStringAsFixed(2)}',
+                      style: const TextStyle(fontSize: 16)),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Alıcı Koruma Hizmeti:',
+                      style: TextStyle(fontSize: 16)),
+                  const Text('₺25.00', style: TextStyle(fontSize: 16)),
+                ],
+              ),
+              const Divider(height: 32, thickness: 1),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Toplam:',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text('₺${(toplamTutar + 25.0).toStringAsFixed(2)}',
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -238,16 +295,23 @@ class _SepetimPageState extends State<SepetimPage> {
                   itemCount: urunler.length,
                   itemBuilder: (context, index) {
                     //int maxMiktar = urunler[index].miktar ?? 1;
-
+                    debugPrint('Sepet verileri: ${urunler.length}');
                     return Card(
+                      color: Colors.white,
                       child: ListTile(
                         leading: Image.network(
-                          urunler[index].resimler?[0] ?? '',
+                          urunler[index].resimler != null &&
+                                  urunler[index].resimler!.isNotEmpty
+                              ? urunler[index].resimler![0]
+                              : 'https://via.placeholder.com/60',
                           width: 60,
                           height: 60,
                           fit: BoxFit.cover,
                         ),
-                        title: Text(urunler[index].baslik ?? ''),
+                        title: Text(
+                          urunler[index].baslik ?? '',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -292,9 +356,65 @@ class _SepetimPageState extends State<SepetimPage> {
                 ),
                 Positioned(
                   bottom: 0,
+                  left: 0,
+                  right: 0,
                   child: Container(
+                    color: Colors.white,
                     padding: const EdgeInsets.all(16.0),
-                    child: Text("Toplam: ₺${toplamTutar.toStringAsFixed(2)}"),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: _showDetailModal, // Detay modali açılır
+                              child: Row(
+                                children: const [
+                                  Icon(Icons.info_outline,
+                                      color: Colors.grey), // Detay ikonu
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                                width: 16), // Detay ve toplam arasında boşluk
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Toplam:',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  '₺${(toplamTutar + 25.0).toStringAsFixed(2)}',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 12),
+                          ),
+                          onPressed: () {
+                            // Ödeme işlemi yapılır
+                          },
+                          child: const Text(
+                            'Ödemeye Geç',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

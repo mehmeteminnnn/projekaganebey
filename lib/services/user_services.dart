@@ -3,54 +3,77 @@ import 'package:flutter/material.dart';
 
 class UserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  Future<bool> isProductInCart(String userId, String ilanId) async {
+    try {
+      final userRef =
+          FirebaseFirestore.instance.collection('users').doc(userId);
+      final userDoc = await userRef.get();
 
-  Future<void> addToCart(BuildContext context, String userId, String ilanId, int miktar) async {
-  final userRef = _firestore.collection('users').doc(userId);
+      if (userDoc.exists) {
+        final cart =
+            List<Map<String, dynamic>>.from(userDoc.data()?['sepetim'] ?? []);
+        // Sepette ürün var mı kontrol et (ilanId'yi karşılaştırarak)
+        for (var item in cart) {
+          if (item['id'] == ilanId) {
+            return true; // Eğer ürün varsa true döndür
+          }
+        }
+      }
+      return false; // Ürün bulunamadıysa false döndür
+    } catch (e) {
+      throw Exception('Hata: $e');
+    }
+  }
 
-  try {
-    final userDoc = await userRef.get();
+  Future<void> addToCart(
+      BuildContext context, String userId, String ilanId, int miktar) async {
+    final userRef = _firestore.collection('users').doc(userId);
 
-    if (userDoc.exists) {
-      // Kullanıcı mevcutsa, sepeti al
-      var sepetim = List<Map<String, dynamic>>.from(userDoc['sepetim'] ?? []);
+    try {
+      final userDoc = await userRef.get();
 
-      // Sepet zaten mevcutsa, ürünü bul
-      var existingProduct = sepetim.firstWhere(
-        (item) => item['id'] == ilanId,
-        orElse: () => {},
-      );
+      if (userDoc.exists) {
+        // Kullanıcı mevcutsa, sepeti al
+        var sepetim = List<Map<String, dynamic>>.from(userDoc['sepetim'] ?? []);
 
-      if (existingProduct.isEmpty) {
-        // Ürün sepette yok, yeni ürün ekle
-        sepetim.add({'id': ilanId, 'miktar': miktar});
+        // Sepet zaten mevcutsa, ürünü bul
+        var existingProduct = sepetim.firstWhere(
+          (item) => item['id'] == ilanId,
+          orElse: () => {},
+        );
+
+        if (existingProduct.isEmpty) {
+          // Ürün sepette yok, yeni ürün ekle
+          sepetim.add({'id': ilanId, 'miktar': miktar});
+        } else {
+          // Ürün sepette mevcut, miktarı arttır
+          existingProduct['miktar'] += miktar;
+        }
+
+        // Sepet güncelle
+        await userRef.update({
+          'sepetim': sepetim,
+        });
       } else {
-        // Ürün sepette mevcut, miktarı arttır
-        existingProduct['miktar'] += miktar;
+        // Kullanıcı dokümanı yoksa oluştur ve sepete ekle
+        await userRef.set({
+          'sepetim': [
+            {'id': ilanId, 'miktar': miktar}
+          ],
+        });
       }
 
-      // Sepet güncelle
-      await userRef.update({
-        'sepetim': sepetim,
-      });
-    } else {
-      // Kullanıcı dokümanı yoksa oluştur ve sepete ekle
-      await userRef.set({
-        'sepetim': [{'id': ilanId, 'miktar': miktar}],
-      });
+      // İşlem başarılı olduğunda mesaj göster
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Ürün sepetinize başarıyla eklendi!')),
+      );
+    } catch (e) {
+      // Hata durumunda mesaj göster
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sepete eklerken bir hata oluştu: $e')),
+      );
     }
-
-    // İşlem başarılı olduğunda mesaj göster
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Ürün sepetinize başarıyla eklendi!')),
-    );
-  } catch (e) {
-    // Hata durumunda mesaj göster
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Sepete eklerken bir hata oluştu: $e')),
-    );
   }
-}
-
 
   Future<bool> isFavorited(String userId, String ilanId) async {
     final userRef = _firestore.collection('users').doc(userId);
