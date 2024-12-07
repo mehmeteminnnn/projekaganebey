@@ -63,6 +63,7 @@ class IlanModel {
       desenYonu: map['desenYonu'] ?? "",
       renk: map['renk'] ?? "",
       en: map['en']?.toDouble(),
+      
     );
   }
 

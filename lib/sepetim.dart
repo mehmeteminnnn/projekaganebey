@@ -14,7 +14,7 @@ class SepetimPage extends StatefulWidget {
 class _SepetimPageState extends State<SepetimPage> {
   double toplamTutar = 0.0;
 
-  // Sepet verisini anlık olarak almak için Stream kullanıyoruz.
+  // Sepet verilerini al
   Future<List<IlanModel>> getSepetData(String userId) async {
     try {
       final userDoc = await FirebaseFirestore.instance
@@ -23,31 +23,33 @@ class _SepetimPageState extends State<SepetimPage> {
           .get();
 
       if (userDoc.exists) {
-        List<String> urunIds = List<String>.from(userDoc['sepetim'] ?? []);
+        List<Map<String, dynamic>> sepetimList =
+            List<Map<String, dynamic>>.from(userDoc['sepetim'] ?? []);
         List<IlanModel> urunler = [];
         double tempToplamTutar = 0.0;
 
-        debugPrint("Sepet ID'leri: $urunIds");
+        // Sepet içeriğini işle
+        for (var sepetItem in sepetimList) {
+          final productId = sepetItem['id'];
+          final miktar = sepetItem['miktar'];
 
-        for (var urunId in urunIds) {
           final ilanDoc = await FirebaseFirestore.instance
               .collection('ilanlar')
-              .doc(urunId)
+              .doc(productId)
               .get();
 
           if (ilanDoc.exists) {
             var ilanData = ilanDoc.data()!;
+
             IlanModel ilan = IlanModel.fromMap({
-              'id': urunId,
+              'id': productId,
               'baslik': ilanData['baslik'],
               'fiyat': ilanData['fiyat'],
               'resimler': ilanData['resimler'],
+              'miktar': miktar,
             }, ilanDoc.id);
             urunler.add(ilan);
-            tempToplamTutar += ilan.fiyat ?? 0.0;
-            //debugPrint("İlan Başlığı: ${ilan.baslik} - Fiyat: ${ilan.fiyat}");
-          } else {
-            debugPrint("İlan ID'si bulunamadı: $urunId");
+            tempToplamTutar += (ilan.fiyat ?? 0.0) * (miktar ?? 1);
           }
         }
 
@@ -55,36 +57,130 @@ class _SepetimPageState extends State<SepetimPage> {
           toplamTutar = tempToplamTutar;
         });
 
-        debugPrint("Toplam Tutar: $toplamTutar");
-
         return urunler;
       } else {
-        debugPrint("Kullanıcı bulunamadı");
         return [];
       }
     } catch (e) {
-      debugPrint('Hata oluştu: $e');
       throw Exception('Veri alırken hata oluştu: $e');
     }
   }
 
-  // Ürünü sepetten silme fonksiyonu
+  Future<void> updateMiktar(String productId, int miktar) async {
+    try {
+      final ilanDoc = await FirebaseFirestore.instance
+          .collection('ilanlar')
+          .doc(productId)
+          .get();
+
+      var ilanData = ilanDoc.data()!;
+      int maxMiktar = ilanData['miktar'];
+      if (miktar < 1) {
+        miktar = 1; // Miktar minimum 1 olmalı
+      } else if (miktar > maxMiktar) {
+        // Eğer miktar maxMiktar'ı aşarsa uyarı göster
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text(
+              'Miktar Hatası',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: Text('Bu üründen stokta yalnızca $maxMiktar tane var '),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child:
+                    const Text('Tamam', style: TextStyle(color: Colors.orange)),
+              ),
+            ],
+          ),
+        );
+        return; // Uyarı gösterildikten sonra işlem yapılmaz
+      }
+
+      final userRef =
+          FirebaseFirestore.instance.collection('users').doc(widget.userId);
+
+      // Aynı ID'ye sahip bir ürün zaten varsa miktarını güncelle
+      final userDoc = await userRef.get();
+      List<Map<String, dynamic>> sepetimList =
+          List<Map<String, dynamic>>.from(userDoc['sepetim'] ?? []);
+      bool found = false;
+      for (var item in sepetimList) {
+        if (item['id'] == productId) {
+          item['miktar'] = miktar;
+          found = true;
+          break;
+        }
+      }
+
+      // Eğer ürün zaten sepette yoksa, yeni ürün ekle
+      if (!found) {
+        sepetimList.add({'id': productId, 'miktar': miktar});
+      }
+
+      await userRef.update({
+        'sepetim': sepetimList,
+      });
+
+      setState(() {});
+    } catch (e) {
+      debugPrint('Miktar güncellenirken hata oluştu: $e');
+    }
+  }
+
+  // Ürün silme işlemi
+  Future<void> showDeleteConfirmation(
+      String productId, List<IlanModel> urunler) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Silme İşlemi'),
+        content: const Text(
+            'Bu ürünü sepetinizden silmek istediğinize emin misiniz?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(), // İptal
+            child: const Text('Hayır'),
+          ),
+          TextButton(
+            onPressed: () {
+              _removeFromCart(productId, urunler);
+              Navigator.of(context).pop(); // Sil ve kapat
+            },
+            child: const Text('Evet'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _removeFromCart(
       String productId, List<IlanModel> urunler) async {
     try {
-      // Kullanıcının sepetindeki ürünler listesinde bu ürünü sil
       final userRef =
           FirebaseFirestore.instance.collection('users').doc(widget.userId);
+
+      // Silinecek ürünün bilgilerini al
+      final removedProduct = urunler.firstWhere((urun) => urun.id == productId);
+      final removedProductPrice = removedProduct.fiyat ?? 0.0;
+      final removedProductQuantity = removedProduct.miktar ?? 1;
+
+      // Sepetten ilgili ürünü tamamen çıkar
       await userRef.update({
-        'sepetim': FieldValue.arrayRemove([productId]), // Ürünü sil
+        'sepetim': FieldValue.arrayRemove([
+          {'id': productId, 'miktar': removedProductQuantity},
+        ]),
       });
 
+      // Toplam tutarı güncelle
       setState(() {
-        toplamTutar -=
-            urunler.firstWhere((urun) => urun.id == productId).fiyat ?? 0.0;
+        toplamTutar -= removedProductPrice * removedProductQuantity;
       });
-
-      debugPrint("Ürün silindi: $productId");
     } catch (e) {
       debugPrint('Ürün silinirken hata oluştu: $e');
     }
@@ -97,18 +193,19 @@ class _SepetimPageState extends State<SepetimPage> {
         centerTitle: true,
         title: const Text(
           "Sepetim",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        elevation: 0,
       ),
       body: StreamBuilder<List<IlanModel>>(
-        stream: Stream.fromFuture(
-            getSepetData(widget.userId)), // Stream'i burada dinliyoruz
+        stream: Stream.fromFuture(getSepetData(widget.userId)),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            debugPrint('Hata: ${snapshot.error}');
             return Center(child: Text('Hata: ${snapshot.error}'));
           }
+          //debugPrint('Sepet verileri: ${snapshot.data?.first.fiyat}');
 
           final urunler = snapshot.data ?? [];
 
@@ -140,40 +237,53 @@ class _SepetimPageState extends State<SepetimPage> {
                 ListView.builder(
                   itemCount: urunler.length,
                   itemBuilder: (context, index) {
+                    //int maxMiktar = urunler[index].miktar ?? 1;
+
                     return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
                       child: ListTile(
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Image.network(
-                            urunler[index].resimler?[0] ??
-                                'https://ideacdn.net/idea/ar/16/myassets/products/353/pr_01_353.jpg?revision=1697143329',
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
-                          ),
+                        leading: Image.network(
+                          urunler[index].resimler?[0] ?? '',
+                          width: 60,
+                          height: 60,
+                          fit: BoxFit.cover,
                         ),
-                        title: Text(
-                          urunler[index].baslik ?? 'Başlık Yok',
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                        subtitle: Text(
-                          "Fiyat: ₺${urunler[index].fiyat?.toStringAsFixed(2)}",
-                          style: TextStyle(
-                              color: Colors.green.shade700,
-                              fontWeight: FontWeight.bold),
+                        title: Text(urunler[index].baslik ?? ''),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                "Fiyat: ₺${urunler[index].fiyat?.toStringAsFixed(2)}"),
+                            Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    if (urunler[index].miktar! > 1) {
+                                      updateMiktar(
+                                        urunler[index].id!,
+                                        urunler[index].miktar! - 1,
+                                      );
+                                    }
+                                  },
+                                  icon: const Icon(Icons.remove),
+                                ),
+                                Text('${urunler[index].miktar}'),
+                                IconButton(
+                                  onPressed: () {
+                                    updateMiktar(
+                                      urunler[index].id!,
+                                      urunler[index].miktar! + 1,
+                                    );
+                                  },
+                                  icon: const Icon(Icons.add),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () {
-                            // Silme işlemi
-                            if (urunler[index].id != null) {
-                              _removeFromCart(urunler[index].id!, urunler);
-                            }
+                            showDeleteConfirmation(urunler[index].id!, urunler);
                           },
                         ),
                       ),
@@ -182,54 +292,9 @@ class _SepetimPageState extends State<SepetimPage> {
                 ),
                 Positioned(
                   bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Padding(
+                  child: Container(
                     padding: const EdgeInsets.all(16.0),
-                    child: Container(
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 8.0,
-                            spreadRadius: 2.0,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            "Toplam Tutar: ₺${toplamTutar.toStringAsFixed(2)}",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green.shade700,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          ElevatedButton(
-                            onPressed: () {
-                              // Sepetle ödeme işlemi için bir yönlendirme yapılabilir
-                              debugPrint("Ödeme işlemi başlatıldı");
-                            },
-                            child: const Text("Ödeme Yap",
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.white)),
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              backgroundColor: Colors.orange, // Buton rengi
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: Text("Toplam: ₺${toplamTutar.toStringAsFixed(2)}"),
                   ),
                 ),
               ],

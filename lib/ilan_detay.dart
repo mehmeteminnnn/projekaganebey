@@ -15,14 +15,27 @@ class IlanDetayPage extends StatefulWidget {
   State<IlanDetayPage> createState() => _IlanDetayPageState();
 }
 
-class _IlanDetayPageState extends State<IlanDetayPage> {
+class _IlanDetayPageState extends State<IlanDetayPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   final PageController _pageController = PageController();
+  final ScrollController _scrollController = ScrollController();
   int _currentPage = 0;
   bool isFavorited = false;
+  int _quantity = 1;
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      debugPrint('Scroll Offset: ${_scrollController.offset}');
+    });
+  }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -56,6 +69,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // AutomaticKeepAliveMixin için gerekli
     final ilanRef =
         FirebaseFirestore.instance.collection('ilanlar').doc(widget.ilanId);
 
@@ -155,6 +169,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
           final detay = ilanData['detay'] ?? 'Detay Yok';
 
           return SingleChildScrollView(
+            controller: _scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -271,8 +286,51 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                       ),
                       const SizedBox(height: 10),
                       Text(detay, style: const TextStyle(fontSize: 16)),
-                      const SizedBox(height: 10),
-                      Text(detay, style: const TextStyle(fontSize: 16)),
+
+                      // Miktar Seçim Butonları
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.remove_circle_outline),
+                            color: Colors.orange,
+                            onPressed: () {
+                              if (_quantity > 1) {
+                                _quantity--;
+                                // Scroll kontrolüne dokunmadan miktarı güncelle
+                                setState(() {});
+                              }
+                            },
+                          ),
+                          Text(
+                            '$_quantity',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          // Miktar kontrolü eklendi
+                          IconButton(
+                            icon: const Icon(Icons.add_circle_outline),
+                            color: Colors.orange,
+                            onPressed: () {
+                              setState(() {
+                                if (_quantity < int.parse(miktar)) {
+                                  _quantity++; // Miktarı arttır
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content:
+                                            Text('Stok sınırına ulaşıldı!')),
+                                  );
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 20),
 
 // Sepete Ekle Butonu
                       const SizedBox(height: 20),
@@ -283,6 +341,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                               context,
                               widget.id!,
                               widget.ilanId,
+                              _quantity.toInt(),
                             );
                           },
                           icon: const Icon(Icons.shopping_cart),

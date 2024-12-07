@@ -55,7 +55,7 @@ class MainScreen extends StatelessWidget {
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.add_circle),
-        title: ("Depoya Yükle"),
+        title: ("Depota Yükle"),
         activeColorPrimary: Colors.white,
         inactiveColorPrimary: Colors.grey,
         iconSize: 50,

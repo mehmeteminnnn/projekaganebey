@@ -4,21 +4,38 @@ import 'package:flutter/material.dart';
 class UserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> addToCart(BuildContext context, String userId, String ilanId) async {
+  Future<void> addToCart(BuildContext context, String userId, String ilanId, int miktar) async {
   final userRef = _firestore.collection('users').doc(userId);
 
   try {
     final userDoc = await userRef.get();
 
     if (userDoc.exists) {
-      // Kullanıcı mevcutsa sepete ekle
+      // Kullanıcı mevcutsa, sepeti al
+      var sepetim = List<Map<String, dynamic>>.from(userDoc['sepetim'] ?? []);
+
+      // Sepet zaten mevcutsa, ürünü bul
+      var existingProduct = sepetim.firstWhere(
+        (item) => item['id'] == ilanId,
+        orElse: () => {},
+      );
+
+      if (existingProduct.isEmpty) {
+        // Ürün sepette yok, yeni ürün ekle
+        sepetim.add({'id': ilanId, 'miktar': miktar});
+      } else {
+        // Ürün sepette mevcut, miktarı arttır
+        existingProduct['miktar'] += miktar;
+      }
+
+      // Sepet güncelle
       await userRef.update({
-        'sepetim': FieldValue.arrayUnion([ilanId]),
+        'sepetim': sepetim,
       });
     } else {
       // Kullanıcı dokümanı yoksa oluştur ve sepete ekle
       await userRef.set({
-        'sepetim': [ilanId],
+        'sepetim': [{'id': ilanId, 'miktar': miktar}],
       });
     }
 
@@ -33,6 +50,7 @@ class UserService {
     );
   }
 }
+
 
   Future<bool> isFavorited(String userId, String ilanId) async {
     final userRef = _firestore.collection('users').doc(userId);
