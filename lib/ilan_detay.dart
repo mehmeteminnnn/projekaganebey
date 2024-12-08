@@ -285,7 +285,82 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                         ),
                       ),
                       const SizedBox(height: 10),
-                      Text(detay, style: const TextStyle(fontSize: 16)),
+
+                      Text(detay,
+                          style: const TextStyle(
+                              fontSize: 16, color: Colors.grey)),
+
+                      const SizedBox(height: 20),
+                      const Text(
+                        "Satıcı Bilgileri",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      FutureBuilder<Map<String, dynamic>?>(
+                        future: UserService().getCreatorInfo(widget.ilanId),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Text('Hata: ${snapshot.error}');
+                          } else if (!snapshot.hasData ||
+                              snapshot.data == null) {
+                            return const Text('Satıcı bilgileri bulunamadı.');
+                          }
+
+                          final sellerData = snapshot.data!;
+                          final sellerName =
+                              sellerData['name'] ?? 'Bilinmeyen Satıcı';
+                          final sellerPhoto = sellerData['photo'] ?? '';
+                          final sellerRating = sellerData['rating'] ?? 0;
+
+                          return Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 25,
+                                backgroundImage: sellerPhoto.isNotEmpty
+                                    ? NetworkImage(sellerPhoto)
+                                    : null,
+                                child: sellerPhoto.isEmpty
+                                    ? const Icon(Icons.person, size: 24)
+                                    : null,
+                              ),
+                              const SizedBox(width: 10),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    sellerName,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: List.generate(
+                                      5,
+                                      (index) => Icon(
+                                        Icons.star,
+                                        color: index < sellerRating
+                                            ? Colors.orange
+                                            : Colors.grey,
+                                        size: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 20),
 
                       // Miktar Seçim Butonları
                       Row(
@@ -329,8 +404,6 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                           ),
                         ],
                       ),
-
-                      const SizedBox(height: 20),
 
 // Sepete Ekle Butonu
                       const SizedBox(height: 20),

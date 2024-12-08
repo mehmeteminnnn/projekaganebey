@@ -20,6 +20,11 @@ class IlanModel {
   String? desenYonu; // Desen yönü (nullable)
   String? renk; // Ürünün rengi
 
+  // Yeni eklenen alanlar
+  String? saticiAdi; // Satıcının adı
+  String? saticiFotografi; // Satıcının fotoğrafı
+  double? saticiPuan; // Satıcının puanı
+
   IlanModel({
     this.en = 0.0, // Varsayılan değer
     this.id,
@@ -39,6 +44,10 @@ class IlanModel {
     this.miktar = 0, // Varsayılan değer
     this.desenYonu = "Yön Yok", // Varsayılan değer
     this.renk = "Renk Yok", // Varsayılan değer
+    this.saticiAdi, // Yeni alan
+    this.saticiFotografi =
+        "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541", // Yeni alan
+    this.saticiPuan = 0.0, // Yeni alan
   });
 
   // Firestore'dan veri çekerken kullanılan `fromMap` metodu
@@ -63,7 +72,11 @@ class IlanModel {
       desenYonu: map['desenYonu'] ?? "",
       renk: map['renk'] ?? "",
       en: map['en']?.toDouble(),
-      
+      // Yeni alanların atanması
+      saticiAdi: map['saticiAdi'] ?? "",
+      saticiFotografi: map['saticiFotografi'] ??
+          " https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541",
+      saticiPuan: map['saticiPuan']?.toDouble() ?? 0.0,
     );
   }
 
@@ -87,6 +100,9 @@ class IlanModel {
       'miktar': miktar,
       'desenYonu': desenYonu,
       'renk': renk,
+      'saticiAdi': saticiAdi,
+      'saticiFotografi': saticiFotografi,
+      'saticiPuan': saticiPuan,
     };
   }
 }

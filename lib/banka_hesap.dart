@@ -179,7 +179,7 @@ class _BankaHesapBilgileriPageState extends State<BankaHesapBilgileriPage> {
           labelStyle:
               const TextStyle(color: Colors.grey, fontWeight: FontWeight.w500),
           filled: true, // Arka planı doldur
-          fillColor: Colors.grey[200], // Arka plan rengi
+          fillColor: Colors.grey[100], // Arka plan rengi
           contentPadding: const EdgeInsets.symmetric(
               vertical: 16.0, horizontal: 20.0), // Daha büyük iç padding
           border: InputBorder.none, // Kenarlık olmaması

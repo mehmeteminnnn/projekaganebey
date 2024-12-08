@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:projekaganebey/models/ilan.dart';
+import 'package:projekaganebey/services/user_services.dart';
 
 class SepetimPage extends StatefulWidget {
   final String userId;
@@ -26,9 +27,10 @@ class _SepetimPageState extends State<SepetimPage> {
         List<Map<String, dynamic>> sepetimList =
             List<Map<String, dynamic>>.from(userDoc['sepetim'] ?? []);
         List<IlanModel> urunler = [];
+        Map<String, Map<String, dynamic>> saticiBilgileri =
+            {}; // Satıcı bilgileri
         double tempToplamTutar = 0.0;
 
-        // Sepet içeriğini işle
         for (var sepetItem in sepetimList) {
           final productId = sepetItem['id'];
           final miktar = sepetItem['miktar'];
@@ -40,6 +42,42 @@ class _SepetimPageState extends State<SepetimPage> {
 
           if (ilanDoc.exists) {
             var ilanData = ilanDoc.data()!;
+            final saticiId = ilanData['olusturanKullaniciId'];
+
+            // Satıcı bilgilerini bir kez alın
+            if (!saticiBilgileri.containsKey(saticiId)) {
+              final saticiDoc = await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(saticiId)
+                  .get();
+
+              if (saticiDoc.exists) {
+                saticiBilgileri[saticiId] = {
+                  'name': saticiDoc.data()?['name'] ?? 'Bilinmeyen Satıcı',
+                  'photo': saticiDoc.data()?['photo'] ??
+                      "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541", // Varsayılan fotoğraf URL'si
+                  'rating': saticiDoc.data()?['rating']?.toDouble() ?? 0.0,
+                };
+              } else {
+                saticiBilgileri[saticiId] = {
+                  'name': 'Bilinmeyen Satıcı',
+                  'photo':
+                      "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541", // Varsayılan fotoğraf URL'si
+                  'rating': 0.0,
+                };
+              }
+            }
+
+            // Satıcı bilgilerini al
+            final sellerInfo = saticiBilgileri[saticiId]!;
+
+            // Satıcı adı, fotoğrafı ve puanı için null kontrolü ve varsayılan değer ataması
+            final sellerName =
+                sellerInfo['name'] ?? "Bilinmeyen Satıcı"; // Varsayılan değer
+            final sellerPhoto = sellerInfo['photo'] ??
+                "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"; // Varsayılan fotoğraf URL'si
+            final sellerRating =
+                sellerInfo['rating']?.toDouble() ?? 0.0; // Varsayılan puan 0.0
 
             IlanModel ilan = IlanModel.fromMap({
               'id': productId,
@@ -47,9 +85,16 @@ class _SepetimPageState extends State<SepetimPage> {
               'fiyat': ilanData['fiyat'],
               'resimler': ilanData['resimler'],
               'miktar': miktar,
+              'olusturanKullaniciId': saticiId,
+              'saticiAdi': sellerName,
+              'saticiFotografi': sellerPhoto,
+              'saticiPuan': sellerRating,
             }, ilanDoc.id);
+
             urunler.add(ilan);
             tempToplamTutar += (ilan.fiyat ?? 0.0) * (miktar ?? 1);
+          } else {
+            print("Ürün $productId verisi mevcut değil.");
           }
         }
 
@@ -59,10 +104,12 @@ class _SepetimPageState extends State<SepetimPage> {
 
         return urunler;
       } else {
+        print("Kullanıcı verisi mevcut değil.");
         return [];
       }
     } catch (e) {
-      throw Exception('Veri alırken hata oluştu: $e');
+      print("Hata oluştu: $e");
+      return [];
     }
   }
 
@@ -263,6 +310,7 @@ class _SepetimPageState extends State<SepetimPage> {
             return Center(child: Text('Hata: ${snapshot.error}'));
           }
           //debugPrint('Sepet verileri: ${snapshot.data?.first.fiyat}');
+          debugPrint('${snapshot.data?.first.olusturanKullaniciId} satıcı');
 
           final urunler = snapshot.data ?? [];
 
@@ -295,7 +343,9 @@ class _SepetimPageState extends State<SepetimPage> {
                   itemCount: urunler.length,
                   itemBuilder: (context, index) {
                     //int maxMiktar = urunler[index].miktar ?? 1;
+
                     debugPrint('Sepet verileri: ${urunler.length}');
+
                     return Card(
                       color: Colors.white,
                       child: ListTile(
@@ -317,6 +367,52 @@ class _SepetimPageState extends State<SepetimPage> {
                           children: [
                             Text(
                                 "Fiyat: ₺${urunler[index].fiyat?.toStringAsFixed(2)}"),
+                            /*Text(
+                                "Miktar: ${urunler[index].olusturanKullaniciId}"),*/
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Satıcı Bilgileri Başlığı
+                                Row(
+                                  children: [
+                                    // Satıcı Adı
+                                    Text(
+                                      "Satıcı: ${urunler[index].saticiAdi}",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                    height:
+                                        1), // Satıcı adı ile puan arasına boşluk ekledik
+                                // Satıcı Puanı
+                                Row(
+                                  children: [
+                                    // Yıldız ikonu
+                                    Icon(
+                                      Icons.star,
+                                      color: Colors.orange,
+                                      size: 16,
+                                    ),
+                                    SizedBox(
+                                        width:
+                                            4), // Yıldız ve puan arasında boşluk
+                                    Text(
+                                      "${urunler[index].saticiPuan} / 5",
+                                      style: TextStyle(
+                                        color: Colors.orange,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                             Row(
                               children: [
                                 IconButton(
