@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:projekaganebey/services/user_services.dart';
 
 class IlanDetayPage extends StatefulWidget {
@@ -20,6 +21,7 @@ class _IlanDetayPageState extends State<IlanDetayPage>
   @override
   bool get wantKeepAlive => true;
   final PageController _pageController = PageController();
+  final TextEditingController _commentController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   int _currentPage = 0;
   bool isFavorited = false;
@@ -361,7 +363,158 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                         },
                       ),
                       const SizedBox(height: 20),
+                      const Text(
+                        "Son Yorumlar",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
 
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('comments')
+                            .where('ilanId', isEqualTo: widget.ilanId)
+                            .orderBy('timestamp', descending: true)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (snapshot.hasError) {
+                            debugPrint('Hata: ${snapshot.error}');
+                            return Center(
+                                child: Text('Hata: ${snapshot.error}'));
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.docs.isEmpty) {
+                            return Center(
+                              child: Text(
+                                'Henüz yorum yapılmamış.',
+                                style: TextStyle(
+                                    color: Colors.orange.shade500,
+                                    fontSize: 14,
+                                    fontStyle: FontStyle.italic),
+                              ),
+                            );
+                          }
+
+                          final comments = snapshot.data!.docs;
+
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: comments.length,
+                            itemBuilder: (context, index) {
+                              final comment = comments[index];
+                              final userName =
+                                  comment['userName'] ?? ""; // Kullanıcı adı
+                              final commentText =
+                                  comment['comment']; // Yorum içeriği
+                              final timestamp =
+                                  (comment['timestamp'] as Timestamp).toDate();
+
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 20, // Avatar boyutu
+                                          backgroundColor:
+                                              Colors.orange.shade300,
+                                          child: Text(
+                                            userName[0]
+                                                .toUpperCase(), // Kullanıcı adının ilk harfi
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                userName ??
+                                                    'Bilinmeyen Kullanıcı',
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                              Text(
+                                                DateFormat('d MMM yyyy, HH:mm')
+                                                    .format(timestamp),
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey.shade600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 48),
+                                      child: Text(
+                                        commentText,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                    ),
+                                    const Divider(), // Ayrım çizgisi
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(height: 20),
+
+                      TextField(
+                        controller: _commentController,
+                        decoration: InputDecoration(
+                          filled: true, // Arka plan rengini etkinleştirir
+                          fillColor: Colors
+                              .orange.shade50, // Açık turuncu arka plan rengi
+                          hintText: "Satıcıya soru sor",
+
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              Icons.send,
+                              color: Colors
+                                  .orange, // Gönder ikonunun turuncu rengi
+                            ),
+                            onPressed: _addComment,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                                12), // Yuvarlatılmış köşeler
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.orange.shade700,
+                                width: 2), // Odaklanıldığında daha koyu turuncu
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
                       // Miktar Seçim Butonları
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -405,7 +558,7 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                         ],
                       ),
 
-// Sepete Ekle Butonu
+                      // Sepete Ekle Butonu
                       const SizedBox(height: 20),
                       Center(
                         child: ElevatedButton.icon(
@@ -452,6 +605,37 @@ class _IlanDetayPageState extends State<IlanDetayPage>
         },
       ),
     );
+  }
+
+  void _addComment() async {
+    if (_commentController.text.isNotEmpty) {
+      final userId = widget.id; // Kullanıcı ID'si
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      // Kullanıcı bilgilerini almak
+      if (userDoc.exists) {
+        final userName =
+            userDoc['name']; // 'name' alanının doğru olduğundan emin olun
+
+        // Yorum ekleme işlemi
+        await FirebaseFirestore.instance.collection('comments').add({
+          'userId': userId, // Kullanıcı ID'si burada girilmeli
+          'userName': userName, // Kullanıcı adı burada ekleniyor
+          'comment': _commentController.text,
+          'timestamp': FieldValue.serverTimestamp(),
+          'ilanId':
+              widget.ilanId, // Yorumun hangi ilana ait olduğunu belirten ID
+        });
+
+        // Yorum ekleme işlemi tamamlandığında, TextField'ı temizle
+        _commentController.clear();
+      } else {
+        debugPrint('Kullanıcı bulunamadı!');
+      }
+    }
   }
 
   // Özellik widget'ı

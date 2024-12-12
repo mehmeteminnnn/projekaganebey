@@ -20,6 +20,23 @@ class AdsMDFLamPage extends StatefulWidget {
 class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
   final FirestoreService _firestoreService = FirestoreService();
   String? selectedChip;
+  String searchQuery = ''; // Arama metni
+  List<IlanModel>? filteredIlanlar;
+  Future<void> _searchAds(String query) async {
+    if (query.isEmpty) {
+      setState(() {
+        searchQuery = '';
+        filteredIlanlar = null;
+      });
+      return;
+    }
+
+    final results = await _firestoreService.searchIlanlar(query);
+    setState(() {
+      searchQuery = query;
+      filteredIlanlar = results;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +73,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
           ),
           padding: EdgeInsets.symmetric(horizontal: 16.0),
           child: TextField(
+            onChanged: _searchAds,
             decoration: InputDecoration(
               hintText: 'Kelime veya ilan No. ile ara',
               border: InputBorder.none,

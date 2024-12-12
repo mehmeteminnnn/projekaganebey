@@ -310,7 +310,7 @@ class _SepetimPageState extends State<SepetimPage> {
             return Center(child: Text('Hata: ${snapshot.error}'));
           }
           //debugPrint('Sepet verileri: ${snapshot.data?.first.fiyat}');
-          debugPrint('${snapshot.data?.first.olusturanKullaniciId} satıcı');
+          //debugPrint('${snapshot.data?.first.olusturanKullaniciId} satıcı');
 
           final urunler = snapshot.data ?? [];
 
@@ -344,7 +344,7 @@ class _SepetimPageState extends State<SepetimPage> {
                   itemBuilder: (context, index) {
                     //int maxMiktar = urunler[index].miktar ?? 1;
 
-                    debugPrint('Sepet verileri: ${urunler.length}');
+                    //  debugPrint('Sepet verileri: ${urunler.length}');
 
                     return Card(
                       color: Colors.white,

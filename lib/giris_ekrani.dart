@@ -16,35 +16,44 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Kullanıcı giriş işlemini kontrol eden fonksiyon
   Future<void> _loginUser() async {
-    try {
-      final email = _emailController.text.trim();
-      final password = _passwordController.text.trim();
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return Center(
+        child: CircularProgressIndicator(), // Yükleme animasyonu
+      );
+    },
+  );
 
-      // Firestore'da `users` koleksiyonunu sorgula
-      final QuerySnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .where('email', isEqualTo: email)
-          .where('password', isEqualTo: password)
-          .get();
+  try {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
 
-      if (userSnapshot.docs.isNotEmpty) {
-        final id = userSnapshot.docs.first.id;
-        // Kullanıcı bilgileri doğruysa
-        Fluttertoast.showToast(msg: "Giriş başarılı!");
-        debugPrint('id: $id');
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => MainScreen(id: id)),
-        );
-      } else {
-        // E-posta veya şifre yanlış
-        Fluttertoast.showToast(msg: "E-posta veya şifre hatalı.");
-      }
-    } catch (e) {
-      // Hata durumunda mesaj göster
-      Fluttertoast.showToast(msg: "Hata: ${e.toString()}");
+    final QuerySnapshot userSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .where('password', isEqualTo: password)
+        .get();
+
+    Navigator.pop(context); // Yükleme göstergesini kapat
+
+    if (userSnapshot.docs.isNotEmpty) {
+      final id = userSnapshot.docs.first.id;
+      Fluttertoast.showToast(msg: "Giriş başarılı!");
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainScreen(id: id)),
+      );
+    } else {
+      Fluttertoast.showToast(msg: "E-posta veya şifre hatalı.");
     }
+  } catch (e) {
+    Navigator.pop(context); // Hata durumunda da yükleme göstergesini kapat
+    Fluttertoast.showToast(msg: "Hata: ${e.toString()}");
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

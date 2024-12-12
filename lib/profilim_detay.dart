@@ -51,9 +51,31 @@ class _ProfilDetayPageState extends State<ProfilDetayPage> {
           DateTime? createdAt = userData['createdAt'] != null
               ? (userData['createdAt'] as Timestamp).toDate()
               : null;
+          String formatDate(DateTime date) {
+            List<String> months = [
+              'Ocak',
+              'Şubat',
+              'Mart',
+              'Nisan',
+              'Mayıs',
+              'Haziran',
+              'Temmuz',
+              'Ağustos',
+              'Eylül',
+              'Ekim',
+              'Kasım',
+              'Aralık'
+            ];
+
+            int day = date.day;
+            String month = months[date.month - 1];
+            int year = date.year;
+
+            return "$day $month $year";
+          }
 
           String membershipInfo = createdAt != null
-              ? "📅 ${DateFormat('MMM yyyy').format(createdAt)} tarihinden beri üye"
+              ? "📅 ${formatDate(createdAt)} tarihinden beri üye"
               : "Üyelik tarihi bilinmiyor";
 
           return Padding(

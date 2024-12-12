@@ -34,7 +34,8 @@ class UserService {
 
       if (userDoc.exists) {
         // Kullanıcı mevcutsa, sepeti al
-        var sepetim = List<Map<String, dynamic>>.from(userDoc['sepetim'] ?? []);
+        var sepetim =
+            List<Map<String, dynamic>>.from(userDoc.data()?['sepetim'] ?? []);
 
         // Sepet zaten mevcutsa, ürünü bul
         var existingProduct = sepetim.firstWhere(
@@ -72,6 +73,7 @@ class UserService {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Sepete eklerken bir hata oluştu: $e')),
       );
+      debugPrint('Sepete eklerken bir hata oluştu: $e');
     }
   }
 
@@ -91,32 +93,29 @@ class UserService {
     }
   }
 
+  Future<Map<String, dynamic>?> getCreatorInfo(String ilanId) async {
+    try {
+      // İlanlar koleksiyonundan ilanId'ye sahip dokümanı al
+      final ilanDoc = await _firestore.collection('ilanlar').doc(ilanId).get();
 
+      if (ilanDoc.exists) {
+        // İlan dokümanından olusturanKullaniciId'yi al
+        final creatorId = ilanDoc.data()?['olusturanKullaniciId'];
 
-Future<Map<String, dynamic>?> getCreatorInfo(String ilanId) async {
-  try {
-    // İlanlar koleksiyonundan ilanId'ye sahip dokümanı al
-    final ilanDoc = await _firestore.collection('ilanlar').doc(ilanId).get();
+        if (creatorId != null) {
+          // Users koleksiyonundan kullanıcı bilgilerini al
+          final userDoc =
+              await _firestore.collection('users').doc(creatorId).get();
 
-    if (ilanDoc.exists) {
-      // İlan dokümanından olusturanKullaniciId'yi al
-      final creatorId = ilanDoc.data()?['olusturanKullaniciId'];
-
-      if (creatorId != null) {
-        // Users koleksiyonundan kullanıcı bilgilerini al
-        final userDoc = await _firestore.collection('users').doc(creatorId).get();
-
-        if (userDoc.exists) {
-          // Kullanıcı bilgilerini döndür
-          return userDoc.data() as Map<String, dynamic>;
+          if (userDoc.exists) {
+            // Kullanıcı bilgilerini döndür
+            return userDoc.data() as Map<String, dynamic>;
+          }
         }
       }
+      return null; // Eğer ilan veya kullanıcı bulunamazsa null döndür
+    } catch (e) {
+      throw Exception('Kullanıcı bilgilerini alırken bir hata oluştu: $e');
     }
-    return null; // Eğer ilan veya kullanıcı bulunamazsa null döndür
-  } catch (e) {
-    throw Exception('Kullanıcı bilgilerini alırken bir hata oluştu: $e');
   }
-}
-
-
 }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:projekaganebey/models/ilan.dart';
 
 class FirestoreService {
@@ -33,9 +34,22 @@ class FirestoreService {
     }
 
     return snapshot.docs
-        .map((doc) => IlanModel.fromMap(
-            doc.data() as Map<String, dynamic>, doc.id))
+        .map((doc) =>
+            IlanModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
         .toList();
+  }
+
+  Future<List<IlanModel>> searchIlanlar(String query) async {
+    final collection = FirebaseFirestore.instance.collection('ilanlar');
+    final results = await collection
+        .where('baslik', isGreaterThanOrEqualTo: query)
+        .where('baslik', isLessThanOrEqualTo: '$query\uf8ff')
+        .get();
+    debugPrint('Arama sonuçları: $results');
+    // Gelen dökümanları IlanModel'e dönüştür
+    return results.docs.map((doc) {
+      return IlanModel.fromMap(doc.data(), doc.id);
+    }).toList();
   }
 
   // Filtrelere göre ilanları getirme

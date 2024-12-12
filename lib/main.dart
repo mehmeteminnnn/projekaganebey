@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:projekaganebey/firebase_options.dart';
 import 'package:projekaganebey/giris_ekrani.dart';
+import 'package:projekaganebey/splash_screen.dart';
 
 void main() async { 
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: Colors.white,
           appBarTheme: AppBarTheme(backgroundColor: Colors.white)),
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: SplashScreen(),
     );
   }
 }
