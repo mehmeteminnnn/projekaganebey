@@ -168,7 +168,7 @@ class _IlanDetayPageState extends State<IlanDetayPage>
           final yukseklik = ilanData['yukseklik']?.toString() ?? '0';
           final genislik = ilanData['genislik']?.toString() ?? '0';
           final renk = ilanData['renk'] ?? 'Renk Yok';
-          final detay = ilanData['detay'] ?? 'Detay Yok';
+          final detay = ilanData['aciklama'] ?? 'Detay Yok';
 
           return SingleChildScrollView(
             controller: _scrollController,

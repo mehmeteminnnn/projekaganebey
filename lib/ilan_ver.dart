@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,6 +6,8 @@ import 'package:projekaganebey/ilan_ozellikleri.dart';
 import 'package:projekaganebey/models/ilan.dart';
 
 class IlanVerPage extends StatefulWidget {
+  final String? id;
+  const IlanVerPage({Key? key, this.id}) : super(key: key);
   @override
   _IlanVerPageState createState() => _IlanVerPageState();
 }
@@ -28,7 +28,7 @@ class _IlanVerPageState extends State<IlanVerPage> {
   }
 
   Future<void> _uploadImages() async {
-    final String? uid = FirebaseAuth.instance.currentUser?.uid;
+    final String? uid = widget.id; // FirebaseAuth.instance.currentUser?.uid;
 
     if (uid == null) {
       print("Kullanıcı oturum açmamış.");
@@ -96,7 +96,6 @@ class _IlanVerPageState extends State<IlanVerPage> {
           "Fotoğraf",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-      
       ),
       body: Column(
         children: [

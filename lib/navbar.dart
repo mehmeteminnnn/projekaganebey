@@ -31,7 +31,7 @@ class MainScreen extends StatelessWidget {
     return [
       AdsMDFLamPage(id: id),
       FavorilerimPage(id: id),
-      IlanVerPage(),
+      IlanVerPage(id: id),
       SepetimPage(
         userId: id!,
       ),
