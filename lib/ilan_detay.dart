@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:projekaganebey/satici.dart';
 import 'package:projekaganebey/services/user_services.dart';
 
 class IlanDetayPage extends StatefulWidget {
@@ -317,48 +318,60 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                           }
 
                           final sellerData = snapshot.data!;
+
                           final sellerName =
                               sellerData['name'] ?? 'Bilinmeyen Satıcı';
                           final sellerPhoto = sellerData['photo'] ?? '';
                           final sellerRating = sellerData['rating'] ?? 0;
 
-                          return Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 25,
-                                backgroundImage: sellerPhoto.isNotEmpty
-                                    ? NetworkImage(sellerPhoto)
-                                    : null,
-                                child: sellerPhoto.isEmpty
-                                    ? const Icon(Icons.person, size: 24)
-                                    : null,
-                              ),
-                              const SizedBox(width: 10),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    sellerName,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Row(
-                                    children: List.generate(
-                                      5,
-                                      (index) => Icon(
-                                        Icons.star,
-                                        color: index < sellerRating
-                                            ? Colors.orange
-                                            : Colors.grey,
-                                        size: 16,
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      SellerPage(sellerData: sellerData),
+                                ),
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 25,
+                                  backgroundImage: sellerPhoto.isNotEmpty
+                                      ? NetworkImage(sellerPhoto)
+                                      : null,
+                                  child: sellerPhoto.isEmpty
+                                      ? const Icon(Icons.person, size: 24)
+                                      : null,
+                                ),
+                                const SizedBox(width: 10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      sellerName,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                    Row(
+                                      children: List.generate(
+                                        5,
+                                        (index) => Icon(
+                                          Icons.star,
+                                          color: index < sellerRating
+                                              ? Colors.orange
+                                              : Colors.grey,
+                                          size: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           );
                         },
                       ),
