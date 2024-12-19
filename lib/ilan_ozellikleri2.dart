@@ -3,9 +3,11 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:projekaganebey/ilan_detay.dart';
 import 'package:projekaganebey/ilan_hazir.dart';
 import 'package:projekaganebey/models/ilan.dart';
 import 'package:turkish/turkish.dart';
@@ -13,17 +15,19 @@ import 'package:turkish/turkish.dart';
 class ProductPage extends StatefulWidget {
   final List<XFile?> images;
   final IlanModel ilan;
+  final String? id;
 
-  ProductPage({required this.images, required this.ilan});
+  ProductPage({required this.images, required this.ilan, this.id});
 
   @override
   State<ProductPage> createState() => _ProductPageState();
 }
 
 class _ProductPageState extends State<ProductPage> {
+  final List<String> _imageUrls = []; // Yüklenen resimlerin URL'leri
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth =
-      FirebaseAuth.instance; // Firebase Auth için referans
+  /* final FirebaseAuth _auth =
+      FirebaseAuth.instance; // Firebase Auth için referans*/
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _titleController =
       TextEditingController(); // Ürün Başlığı için Controller
@@ -37,6 +41,26 @@ class _ProductPageState extends State<ProductPage> {
   void initState() {
     super.initState();
     _loadCities();
+  }
+
+  Future<void> _uploadImages() async {
+    final String? uid = widget.id; // User ID'yi burada alabilirsiniz
+
+    for (var image in widget.images) {
+      if (image != null) {
+        File file = File(image.path);
+        String fileName = '$uid-${DateTime.now().millisecondsSinceEpoch}.jpg';
+        Reference storageRef =
+            FirebaseStorage.instance.ref().child('ilanlar/$fileName');
+        UploadTask uploadTask = storageRef.putFile(file);
+
+        final TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
+        String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+
+        // URL'yi ekleyelim
+        _imageUrls.add(downloadUrl);
+      }
+    }
   }
 
   Future<void> _loadCities() async {
@@ -68,14 +92,9 @@ class _ProductPageState extends State<ProductPage> {
 
   Future<void> saveIlanToFirestore() async {
     try {
-      // Oturum açan kullanıcının UID'sini al
-      final User? user = _auth.currentUser;
-      if (user == null) {
-        throw Exception("Kullanıcı oturumu açık değil!");
-      }
-
-      String userId = user.uid;
-
+      String? userId = widget.id;
+// Resimleri yüklemeden önce bekleyin
+      await _uploadImages(); // Resimler yüklendikten sonra işlemi devam ettirin
       // TextField'den alınan açıklama ve başlık metinlerini IlanModel'e ekleyelim
       String description = _descriptionController.text;
       String title = _titleController.text;
@@ -87,7 +106,7 @@ class _ProductPageState extends State<ProductPage> {
       widget.ilan.baslik = title;
       widget.ilan.olusturanKullaniciId =
           userId; // Kullanıcı UID'sini IlanModel'e ekle
-         
+      widget.ilan.resimler = _imageUrls; // Resim URL'lerini IlanModel'e ekle
 
       // Yeni ilanı 'ilanlar' koleksiyonuna ekle ve ID'sini al
       DocumentReference ilanDocRef =
@@ -108,9 +127,7 @@ class _ProductPageState extends State<ProductPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => ProductDetailPage(
-            images: widget.images,
-          ),
+          builder: (context) => IlanDetayPage(ilanId: ilanId),
         ),
       );
     } catch (e) {

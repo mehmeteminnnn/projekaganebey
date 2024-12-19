@@ -10,8 +10,9 @@ import 'package:toggle_switch/toggle_switch.dart';
 class IlanOzellikleriPage extends StatefulWidget {
   final List<XFile?> images;
   final IlanModel ilan;
+  final String? id;
 
-  IlanOzellikleriPage({required this.images, required this.ilan});
+  IlanOzellikleriPage({required this.images, required this.ilan, this.id});
 
   @override
   _IlanOzellikleriPageState createState() => _IlanOzellikleriPageState();
@@ -225,7 +226,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ProductPage(
-                                    images: widget.images, ilan: widget.ilan)));
+                                    images: widget.images, ilan: widget.ilan, id: widget.id)));
                       }
                     : null,
                 child: Text(

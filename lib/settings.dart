@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:projekaganebey/adreslerim.dart';
 
 class AyarlarPage extends StatelessWidget {
   @override
@@ -248,23 +249,6 @@ void _showDeleteAccountDialog(BuildContext context) {
       );
     },
   );
-}
-
-class AdreslerimPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Adreslerim'),
-      ),
-      body: Center(
-        child: Text(
-          'Adreslerim ekranı burada olacak.',
-          style: TextStyle(fontSize: 18),
-        ),
-      ),
-    );
-  }
 }
 
 class FaturaBilgilerimPage extends StatelessWidget {

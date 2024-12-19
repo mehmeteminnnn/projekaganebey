@@ -1,9 +1,11 @@
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
+//import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:projekaganebey/ilan_ozellikleri.dart';
 import 'package:projekaganebey/models/ilan.dart';
+//import 'package:projekaganebey/ilan_ozellikleri.dart';
+//1import 'package:projekaganebey/models/ilan.dart';
 
 class IlanVerPage extends StatefulWidget {
   final String? id;
@@ -15,7 +17,7 @@ class IlanVerPage extends StatefulWidget {
 class _IlanVerPageState extends State<IlanVerPage> {
   final List<XFile?> _images = [];
   final ImagePicker _picker = ImagePicker();
-  final List<String> _imageUrls = []; // Yüklenen resimlerin URL'leri
+ // final List<String> _imageUrls = []; // Yüklenen resimlerin URL'leri
 
   Future<void> _pickImage() async {
     final XFile? pickedFile =
@@ -26,8 +28,30 @@ class _IlanVerPageState extends State<IlanVerPage> {
       });
     }
   }
+  Future<void> _onContinue() async {
+  if (_images.isNotEmpty) {
+    // Yalnızca resimleri ve ilanı bir sonraki sayfaya geçiyoruz
+    IlanModel ilan = IlanModel(
+      resimler: [], // URL'ler bu sayfada değil, ikinci sayfada yüklenecek
+    );
 
-  Future<void> _uploadImages() async {
+    // Resimleri bir sonraki sayfaya geçiriyoruz
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => IlanOzellikleriPage(id:widget.id, //1
+          ilan: ilan,
+          images: _images,  // Resimleri geçiyoruz
+        ),
+      ),
+    );
+  } else {
+    print("Resim yüklenmemiş.");
+  }
+}
+
+
+ /* Future<void> _uploadImages() async {
     final String? uid = widget.id; // FirebaseAuth.instance.currentUser?.uid;
 
     if (uid == null) {
@@ -85,7 +109,7 @@ class _IlanVerPageState extends State<IlanVerPage> {
     } else {
       print("Resim yüklenmemiş.");
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
