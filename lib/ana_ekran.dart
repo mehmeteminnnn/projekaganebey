@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:projekaganebey/bildirimler.dart';
 import 'package:projekaganebey/filtre.dart';
 import 'package:projekaganebey/models/ilan.dart';
-import 'package:projekaganebey/sepetim.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
 import 'package:projekaganebey/widgets/ilan_card.dart';
 
@@ -169,14 +168,15 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                             itemBuilder: (context, index) {
                               final ilan = ilanlar[index];
                               return buildIlanCard(
-                                  userId: widget.id,
-                                  baslik: ilan.baslik,
-                                  fiyat: ilan.fiyat,
-                                  resimUrl: ilan.resimler?.isNotEmpty == true
-                                      ? ilan.resimler![0]
-                                      : null,
-                                  ilanID: ilan.id,
-                                  context: context);
+                                userId: widget.id,
+                                baslik: ilan.baslik,
+                                fiyat: ilan.fiyat,
+                                resimUrl: ilan.resimler?.isNotEmpty == true
+                                    ? ilan.resimler![0]
+                                    : null,
+                                ilanID: ilan.id!,
+                                context: context,
+                              );
                             },
                           );
                         },

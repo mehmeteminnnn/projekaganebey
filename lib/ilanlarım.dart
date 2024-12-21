@@ -111,7 +111,7 @@ class _IlanlarimPageState extends State<IlanlarimPage> {
                       resimUrl: ilan.resimler?.isNotEmpty == true
                           ? ilan.resimler![0]
                           : null,
-                      ilanID: ilan.id,
+                      ilanID: ilan.id!,
                       context: context,
                     );
                   },

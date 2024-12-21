@@ -1,5 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:projekaganebey/services/user_services.dart';
 import 'package:projekaganebey/widgets/ilan_card.dart';
 
 class SellerPage extends StatelessWidget {
@@ -31,68 +33,181 @@ class SellerPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Satıcı Bilgileri"),
+        centerTitle: true,
+        title: const Text("Satıcı Bilgileri",
+            style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 16)),
+        actions: [
+          // Popup menu button
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == "report") {
+                // Şikayet ekranına gitme veya şikayet işlemi
+                _showReportDialog(context);
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem(
+                  value: "report",
+                  child: Text("Satıcıyı Şikayet Et"),
+                ),
+              ];
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Satıcı Bilgileri Kısmı
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  radius: 50,
+                  radius: 35, //Daha küçük bir avatar
                   backgroundImage: (sellerPhoto.isNotEmpty
                       ? NetworkImage(sellerPhoto)
                       : null),
                   child: sellerPhoto.isEmpty
-                      ? const Icon(Icons.person, size: 50)
+                      ? const Icon(Icons.person, size: 40)
                       : null,
                 ),
-                const SizedBox(width: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      sellerData['name'] ?? 'Bilinmeyen Satıcı',
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: List.generate(
-                        5,
-                        (index) => Icon(
-                          Icons.star,
-                          color: index < (sellerData['rating'] ?? 0)
-                              ? Colors.orange
-                              : Colors.grey,
-                          size: 18,
+                const SizedBox(width: 16),
+                Expanded(
+                  // Metni sarmak için Expanded ekledik
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        sellerData['name'] ?? 'Bilinmeyen Satıcı',
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                        overflow: TextOverflow
+                            .ellipsis, // Uzun metinler için kesme ekleyin
+                        maxLines: 1, // Bir satırda tutun
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: List.generate(
+                          5,
+                          (index) => Icon(
+                            Icons.star,
+                            color: index < (sellerData['rating'] ?? 0)
+                                ? Colors.orange
+                                : Colors.grey,
+                            size: 14,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
+                      const SizedBox(height: 6),
+                      Text(
+                        "Puan: ${(sellerData['rating'] ?? 0)}/5",
+                        style:
+                            const TextStyle(fontSize: 14, color: Colors.orange),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 35),
+
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.inventory, size: 25, color: Colors.blue),
+                    SizedBox(height: 4),
                     Text(
-                      "Puan: ${(sellerData['rating'] ?? 0)}/5",
+                      "Ürün Adedi",
                       style:
-                          const TextStyle(fontSize: 16, color: Colors.orange),
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      "12",
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 20),
+                // Satış adedi
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.shopping_cart, size: 25, color: Colors.green),
+                    SizedBox(height: 4),
+                    Text(
+                      "Satış Adedi",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      "23",
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                     ),
                   ],
                 ),
               ],
             ),
             const SizedBox(height: 20),
+            /*Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                // Ürün adedi
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.inventory, size: 25, color: Colors.blue),
+                    SizedBox(height: 4),
+                    Text(
+                      "Ürün Adedi",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      "12",
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 20),
+                // Satış adedi
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.shopping_cart, size: 25, color: Colors.green),
+                    SizedBox(height: 4),
+                    Text(
+                      "Satış Adedi",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      "23",
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 20),*/
+            // Satıcının İlanları Başlığı
             const Text(
               "Satıcının İlanları:",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
+
+            // İlanlar Grid Görünümü
             Expanded(
               child: FutureBuilder<List<Map<String, dynamic>>>(
-                future: _getListings(
-                    listingIds), // Firestore'dan ilan verilerini al.
+                future: _getListings(listingIds),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -145,6 +260,37 @@ class SellerPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  // Şikayet ekranı için bir dialog gösterme fonksiyonu
+  void _showReportDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Satıcıyı Şikayet Et"),
+          content: Text("Satıcıyı şikayet etmek istediğinizden emin misiniz?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Dialogu kapat
+              },
+              child: Text("İptal"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Şikayet işlemini gerçekleştir
+                Navigator.pop(context); // Dialogu kapat
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Şikayetiniz gönderildi.")),
+                );
+              },
+              child: Text("Şikayet Et"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

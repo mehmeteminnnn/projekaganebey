@@ -24,6 +24,7 @@ class _IlanDetayPageState extends State<IlanDetayPage>
   final PageController _pageController = PageController();
   final TextEditingController _commentController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _replyController = TextEditingController();
   int _currentPage = 0;
   bool isFavorited = false;
   int _quantity = 1;
@@ -324,57 +325,72 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                           final sellerPhoto = sellerData['photo'] ?? '';
                           final sellerRating = sellerData['rating'] ?? 0;
 
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      SellerPage(sellerData: sellerData),
-                                ),
-                              );
-                            },
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 25,
-                                  backgroundImage: sellerPhoto.isNotEmpty
-                                      ? NetworkImage(sellerPhoto)
-                                      : null,
-                                  child: sellerPhoto.isEmpty
-                                      ? const Icon(Icons.person, size: 24)
-                                      : null,
-                                ),
-                                const SizedBox(width: 10),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      sellerName,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Row(
-                                      children: List.generate(
-                                        5,
-                                        (index) => Icon(
-                                          Icons.star,
-                                          color: index < sellerRating
-                                              ? Colors.orange
-                                              : Colors.grey,
-                                          size: 16,
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment
+                                .spaceBetween, // Sağda buton yerleştirmek için
+                            children: [
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 25,
+                                    backgroundImage: sellerPhoto.isNotEmpty
+                                        ? NetworkImage(sellerPhoto)
+                                        : null,
+                                    child: sellerPhoto.isEmpty
+                                        ? const Icon(Icons.person, size: 24)
+                                        : null,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        sellerName,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
+                                      Row(
+                                        children: List.generate(
+                                          5,
+                                          (index) => Icon(
+                                            Icons.star,
+                                            color: index < sellerRating
+                                                ? Colors.orange
+                                                : Colors.grey,
+                                            size: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          SellerPage(sellerData: sellerData),
                                     ),
-                                  ],
+                                  );
+                                },
+                                child: Text(
+                                  'Satıcıyı Gör',
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 14,
+                                  ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           );
                         },
                       ),
+
                       const SizedBox(height: 20),
                       const Text(
                         "Son Yorumlar",
@@ -423,10 +439,12 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
                               final comment = comments[index];
+                              final commentId = comment.id;
+                              debugPrint('Comment ID: $commentId');
                               final userName =
-                                  comment['userName'] ?? ""; // Kullanıcı adı
+                                  comment['userName'] ?? 'Bilinmeyen Kullanıcı';
                               final commentText =
-                                  comment['comment']; // Yorum içeriği
+                                  comment['comment'] ?? 'Yorum yok';
                               final timestamp =
                                   (comment['timestamp'] as Timestamp).toDate();
 
@@ -439,12 +457,11 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                                     Row(
                                       children: [
                                         CircleAvatar(
-                                          radius: 20, // Avatar boyutu
+                                          radius: 20,
                                           backgroundColor:
                                               Colors.orange.shade300,
                                           child: Text(
-                                            userName[0]
-                                                .toUpperCase(), // Kullanıcı adının ilk harfi
+                                            userName[0].toUpperCase(),
                                             style: const TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
@@ -458,8 +475,7 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                userName ??
-                                                    'Bilinmeyen Kullanıcı',
+                                                userName,
                                                 style: const TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold,
@@ -490,7 +506,131 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                                         ),
                                       ),
                                     ),
-                                    const Divider(), // Ayrım çizgisi
+                                    const Divider(),
+
+                                    // Yanıt verme butonu
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 48),
+                                      child: TextButton(
+                                        onPressed: () {
+                                          _showReplyForm(commentId);
+                                        },
+                                        child: const Text(
+                                          "Yanıtla",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.blue,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+                                    // Yanıtları göster bölümü
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 48),
+                                      child: StreamBuilder<QuerySnapshot>(
+                                        stream: FirebaseFirestore.instance
+                                            .collection('replys')
+                                            .where('parentCommentId',
+                                                isEqualTo: commentId)
+                                            .orderBy('timestamp',
+                                                descending: true)
+                                            .snapshots(),
+                                        builder: (context, replySnapshot) {
+                                          debugPrint(
+                                              'Reply Snapshot: ${replySnapshot.data}');
+                                          if (!replySnapshot.hasData ||
+                                              replySnapshot
+                                                  .data!.docs.isEmpty) {
+                                            return const SizedBox
+                                                .shrink(); // Yanıt yoksa boş bırak
+                                          }
+
+                                          final replies =
+                                              replySnapshot.data!.docs;
+
+                                          return Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  // Yanıtları aç/kapat mantığı eklenebilir
+                                                },
+                                                child: const Text(
+                                                  "Yanıtları göster",
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.orange,
+                                                  ),
+                                                ),
+                                              ),
+                                              for (var reply in replies)
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 16, top: 8),
+                                                  child: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      CircleAvatar(
+                                                        radius: 16,
+                                                        backgroundColor: Colors
+                                                            .orange.shade200,
+                                                        child: Text(
+                                                          (reply['userName'] ??
+                                                                  'U')[0]
+                                                              .toUpperCase(),
+                                                          style:
+                                                              const TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              reply['userName'] ??
+                                                                  'Bilinmeyen Kullanıcı',
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                    .black87,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              reply['replyText'] ??
+                                                                  'Yanıt yok',
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 12,
+                                                                color: Colors
+                                                                    .black87,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                    ),
                                   ],
                                 ),
                               );
@@ -498,6 +638,7 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                           );
                         },
                       ),
+
                       SizedBox(height: 20),
 
                       TextField(
@@ -597,7 +738,7 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                             }
                           },
                           icon: const Icon(Icons.shopping_cart),
-                          label: const Text("Sepete Ekle"),
+                          label: const Text("Ödemeye Geç"),
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.orange,
                             padding: const EdgeInsets.symmetric(
@@ -618,6 +759,51 @@ class _IlanDetayPageState extends State<IlanDetayPage>
         },
       ),
     );
+  }
+
+  // Yanıt formunu gösteren fonksiyon
+  void _showReplyForm(String commentId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Yanıtınızı yazın"),
+          content: TextField(
+            controller: _replyController, // Yanıt yazma alanı
+            decoration: const InputDecoration(
+              hintText: 'Yanıtınızı buraya yazın...',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Yanıtı Firestore'a ekle
+                _submitReply(commentId);
+                Navigator.of(context).pop();
+              },
+              child: const Text("Gönder"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("İptal"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+// Yanıtı Firestore'a gönderme fonksiyonu
+  void _submitReply(String commentId) {
+    FirebaseFirestore.instance.collection('replys').add({
+      'parentCommentId': commentId, // Yanıt verilen yorumun ID'si
+      'replyText': _replyController.text,
+      'timestamp': FieldValue.serverTimestamp(),
+      'userName': 'Current User', // Kullanıcı adı
+      'ilanId': widget.ilanId, // İlan ID'si
+    });
   }
 
   void _addComment() async {
