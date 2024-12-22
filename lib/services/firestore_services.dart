@@ -19,6 +19,39 @@ class FirestoreService {
       return IlanModel.fromMap(data, doc.id);
     }).toList();
   }
+Future<List<IlanModel>> fetchSimilarIlanlar(String ilanId) async {
+  try {
+    // İlanın kategorisini bul
+    DocumentSnapshot ilanSnapshot =
+        await _firestore.collection('ilanlar').doc(ilanId).get();
+
+    if (!ilanSnapshot.exists) {
+      throw Exception('İlan bulunamadı');
+    }
+
+    // İlanın kategorisini al
+    String? kategori = ilanSnapshot['kategori'];
+
+    if (kategori == null || kategori.isEmpty) {
+      throw Exception('İlanın kategorisi bulunamadı');
+    }
+
+    // Aynı kategorideki ilanları getir, ancak aynı ilan ID'sini hariç tut
+    QuerySnapshot snapshot = await _firestore
+        .collection('ilanlar')
+        .where('kategori', isEqualTo: kategori)
+        .where(FieldPath.documentId, isNotEqualTo: ilanId)
+        .get();
+
+    return snapshot.docs
+        .map((doc) =>
+            IlanModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+        .toList();
+  } catch (e) {
+    debugPrint('Hata: $e');
+    rethrow;
+  }
+}
 
   // Kategoriye göre ilanları getirme
   Future<List<IlanModel>> fetchIlanlarByCategory(String? category) async {

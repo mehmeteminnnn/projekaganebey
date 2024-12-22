@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:projekaganebey/satici.dart';
 import 'package:projekaganebey/services/user_services.dart';
+import 'package:projekaganebey/widgets/benzer_ilanlar.dart';
 
 class IlanDetayPage extends StatefulWidget {
   final String ilanId;
@@ -443,8 +444,9 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                               debugPrint('Comment ID: $commentId');
                               final userName =
                                   comment['userName'] ?? 'Bilinmeyen Kullanıcı';
-                              final commentText =
-                                  comment['comment'] ?? 'Yorum yok';
+                              final commentText = comment['comment'] != null
+                                  ? comment['comment']
+                                  : 'Yorum yok';
                               final timestamp =
                                   (comment['timestamp'] as Timestamp).toDate();
 
@@ -750,6 +752,17 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                           ),
                         ),
                       ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        "Benzer İlanlar",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      benzerIlanlarWidget(widget.ilanId, widget.id ?? ''),
                     ],
                   ),
                 ),
