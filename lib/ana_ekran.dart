@@ -4,6 +4,7 @@ import 'package:projekaganebey/filtre.dart';
 import 'package:projekaganebey/models/ilan.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
 import 'package:projekaganebey/widgets/ilan_card.dart';
+import 'package:projekaganebey/widgets/kampanyalar_banner.dart';
 
 class AdsMDFLamPage extends StatefulWidget {
   @override
@@ -82,6 +83,8 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
       ),
       body: Column(
         children: [
+          const KampanyalarBanner(), // Kampanyalar Widget'ı
+          const SizedBox(height: 2),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(

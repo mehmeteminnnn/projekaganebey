@@ -2,30 +2,38 @@ import 'package:flutter/material.dart';
 
 class NotificationModel {
   final String title;
-  final String description;
   final DateTime date;
 
-  NotificationModel(
-      {required this.title, required this.description, required this.date});
+  NotificationModel({
+    required this.title,
+    required this.date,
+  });
 }
 
 class NotificationsPage extends StatelessWidget {
   // Örnek bildirim verileri
   final List<NotificationModel> notifications = [
     NotificationModel(
-      title: 'Yeni İlan Yayınlandı',
-      description: 'Yeni bir ilan yayına alındı. Başvurunuzu yapabilirsiniz.',
-      date: DateTime.now().subtract(Duration(minutes: 5)),
+      title: 'Bugün eklenen yeni PVC ürünlerini keşfetmek için tıklayın 👉',
+      date: DateTime.now().subtract(Duration(minutes: 10)),
     ),
     NotificationModel(
-      title: 'Hesabınız Onaylandı',
-      description: 'Hesabınız başarıyla onaylandı, artık ilan verebilirsiniz.',
-      date: DateTime.now().subtract(Duration(hours: 1)),
+      title: 'Laminant ürünlerde %10 indirim fırsatını kaçırmayın 👉',
+      date: DateTime.now().subtract(Duration(hours: 2)),
     ),
     NotificationModel(
-      title: 'Yeni Mesajınız Var',
-      description: 'Bir kullanıcı size yeni bir mesaj gönderdi.',
+      title:
+          '100 TL altı laminant ve PVC ürünlerde kargo bedava! Şimdi alışveriş yapın 👉',
       date: DateTime.now().subtract(Duration(days: 1)),
+    ),
+    NotificationModel(
+      title: 'En çok satan PVC modellerimiz stokta! Göz atmayı unutmayın 👉',
+      date: DateTime.now().subtract(Duration(days: 3)),
+    ),
+    NotificationModel(
+      title:
+          'Müşterilerimizin favori laminant tasarımları: Keşfetmek için tıkla 👉',
+      date: DateTime.now().subtract(Duration(days: 7)),
     ),
   ];
 
@@ -57,35 +65,49 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.all(13.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              notification.title,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 24,
+            backgroundColor: Colors.pink[100],
+            child: Icon(
+              Icons.campaign,
+              color: Colors.pink,
+              size: 28,
             ),
-            SizedBox(height: 8),
-            Text(
-              notification.description,
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  notification.title,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  _formatDate(notification.date),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
             ),
-            SizedBox(height: 8),
-            Text(
-              '${notification.date.hour}:${notification.date.minute}, ${notification.date.day}/${notification.date.month}/${notification.date.year}',
-              style: TextStyle(fontSize: 14, color: Colors.grey[400]),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    final Duration diff = DateTime.now().difference(date);
+    if (diff.inMinutes < 60) {
+      return '${diff.inMinutes} dk önce';
+    } else if (diff.inHours < 24) {
+      return '${diff.inHours} saat önce';
+    } else {
+      return '${diff.inDays} gün önce';
+    }
   }
 }
