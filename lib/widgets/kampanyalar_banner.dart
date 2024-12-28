@@ -5,32 +5,34 @@ class KampanyalarBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Kampanya resimlerinin listesi
+    final List<String> kampanyaResimleri = [
+      'assets/1.png',
+      'assets/2.png',
+      'assets/3.png',
+    ];
+
     return SizedBox(
-      height: 60, // Banner yüksekliği
+      height: 60, // Mevcut yükseklik korunuyor
       child: PageView.builder(
         scrollDirection: Axis.horizontal, // Yatay kaydırma
-        itemCount: 5, // Kampanya sayısı
+        itemCount: kampanyaResimleri.length, // Resim sayısı kadar oluştur
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
               // Kampanya detaylarına yönlendirme
-              debugPrint("Kampanya $index tıklandı.");
+              debugPrint("Kampanya ${index + 1} tıklandı.");
             },
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 8.0),
-              width: 400,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: Colors.blue.shade100,
               ),
-              child: Center(
-                child: Text(
-                  "Kampanya ${index + 1}",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  kampanyaResimleri[index % kampanyaResimleri.length],
+                  fit: BoxFit.cover, // Resimleri karta sığdırır
                 ),
               ),
             ),

@@ -74,7 +74,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
           child: TextField(
             onChanged: _searchAds,
             decoration: InputDecoration(
-              hintText: 'Kelime veya ilan No. ile ara',
+              hintText: 'Kelime veya ilan no ile ara',
               border: InputBorder.none,
               icon: Icon(Icons.search, color: Colors.grey),
             ),

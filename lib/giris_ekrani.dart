@@ -16,44 +16,43 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Kullanıcı giriş işlemini kontrol eden fonksiyon
   Future<void> _loginUser() async {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return Center(
-        child: CircularProgressIndicator(), // Yükleme animasyonu
-      );
-    },
-  );
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(), // Yükleme animasyonu
+        );
+      },
+    );
 
-  try {
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
+    try {
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
 
-    final QuerySnapshot userSnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .where('password', isEqualTo: password)
-        .get();
+      final QuerySnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: email)
+          .where('password', isEqualTo: password)
+          .get();
 
-    Navigator.pop(context); // Yükleme göstergesini kapat
+      Navigator.pop(context); // Yükleme göstergesini kapat
 
-    if (userSnapshot.docs.isNotEmpty) {
-      final id = userSnapshot.docs.first.id;
-      Fluttertoast.showToast(msg: "Giriş başarılı!");
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MainScreen(id: id)),
-      );
-    } else {
-      Fluttertoast.showToast(msg: "E-posta veya şifre hatalı.");
+      if (userSnapshot.docs.isNotEmpty) {
+        final id = userSnapshot.docs.first.id;
+        Fluttertoast.showToast(msg: "Giriş başarılı!");
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MainScreen(id: id)),
+        );
+      } else {
+        Fluttertoast.showToast(msg: "E-posta veya şifre hatalı.");
+      }
+    } catch (e) {
+      Navigator.pop(context); // Hata durumunda da yükleme göstergesini kapat
+      Fluttertoast.showToast(msg: "Hata: ${e.toString()}");
     }
-  } catch (e) {
-    Navigator.pop(context); // Hata durumunda da yükleme göstergesini kapat
-    Fluttertoast.showToast(msg: "Hata: ${e.toString()}");
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -64,11 +63,12 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            /*Icon(
               Icons.architecture,
               size: 100,
               color: Colors.blueAccent,
-            ),
+            ),*/
+            Image.asset('assets/daire.png', width: 100),
             SizedBox(height: 40),
 
             // E-posta alanı
@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: Text(
                   'Giriş Yap',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
             ),

@@ -23,27 +23,23 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueAccent, // Arkaplan rengi
+      backgroundColor: Colors.white, // Arkaplan rengi
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Logo veya animasyon
-            Icon(
-              Icons.architecture,
-              size: 100,
-              color: Colors.white,
-            ),
+            Image.asset('assets/daire.png', width: 100, height: 100),
             SizedBox(height: 20),
             // Yükleme göstergesi
             CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
             ),
             SizedBox(height: 20),
             // Uygulama ismi veya mesaj
             Text(
               'Yükleniyor...',
-              style: TextStyle(color: Colors.white, fontSize: 18),
+              style: TextStyle(color: Colors.blue, fontSize: 18),
             ),
           ],
         ),
