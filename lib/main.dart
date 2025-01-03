@@ -4,7 +4,7 @@ import 'package:projekaganebey/firebase_options.dart';
 import 'package:projekaganebey/giris_ekrani.dart';
 import 'package:projekaganebey/splash_screen.dart';
 
-void main() async { 
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApp());

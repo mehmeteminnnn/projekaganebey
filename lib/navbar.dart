@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:projekaganebey/ana_ekran.dart';
+import 'package:projekaganebey/bildirimler.dart';
 //import 'package:projekaganebey/bildirimler.dart';
 import 'package:projekaganebey/favorilerim.dart';
 import 'package:projekaganebey/ilan_ver.dart';
@@ -32,9 +33,7 @@ class MainScreen extends StatelessWidget {
       AdsMDFLamPage(id: id),
       FavorilerimPage(id: id),
       IlanVerPage(id: id),
-      SepetimPage(
-        userId: id!,
-      ),
+      NotificationsPage(),
       ProfileScreen(id: id),
     ];
   }
@@ -62,8 +61,8 @@ class MainScreen extends StatelessWidget {
         activeColorSecondary: Colors.blue,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.shopping_bag),
-        title: ("Sepetim"),
+        icon: Icon(Icons.notifications),
+        title: ("Bildirimler"),
         activeColorPrimary: Colors.blue,
         inactiveColorPrimary: Colors.grey,
       ),
@@ -88,7 +87,7 @@ class MainScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       stateManagement: true,
-      navBarHeight: 58,
+      navBarHeight: 55,
       decoration: NavBarDecoration(
         borderRadius: BorderRadius.circular(15.0),
         colorBehindNavBar: Colors.white,

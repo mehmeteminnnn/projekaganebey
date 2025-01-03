@@ -646,31 +646,38 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                       TextField(
                         controller: _commentController,
                         decoration: InputDecoration(
-                          filled: true, // Arka plan rengini etkinleştirir
-                          fillColor: Colors
-                              .orange.shade50, // Açık turuncu arka plan rengi
+                          filled: true,
+                          fillColor: Colors.grey
+                              .shade100, // Arka plan rengini açık gri yapar
                           hintText: "Satıcıya soru sor",
-
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              Icons.send,
-                              color: Colors
-                                  .orange, // Gönder ikonunun turuncu rengi
-                            ),
-                            onPressed: _addComment,
+                          hintStyle: TextStyle(
+                            color: Colors.grey, // İpucu metni rengini gri yapar
+                            fontSize: 16, // Metin boyutu
+                          ),
+                          prefixIcon: Icon(
+                            Icons.edit, // Kalem simgesi
+                            color: Colors.grey, // İkon rengi
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                                30), // Tam yuvarlak köşeler
+                            borderSide:
+                                BorderSide.none, // Kenar çizgisi kaldırıldı
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                                12), // Yuvarlatılmış köşeler
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
                           ),
                           focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
                             borderSide: BorderSide(
-                                color: Colors.orange.shade700,
-                                width: 2), // Odaklanıldığında daha koyu turuncu
-                            borderRadius: BorderRadius.circular(12),
+                              color: Colors.grey
+                                  .shade300, // Odaklanıldığında daha belirgin bir renk
+                            ),
                           ),
                         ),
                       ),
+/*
                       // Miktar Seçim Butonları
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -712,8 +719,8 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                             },
                           ),
                         ],
-                      ),
-
+                      ),*/
+/*
                       // Sepete Ekle Butonu
                       const SizedBox(height: 20),
                       Center(
@@ -739,7 +746,8 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                               );
                             }
                           },
-                          icon: const Icon(Icons.shopping_cart),
+                          icon: const Icon(Icons.credit_card,
+                              color: Colors.orange),
                           label: const Text("Ödemeye Geç"),
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.orange,
@@ -751,7 +759,7 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                             ),
                           ),
                         ),
-                      ),
+                      ),*/
                       const SizedBox(height: 20),
                       const Text(
                         "Benzer İlanlar",

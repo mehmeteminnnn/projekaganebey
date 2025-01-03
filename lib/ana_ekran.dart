@@ -21,6 +21,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
   String? selectedChip;
   String searchQuery = ''; // Arama metni
   List<IlanModel>? filteredIlanlar;
+  final int notificationCount = 5; // Bildirim sayısı
   Future<void> _searchAds(String query) async {
     if (query.isEmpty) {
       setState(() {
@@ -41,29 +42,49 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          /* IconButton(
-            icon: const Icon(Icons.shoppin_bag, color: Colors.blue),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => SepetimPage(
-                            userId: widget.id!,
-                          )));
-
-              // debugPrint("Sepet ikonuna tıklandı");
-              // Sepet sayfasına yönlendirme yapılabilir
-            },
-          ),*/
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.blue),
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => NotificationsPage()));
-            },
+        /*actions: [
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.notifications, color: Colors.blue),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NotificationsPage(),
+                    ),
+                  );
+                },
+              ),
+              if (notificationCount > 0) // Eğer bildirim varsa göster
+                Positioned(
+                  right: 4,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      '$notificationCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
           ),
-        ],
+        ],*/
         backgroundColor: Colors.white,
         title: Container(
           decoration: BoxDecoration(
