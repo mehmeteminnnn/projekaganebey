@@ -26,6 +26,8 @@ dependencies:
   turkish: ^0.2.1
   number_paginator: ^0.4.1
   intl: ^0.20.1
+  firebase_messaging: ^15.1.6
+  flutter_local_notifications: ^18.0.1
 
 dev_dependencies:
   flutter_test:

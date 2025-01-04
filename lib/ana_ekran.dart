@@ -156,6 +156,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                       );
                     },
                   )
+                //Eğer filtreleme yapılmışsa
                 : widget.filteredAds != null && widget.filteredAds!.isEmpty
                     ? Center(
                         child: Text('Aradığınız ilan bulunamadı.'),
