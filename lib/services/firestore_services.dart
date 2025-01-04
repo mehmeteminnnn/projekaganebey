@@ -19,39 +19,40 @@ class FirestoreService {
       return IlanModel.fromMap(data, doc.id);
     }).toList();
   }
-Future<List<IlanModel>> fetchSimilarIlanlar(String ilanId) async {
-  try {
-    // İlanın kategorisini bul
-    DocumentSnapshot ilanSnapshot =
-        await _firestore.collection('ilanlar').doc(ilanId).get();
 
-    if (!ilanSnapshot.exists) {
-      throw Exception('İlan bulunamadı');
+  Future<List<IlanModel>> fetchSimilarIlanlar(String ilanId) async {
+    try {
+      // İlanın kategorisini bul
+      DocumentSnapshot ilanSnapshot =
+          await _firestore.collection('ilanlar').doc(ilanId).get();
+
+      if (!ilanSnapshot.exists) {
+        throw Exception('İlan bulunamadı');
+      }
+
+      // İlanın kategorisini al
+      String? kategori = ilanSnapshot['kategori'];
+
+      if (kategori == null || kategori.isEmpty) {
+        throw Exception('İlanın kategorisi bulunamadı');
+      }
+
+      // Aynı kategorideki ilanları getir, ancak aynı ilan ID'sini hariç tut
+      QuerySnapshot snapshot = await _firestore
+          .collection('ilanlar')
+          .where('kategori', isEqualTo: kategori)
+          .where(FieldPath.documentId, isNotEqualTo: ilanId)
+          .get();
+
+      return snapshot.docs
+          .map((doc) =>
+              IlanModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+          .toList();
+    } catch (e) {
+      debugPrint('Hata: $e');
+      rethrow;
     }
-
-    // İlanın kategorisini al
-    String? kategori = ilanSnapshot['kategori'];
-
-    if (kategori == null || kategori.isEmpty) {
-      throw Exception('İlanın kategorisi bulunamadı');
-    }
-
-    // Aynı kategorideki ilanları getir, ancak aynı ilan ID'sini hariç tut
-    QuerySnapshot snapshot = await _firestore
-        .collection('ilanlar')
-        .where('kategori', isEqualTo: kategori)
-        .where(FieldPath.documentId, isNotEqualTo: ilanId)
-        .get();
-
-    return snapshot.docs
-        .map((doc) =>
-            IlanModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
-        .toList();
-  } catch (e) {
-    debugPrint('Hata: $e');
-    rethrow;
   }
-}
 
   // Kategoriye göre ilanları getirme
   Future<List<IlanModel>> fetchIlanlarByCategory(String? category) async {
@@ -133,5 +134,27 @@ Future<List<IlanModel>> fetchSimilarIlanlar(String ilanId) async {
       final data = doc.data() as Map<String, dynamic>;
       return IlanModel.fromMap(data, doc.id);
     }).toList();
+  }
+
+  Future<List<IlanModel>> searchIlanlarByTitle(String query) async {
+    // Firestore'dan ilanları çekiyoruz (bu arama henüz harf duyarsız değil)
+    final snapshot = await FirebaseFirestore.instance
+        .collection('ilanlar')
+        .get(); // 'baslik' ile ilgili herhangi bir filtreleme yapılmaz
+
+    // Arama terimini küçük harfe çeviriyoruz
+    String searchQuery = query.toLowerCase();
+
+    // Veritabanından gelen veriyi filtreliyoruz
+    final filteredData = snapshot.docs.where((doc) {
+      // Başlıkları küçük harfe çevirerek karşılaştırıyoruz
+      String title = doc['baslik'].toLowerCase();
+      return title.contains(searchQuery);
+    }).toList();
+
+    // Filtrelenmiş verileri IlanModel'e dönüştürüyoruz
+    return filteredData
+        .map((doc) => IlanModel.fromMap(doc.data(), doc.id))
+        .toList();
   }
 }

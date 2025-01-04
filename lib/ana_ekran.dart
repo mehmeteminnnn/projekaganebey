@@ -22,6 +22,8 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
   String searchQuery = ''; // Arama metni
   List<IlanModel>? filteredIlanlar;
   final int notificationCount = 5; // Bildirim sayısı
+
+  // Firestore'dan ilanları arama
   Future<void> _searchAds(String query) async {
     if (query.isEmpty) {
       setState(() {
@@ -31,7 +33,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
       return;
     }
 
-    final results = await _firestoreService.searchIlanlar(query);
+    final results = await _firestoreService.searchIlanlarByTitle(query);
     setState(() {
       searchQuery = query;
       filteredIlanlar = results;
@@ -42,49 +44,6 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        /*actions: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.notifications, color: Colors.blue),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => NotificationsPage(),
-                    ),
-                  );
-                },
-              ),
-              if (notificationCount > 0) // Eğer bildirim varsa göster
-                Positioned(
-                  right: 4,
-                  top: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 16,
-                      minHeight: 16,
-                    ),
-                    child: Text(
-                      '$notificationCount',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ],*/
         backgroundColor: Colors.white,
         title: Container(
           decoration: BoxDecoration(
@@ -129,7 +88,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
             ),
           ),
           Expanded(
-            child: widget.filteredAds != null && widget.filteredAds!.isNotEmpty
+            child: filteredIlanlar != null && filteredIlanlar!.isNotEmpty
                 ? GridView.builder(
                     padding: EdgeInsets.all(8.0),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -138,25 +97,21 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                       crossAxisSpacing: 8.0,
                       childAspectRatio: 1,
                     ),
-                    itemCount: widget.filteredAds!.length,
+                    itemCount: filteredIlanlar!.length,
                     itemBuilder: (context, index) {
-                      final ilan = widget.filteredAds![index];
-
+                      final ilan = filteredIlanlar![index];
                       return buildIlanCard(
                         userId: widget.id,
-                        baslik: ilan['baslik'],
-                        fiyat: (ilan['fiyat'] != null
-                            ? ilan['fiyat'].toDouble()
-                            : 0),
-                        resimUrl: ilan['resimler']?.isNotEmpty == true
-                            ? ilan['resimler'][0]
+                        baslik: ilan.baslik,
+                        fiyat: ilan.fiyat,
+                        resimUrl: ilan.resimler?.isNotEmpty == true
+                            ? ilan.resimler![0]
                             : null,
-                        ilanID: ilan['id'],
+                        ilanID: ilan.id!,
                         context: context,
                       );
                     },
                   )
-                //Eğer filtreleme yapılmışsa
                 : widget.filteredAds != null && widget.filteredAds!.isEmpty
                     ? Center(
                         child: Text('Aradığınız ilan bulunamadı.'),
@@ -206,7 +161,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                           );
                         },
                       ),
-          )
+          ),
         ],
       ),
     );

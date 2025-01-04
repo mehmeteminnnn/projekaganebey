@@ -75,11 +75,18 @@ Widget buildIlanCard({
                   return CircularProgressIndicator();
                 }
 
-                if (snapshot.hasData && snapshot.data != null) {
+                // Verinin olup olmadığını ve documentin var olup olmadığını kontrol ediyoruz
+                if (snapshot.hasData &&
+                    snapshot.data != null &&
+                    snapshot.data!.exists) {
+                  // favorilerim alanı varsa, yoksa boş bir liste ile başlatıyoruz
                   List<dynamic> favorilerim =
                       snapshot.data!['favorilerim'] ?? [];
+
+                  // favorilerim içinde ilanID var mı diye kontrol ediyoruz
                   bool isFavori = favorilerim.contains(ilanID);
 
+                  // Favori durumu ile ilgili işlemleri burada yapabilirsiniz
                   return IconButton(
                     icon: Icon(
                       isFavori ? Icons.favorite : Icons.favorite_border,
@@ -94,6 +101,7 @@ Widget buildIlanCard({
                     },
                   );
                 } else {
+                  // Eğer veri yoksa ya da document bulunmazsa favori butonu burada görüntüleniyor
                   return IconButton(
                     icon: const Icon(Icons.favorite_border, color: Colors.red),
                     onPressed: () {
