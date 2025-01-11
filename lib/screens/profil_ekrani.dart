@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:projekaganebey/banka_hesap.dart';
+import 'package:projekaganebey/screens/banka_hesap.dart';
 import 'package:projekaganebey/ilanlar%C4%B1m.dart';
-import 'package:projekaganebey/profilim_detay.dart';
+import 'package:projekaganebey/screens/profilim_detay.dart';
 import 'package:projekaganebey/sattiklarim.dart';
-import 'package:projekaganebey/settings.dart';
+import 'package:projekaganebey/screens/settings.dart';
 
 class ProfileCard extends StatelessWidget {
   final IconData icon;

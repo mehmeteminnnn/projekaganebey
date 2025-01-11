@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projekaganebey/giris_ekrani.dart';
+import 'package:projekaganebey/screens/giris_ekrani.dart';
 
 class SplashScreen extends StatefulWidget {
   @override

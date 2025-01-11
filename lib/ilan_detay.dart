@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-import 'package:projekaganebey/satici.dart';
+import 'package:projekaganebey/screens/satici.dart';
 import 'package:projekaganebey/services/user_services.dart';
 import 'package:projekaganebey/widgets/benzer_ilanlar.dart';
 

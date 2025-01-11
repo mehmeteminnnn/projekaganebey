@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:projekaganebey/ana_ekran.dart';
+import 'package:projekaganebey/screens/ana_ekran.dart';
 import 'package:projekaganebey/constants/constants.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
 import 'package:turkish/turkish.dart';
