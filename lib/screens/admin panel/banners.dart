@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class BannerPage extends StatefulWidget {
   @override
@@ -89,6 +92,73 @@ class _BannerPageState extends State<BannerPage> {
     );
   }
 
+  Future<void> _addBanner(File imageFile) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final bannerName = imageFile.path.split('/').last;
+      final storageRef =
+          FirebaseStorage.instance.ref().child('banners/$bannerName');
+      await storageRef.putFile(imageFile);
+      final bannerUrl = await storageRef.getDownloadURL();
+      await _firestoreService.addBanner(bannerName, bannerUrl);
+      await _loadBanners();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Banner eklenirken bir hata oluştu: $e')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void _showAddBannerDialog() {
+    File? imageFile;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Yeni Banner Ekle'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextButton(
+                onPressed: () async {
+                  final pickedFile = await ImagePicker()
+                      .pickImage(source: ImageSource.gallery);
+                  if (pickedFile != null) {
+                    imageFile = File(pickedFile.path);
+                  }
+                },
+                child: Text('Resim Seç'),
+              ),
+              if (imageFile != null) Text('Seçilen Resim: ${imageFile!.path}'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: Text('İptal'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: Text('Ekle'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                if (imageFile != null) {
+                  _addBanner(imageFile!);
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -122,8 +192,21 @@ class _BannerPageState extends State<BannerPage> {
     });
 
     try {
-      final bannerName = bannerUrl.split('/').last.split('?').first;
+      final decodedUrl = Uri.decodeFull(bannerUrl);
+      final bannerName = decodedUrl.split('/').last.split('?').first;
       await _firestoreService.deleteBanner(bannerName);
+      final storageRef =
+          FirebaseStorage.instance.ref().child('banners/$bannerName');
+
+      try {
+        await storageRef.getDownloadURL();
+        await storageRef.delete();
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Silinecek dosya mevcut değil: $bannerName')),
+        );
+      }
+
       await _loadBanners();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -178,7 +261,7 @@ class _BannerPageState extends State<BannerPage> {
                 ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Banner ekleme fonksiyonu buraya gelecek
+          _showAddBannerDialog();
         },
         child: Icon(
           Icons.add,

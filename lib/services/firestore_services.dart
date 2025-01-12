@@ -202,9 +202,28 @@ class FirestoreService {
   // Bannerı sil
   Future<void> deleteBanner(String bannerName) async {
     try {
-      await FirebaseStorage.instance.ref('banners/$bannerName').delete();
+      // Firestore'dan banner bilgilerini al
+      final bannerSnapshot = await FirebaseFirestore.instance
+          .collection('banners')
+          .where('name', isEqualTo: bannerName)
+          .get();
+
+      // Eğer banner mevcutsa, Firestore'dan sil
+      if (bannerSnapshot.docs.isNotEmpty) {
+        for (var doc in bannerSnapshot.docs) {
+          await doc.reference.delete();
+        }
+      } else {
+        print("Banner Firestore'da bulunamadı: $bannerName");
+      }
+
+      // Firebase Storage'dan bannerı sil
+      final ref = FirebaseStorage.instance.ref('banners/$bannerName');
+      await ref.delete();
+      debugPrint('Banner başarıyla silindi: $bannerName');
     } catch (e) {
       print("Hata: $e");
+      throw Exception('Banner silinirken hata: $e');
     }
   }
 
@@ -216,5 +235,17 @@ class FirestoreService {
       'timestamp': FieldValue.serverTimestamp(),
     });
     // Burada ayrıca FCM entegrasyonu yapılabilir.
+  }
+
+  Future<void> addBanner(String bannerName, String bannerUrl) async {
+    try {
+      await FirebaseFirestore.instance.collection('banners').add({
+        'name': bannerName,
+        'url': bannerUrl,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Banner eklenirken hata: $e');
+    }
   }
 }
