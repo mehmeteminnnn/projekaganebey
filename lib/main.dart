@@ -32,7 +32,8 @@ void main() async {
     NotificationService().showNotification(message); // Bildirimi göster
   });
 
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler); 
+  
 
   runApp(MyApp());
 }

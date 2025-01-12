@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:projekaganebey/navbar.dart';
+import 'package:projekaganebey/screens/admin%20panel/admin_panel.dart';
 
 import 'kayit_ol.dart';
 
@@ -29,6 +30,17 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
+
+      // Eğer admin bilgileri ile giriş yapılıyorsa
+      if (email == "admin" && password == "admin") {
+        Navigator.pop(context); // Yükleme göstergesini kapat
+        Fluttertoast.showToast(msg: "Admin olarak giriş yapıldı!");
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DashboardPage()),
+        );
+        return;
+      }
 
       final QuerySnapshot userSnapshot = await FirebaseFirestore.instance
           .collection('users')
@@ -63,11 +75,6 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            /*Icon(
-              Icons.architecture,
-              size: 100,
-              color: Colors.blueAccent,
-            ),*/
             Image.asset('assets/daire.png', width: 100),
             SizedBox(height: 40),
 

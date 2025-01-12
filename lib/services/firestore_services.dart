@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:projekaganebey/models/ilan.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  //final FirebaseStorage _storage = FirebaseStorage.instance;
 
   // İlan ekleme
   Future<void> addIlan(IlanModel ilan) async {
@@ -156,5 +158,63 @@ class FirestoreService {
     return filteredData
         .map((doc) => IlanModel.fromMap(doc.data(), doc.id))
         .toList();
+  }
+
+  // Toplam kullanıcı sayısını al
+  Future<int> getTotalUsers() async {
+    try {
+      final snapshot = await _firestore.collection('users').get();
+      return snapshot.size; // Kullanıcı sayısını döner
+    } catch (e) {
+      print("Hata: $e");
+      return 0;
+    }
+  }
+
+  // Toplam ilan sayısını al
+  Future<int> getTotalAds() async {
+    try {
+      final snapshot = await _firestore.collection('ilanlar').get();
+      return snapshot.size; // İlan sayısını döner
+    } catch (e) {
+      print("Hata: $e");
+      return 0;
+    }
+  }
+
+  // Bannerları listele
+  Future<List<String>> getBanners() async {
+    try {
+      final ListResult banners =
+          await FirebaseStorage.instance.ref('banners').listAll();
+      List<String> bannerUrls = [];
+      for (var item in banners.items) {
+        final url = await item.getDownloadURL();
+        bannerUrls.add(url);
+      }
+      return bannerUrls;
+    } catch (e) {
+      print("Hata: $e");
+      return [];
+    }
+  }
+
+  // Bannerı sil
+  Future<void> deleteBanner(String bannerName) async {
+    try {
+      await FirebaseStorage.instance.ref('banners/$bannerName').delete();
+    } catch (e) {
+      print("Hata: $e");
+    }
+  }
+
+  // Bildirim gönder
+  Future<void> sendNotification(String title, String body) async {
+    await _firestore.collection('notifications').add({
+      'title': title,
+      'body': body,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+    // Burada ayrıca FCM entegrasyonu yapılabilir.
   }
 }
