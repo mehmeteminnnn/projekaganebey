@@ -6,7 +6,36 @@ class NotificationPage extends StatelessWidget {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController bodyController = TextEditingController();
 
-  void sendNotification(String title, String body) async {}
+  Future<void> sendNotification(String title, String body) async {
+    final String apiUrl =
+        'https://fcm.googleapis.com/v1/projects/kaganbey/messages:send';
+    final String accessToken = '105894327811642900545'; // OAuth2 token
+
+    final Map<String, dynamic> message = {
+      'message': {
+        'notification': {
+          'title': title,
+          'body': body,
+        },
+        'topic': 'all', // Tüm kullanıcılara bildirim göndermek için
+      },
+    };
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(message),
+    );
+
+    if (response.statusCode == 200) {
+      print("Bildirim başarıyla gönderildi!");
+    } else {
+      print("Bildirim gönderme hatası: ${response.body}");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
