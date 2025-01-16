@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:projekaganebey/models/ilan.dart';
+import 'package:projekaganebey/models/ilan_model.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
 import 'package:projekaganebey/widgets/ilan_card.dart';
 

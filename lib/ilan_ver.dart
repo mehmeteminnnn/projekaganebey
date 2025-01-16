@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:projekaganebey/ilan_ozellikleri.dart';
-import 'package:projekaganebey/models/ilan.dart';
+import 'package:projekaganebey/models/ilan_model.dart';
 //import 'package:projekaganebey/ilan_ozellikleri.dart';
 //1import 'package:projekaganebey/models/ilan.dart';
 

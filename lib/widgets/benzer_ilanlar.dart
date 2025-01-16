@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projekaganebey/ilan_detay.dart';
-import 'package:projekaganebey/models/ilan.dart';
+import 'package:projekaganebey/models/ilan_model.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
 
 Widget benzerIlanlarWidget(String ilanId, String kullaniciId) {

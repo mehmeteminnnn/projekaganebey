@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:projekaganebey/ilan_detay.dart';
 import 'package:projekaganebey/ilan_hazir.dart';
-import 'package:projekaganebey/models/ilan.dart';
+import 'package:projekaganebey/models/ilan_model.dart';
 import 'package:turkish/turkish.dart';
 
 class ProductPage extends StatefulWidget {

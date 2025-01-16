@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:projekaganebey/constants/constants.dart';
 import 'package:projekaganebey/ilan_ozellikleri2.dart';
-import 'package:projekaganebey/models/ilan.dart';
+import 'package:projekaganebey/models/ilan_model.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class IlanOzellikleriPage extends StatefulWidget {

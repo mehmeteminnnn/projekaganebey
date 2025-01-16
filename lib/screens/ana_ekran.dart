@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:projekaganebey/bildirimler.dart';
 import 'package:projekaganebey/screens/filtreleme_screen.dart';
-import 'package:projekaganebey/models/ilan.dart';
+import 'package:projekaganebey/models/ilan_model.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
 import 'package:projekaganebey/widgets/ilan_card.dart';
 import 'package:projekaganebey/widgets/kampanyalar_banner.dart';

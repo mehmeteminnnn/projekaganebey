@@ -1,41 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:projekaganebey/models/notification_model.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
-class NotificationModel {
-  final String title;
-  final DateTime date;
-
-  NotificationModel({
-    required this.title,
-    required this.date,
-  });
+class NotificationsPage extends StatefulWidget {
+  @override
+  _NotificationsPageState createState() => _NotificationsPageState();
 }
 
-class NotificationsPage extends StatelessWidget {
-  // Örnek bildirim verileri
+class _NotificationsPageState extends State<NotificationsPage> {
   final List<NotificationModel> notifications = [
+    // Örnek bildirim verileri
     NotificationModel(
       title: 'Bugün eklenen yeni PVC ürünlerini keşfetmek için tıklayın 👉',
+      body: 'Bugün eklenen yeni PVC ürünlerini keşfetmek için tıklayın 👉',
       date: DateTime.now().subtract(Duration(minutes: 10)),
     ),
     NotificationModel(
       title: 'Laminant ürünlerde %10 indirim fırsatını kaçırmayın 👉',
+      body: 'Laminant ürünlerde %10 indirim fırsatını kaçırmayın 👉',
       date: DateTime.now().subtract(Duration(hours: 2)),
     ),
     NotificationModel(
       title:
           '100 TL altı laminant ve PVC ürünlerde kargo bedava! Şimdi alışveriş yapın 👉',
+      body:
+          '100 TL altı laminant ve PVC ürünlerde kargo bedava! Şimdi alışveriş yapın 👉',
       date: DateTime.now().subtract(Duration(days: 1)),
     ),
     NotificationModel(
       title: 'En çok satan PVC modellerimiz stokta! Göz atmayı unutmayın 👉',
+      body: 'En çok satan PVC modellerimiz stokta! Göz atmayı unutmayın 👉',
       date: DateTime.now().subtract(Duration(days: 3)),
     ),
     NotificationModel(
       title:
           'Müşterilerimizin favori laminant tasarımları: Keşfetmek için tıkla 👉',
+      body:
+          'Müşterilerimizin favori laminant tasarımları: Keşfetmek için tıkla 👉',
       date: DateTime.now().subtract(Duration(days: 7)),
     ),
   ];
+
+  void addNotification(String title, String body) {
+    notifications.add(NotificationModel(
+      title: title,
+      body: body,
+      date: DateTime.now(),
+    ));
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      addNotification(
+        message.notification?.title ?? 'Yeni Bildirim',
+        message.notification?.body ?? '',
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
