@@ -32,7 +32,13 @@ class _LoginScreenState extends State<LoginScreen> {
       final password = _passwordController.text.trim();
 
       // Eğer admin bilgileri ile giriş yapılıyorsa
-      if (email == "admin" && password == "admin") {
+      final QuerySnapshot adminSnapshot = await FirebaseFirestore.instance
+          .collection('admin')
+          .where('username', isEqualTo: email)
+          .where('password', isEqualTo: password)
+          .get();
+
+      if (adminSnapshot.docs.isNotEmpty) {
         Navigator.pop(context); // Yükleme göstergesini kapat
         Fluttertoast.showToast(msg: "Admin olarak giriş yapıldı!");
         Navigator.pushReplacement(

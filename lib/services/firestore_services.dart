@@ -248,4 +248,17 @@ class FirestoreService {
       throw Exception('Banner eklenirken hata: $e');
     }
   }
+
+  Future<void> updateAdminInfo(String username, String password) async {
+    await _firestore.collection('admin').doc('admin_info').set({
+      'username': username,
+      'password': password,
+    });
+  }
+
+  Future<Map<String, dynamic>> getAdminInfo() async {
+    DocumentSnapshot snapshot =
+        await _firestore.collection('admin').doc('CK6bCpvOHKMtACNj8SoZ').get();
+    return snapshot.data() as Map<String, dynamic>;
+  }
 }

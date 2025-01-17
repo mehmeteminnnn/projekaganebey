@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:projekaganebey/screens/admin%20panel/banners.dart';
 import 'package:projekaganebey/screens/admin%20panel/notification_screen.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
+import 'package:projekaganebey/screens/giris_ekrani.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -13,16 +14,55 @@ class _DashboardPageState extends State<DashboardPage> {
   int totalUsers = 0;
   int totalAds = 0;
 
+  // Kullanıcı adı ve şifre için değişkenler
+  String username = ""; // Varsayılan kullanıcı adı
+  String password = ""; // Varsayılan şifre
+
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     _loadCounts();
+    _loadAdminInfo(); // Admin bilgilerini yükle
   }
 
   Future<void> _loadCounts() async {
     totalUsers = await _firestoreService.getTotalUsers();
     totalAds = await _firestoreService.getTotalAds();
     setState(() {});
+  }
+
+  Future<void> _loadAdminInfo() async {
+    var adminInfo = await _firestoreService.getAdminInfo();
+    setState(() {
+      username = adminInfo['username'];
+      password = adminInfo['password'];
+      _usernameController.text = username; // TextField için varsayılan değer
+    });
+  }
+
+  void _logout() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  }
+
+  void _updateAdminInfo() async {
+    await _firestoreService.updateAdminInfo(
+      _usernameController.text,
+      _passwordController.text,
+    );
+    setState(() {
+      username = _usernameController.text;
+      password = _passwordController.text;
+    });
+    // Başarılı güncelleme mesajı gösterebilirsiniz
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Admin bilgileri güncellendi.")),
+    );
   }
 
   @override
@@ -40,6 +80,13 @@ class _DashboardPageState extends State<DashboardPage> {
             color: Colors.white,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout, color: Colors.red),
+            onPressed: _logout,
+            tooltip: "Çıkış Yap",
+          ),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -89,7 +136,6 @@ class _DashboardPageState extends State<DashboardPage> {
                       context,
                       MaterialPageRoute(builder: (context) => BannerPage()),
                     );
-                    // Banner yönetimi sayfasına yönlendirme
                   },
                 ),
                 const SizedBox(height: 16),
@@ -105,6 +151,54 @@ class _DashboardPageState extends State<DashboardPage> {
                     );
                   },
                 ),
+                const SizedBox(height: 16),
+                _buildManagementCard(
+                  "Admin Bilgileri",
+                  Icons.admin_panel_settings,
+                  Colors.blueAccent,
+                  () {
+                    // Admin bilgilerini güncelleme işlemi
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text("Admin Bilgilerini Güncelle"),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextField(
+                                controller: _usernameController,
+                                decoration:
+                                    InputDecoration(labelText: "Kullanıcı Adı"),
+                              ),
+                              TextField(
+                                controller: _passwordController,
+                                decoration: InputDecoration(labelText: "Şifre"),
+                                obscureText: true,
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                _updateAdminInfo();
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("Güncelle"),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("İptal"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(height: 24),
               ],
             ),
           ),
