@@ -173,609 +173,697 @@ class _IlanDetayPageState extends State<IlanDetayPage>
           final renk = ilanData['renk'] ?? 'Renk Yok';
           final detay = ilanData['aciklama'] ?? 'Detay Yok';
 
-          return SingleChildScrollView(
-            controller: _scrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Resim galerisi
-                Stack(
-                  alignment: Alignment.bottomCenter,
+          return Stack(
+            children: [
+              SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      height: 250,
-                      child: PageView.builder(
-                        controller: _pageController,
-                        itemCount: resimler.length,
-                        itemBuilder: (context, index) {
-                          return Image.network(
-                            resimler[index],
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(Icons.image_not_supported,
-                                    size: 100),
-                          );
-                        },
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 8,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: List.generate(
-                          resimler.length,
-                          (index) => AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            width: 12,
-                            height: 12,
-                            decoration: BoxDecoration(
-                              color: _currentPage == index
-                                  ? Colors.orange
-                                  : Colors.grey,
-                              shape: BoxShape.circle,
+                    // Resim galerisi
+                    Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        SizedBox(
+                          height: 250,
+                          child: PageView.builder(
+                            controller: _pageController,
+                            itemCount: resimler.length,
+                            onPageChanged: (index) {
+                              setState(() {
+                                _currentPage =
+                                    index; // Aktif sayfa indeksini güncelle
+                              });
+                            },
+                            itemBuilder: (context, index) {
+                              return Image.network(
+                                resimler[index],
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(Icons.image_not_supported,
+                                        size: 100),
+                              );
+                            },
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 8,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List.generate(
+                              resimler.length,
+                              (index) => AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 4),
+                                width: 12,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: _currentPage == index
+                                      ? Colors.orange
+                                      : Colors.grey,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                // Ürün detayları
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey,
-                        blurRadius: 6,
-                        offset: Offset(0, -2),
-                      ),
-                    ],
-                  ),
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Fiyat bilgisi
-                      Text(
-                        "$fiyat TL",
-                        style: const TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.orange,
+                    const SizedBox(height: 20),
+                    // Ürün detayları
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            blurRadius: 6,
+                            offset: Offset(0, -2),
+                          ),
+                        ],
                       ),
-                      const Text(
-                        "Birim Adet Fiyatı",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      // Ürün özellikleri başlığı
-                      const Text(
-                        "Ürün Özellikleri",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      _buildFeatureRow("İl", il, "İlçe", ilce),
-                      const SizedBox(height: 16),
-                      _buildFeatureRow("Miktar", "$miktar Adet", "Yükseklik",
-                          "$yukseklik cm"),
-                      const SizedBox(height: 16),
-                      _buildFeatureRow("Genişlik", "$genislik cm", "En",
-                          "${ilanData['en']} cm"),
-                      const SizedBox(height: 16),
-                      _buildFeatureRow("Renk", renk, "Kategori", kategori),
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Fiyat bilgisi
+                          Text(
+                            "$fiyat TL",
+                            style: const TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange,
+                            ),
+                          ),
+                          const Text(
+                            "Birim Adet Fiyatı",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          // Ürün özellikleri başlığı
+                          const Text(
+                            "Ürün Özellikleri",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          _buildFeatureRow("İl", il, "İlçe", ilce),
+                          const SizedBox(height: 16),
+                          _buildFeatureRow("Miktar", "$miktar Adet",
+                              "Yükseklik", "$yukseklik cm"),
+                          const SizedBox(height: 16),
+                          _buildFeatureRow("Genişlik", "$genislik cm", "En",
+                              "${ilanData['en']} cm"),
+                          const SizedBox(height: 16),
+                          _buildFeatureRow("Renk", renk, "Kategori", kategori),
 
-                      const SizedBox(height: 20),
-                      // Ürün açıklama
-                      const Text(
-                        "Detaylı Açıklama",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
+                          const SizedBox(height: 20),
+                          // Ürün açıklama
+                          const Text(
+                            "Detaylı Açıklama",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
 
-                      Text(detay,
-                          style: const TextStyle(
-                              fontSize: 16, color: Colors.grey)),
+                          Text(detay,
+                              style: const TextStyle(
+                                  fontSize: 16, color: Colors.grey)),
 
-                      const SizedBox(height: 20),
-                      const Text(
-                        "Satıcı Bilgileri",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      FutureBuilder<Map<String, dynamic>?>(
-                        future: UserService().getCreatorInfo(widget.ilanId),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return Text('Hata: ${snapshot.error}');
-                          } else if (!snapshot.hasData ||
-                              snapshot.data == null) {
-                            return const Text('Satıcı bilgileri bulunamadı.');
-                          }
+                          const SizedBox(height: 20),
+                          const Text(
+                            "Satıcı Bilgileri",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          FutureBuilder<Map<String, dynamic>?>(
+                            future: UserService().getCreatorInfo(widget.ilanId),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Text('Hata: ${snapshot.error}');
+                              } else if (!snapshot.hasData ||
+                                  snapshot.data == null) {
+                                return const Text(
+                                    'Satıcı bilgileri bulunamadı.');
+                              }
 
-                          final sellerData = snapshot.data!;
+                              final sellerData = snapshot.data!;
 
-                          final sellerName =
-                              sellerData['name'] ?? 'Bilinmeyen Satıcı';
-                          final sellerPhoto = sellerData['photo'] ?? '';
-                          final sellerRating = sellerData['rating'] ?? 0;
+                              final sellerName =
+                                  sellerData['name'] ?? 'Bilinmeyen Satıcı';
+                              final sellerPhoto = sellerData['photo'] ?? '';
+                              final sellerRating = sellerData['rating'] ?? 0;
 
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment
-                                .spaceBetween, // Sağda buton yerleştirmek için
-                            children: [
-                              Row(
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween, // Sağda buton yerleştirmek için
                                 children: [
-                                  CircleAvatar(
-                                    radius: 25,
-                                    backgroundImage: sellerPhoto.isNotEmpty
-                                        ? NetworkImage(sellerPhoto)
-                                        : null,
-                                    child: sellerPhoto.isEmpty
-                                        ? const Icon(Icons.person, size: 24)
-                                        : null,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  Row(
                                     children: [
-                                      Text(
-                                        sellerName,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      CircleAvatar(
+                                        radius: 25,
+                                        backgroundImage: sellerPhoto.isNotEmpty
+                                            ? NetworkImage(sellerPhoto)
+                                            : null,
+                                        child: sellerPhoto.isEmpty
+                                            ? const Icon(Icons.person, size: 24)
+                                            : null,
                                       ),
-                                      Row(
-                                        children: List.generate(
-                                          5,
-                                          (index) => Icon(
-                                            Icons.star,
-                                            color: index < sellerRating
-                                                ? Colors.orange
-                                                : Colors.grey,
-                                            size: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          SellerPage(sellerData: sellerData),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  'Satıcıyı Gör',
-                                  style: TextStyle(
-                                    color: Colors.orange,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-
-                      const SizedBox(height: 20),
-                      const Text(
-                        "Son Yorumlar",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection('comments')
-                            .where('ilanId', isEqualTo: widget.ilanId)
-                            .orderBy('timestamp', descending: true)
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else if (snapshot.hasError) {
-                            debugPrint('Hata: ${snapshot.error}');
-                            return Center(
-                                child: Text('Hata: ${snapshot.error}'));
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.docs.isEmpty) {
-                            return Center(
-                              child: Text(
-                                'Henüz yorum yapılmamış.',
-                                style: TextStyle(
-                                    color: Colors.orange.shade500,
-                                    fontSize: 14,
-                                    fontStyle: FontStyle.italic),
-                              ),
-                            );
-                          }
-
-                          final comments = snapshot.data!.docs;
-
-                          return ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: comments.length,
-                            itemBuilder: (context, index) {
-                              final comment = comments[index];
-                              final commentId = comment.id;
-                              debugPrint('Comment ID: $commentId');
-                              final userName =
-                                  comment['userName'] ?? 'Bilinmeyen Kullanıcı';
-                              final commentText = comment['comment'] != null
-                                  ? comment['comment']
-                                  : 'Yorum yok';
-                              final timestamp =
-                                  (comment['timestamp'] as Timestamp).toDate();
-
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        CircleAvatar(
-                                          radius: 20,
-                                          backgroundColor:
-                                              Colors.orange.shade300,
-                                          child: Text(
-                                            userName[0].toUpperCase(),
+                                      const SizedBox(width: 10),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            sellerName,
                                             style: const TextStyle(
-                                              color: Colors.white,
+                                              fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
+                                          Row(
+                                            children: List.generate(
+                                              5,
+                                              (index) => Icon(
+                                                Icons.star,
+                                                color: index < sellerRating
+                                                    ? Colors.orange
+                                                    : Colors.grey,
+                                                size: 16,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => SellerPage(
+                                              sellerData: sellerData),
                                         ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                userName,
+                                      );
+                                    },
+                                    child: Text(
+                                      'Satıcıyı Gör',
+                                      style: TextStyle(
+                                        color: Colors.orange,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+
+                          const SizedBox(height: 20),
+                          const Text(
+                            "Son Yorumlar",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+
+                          StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('comments')
+                                .where('ilanId', isEqualTo: widget.ilanId)
+                                .orderBy('timestamp', descending: true)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              } else if (snapshot.hasError) {
+                                debugPrint('Hata: ${snapshot.error}');
+                                return Center(
+                                    child: Text('Hata: ${snapshot.error}'));
+                              } else if (!snapshot.hasData ||
+                                  snapshot.data!.docs.isEmpty) {
+                                return Center(
+                                  child: Text(
+                                    'Henüz yorum yapılmamış.',
+                                    style: TextStyle(
+                                        color: Colors.orange.shade500,
+                                        fontSize: 14,
+                                        fontStyle: FontStyle.italic),
+                                  ),
+                                );
+                              }
+
+                              final comments = snapshot.data!.docs;
+
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: comments.length,
+                                itemBuilder: (context, index) {
+                                  final comment = comments[index];
+                                  final commentId = comment.id;
+                                  debugPrint('Comment ID: $commentId');
+                                  final userName = comment['userName'] ??
+                                      'Bilinmeyen Kullanıcı';
+                                  final commentText = comment['comment'] != null
+                                      ? comment['comment']
+                                      : 'Yorum yok';
+                                  final timestamp =
+                                      (comment['timestamp'] as Timestamp)
+                                          .toDate();
+
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8, horizontal: 16),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 20,
+                                              backgroundColor:
+                                                  Colors.orange.shade300,
+                                              child: Text(
+                                                userName[0].toUpperCase(),
                                                 style: const TextStyle(
-                                                  fontSize: 14,
+                                                  color: Colors.white,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black87,
                                                 ),
                                               ),
-                                              Text(
-                                                DateFormat('d MMM yyyy, HH:mm')
-                                                    .format(timestamp),
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.grey.shade600,
-                                                ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    userName,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black87,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    DateFormat(
+                                                            'd MMM yyyy, HH:mm')
+                                                        .format(timestamp),
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color:
+                                                          Colors.grey.shade600,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 48),
+                                          child: Text(
+                                            commentText,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        ),
+                                        const Divider(),
+
+                                        // Yanıt verme butonu
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 48),
+                                          child: TextButton(
+                                            onPressed: () {
+                                              _showReplyForm(commentId);
+                                            },
+                                            child: const Text(
+                                              "Yanıtla",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.blue,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                        // Yanıtları göster bölümü
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 48),
+                                          child: StreamBuilder<QuerySnapshot>(
+                                            stream: FirebaseFirestore.instance
+                                                .collection('replys')
+                                                .where('parentCommentId',
+                                                    isEqualTo: commentId)
+                                                .orderBy('timestamp',
+                                                    descending: true)
+                                                .snapshots(),
+                                            builder: (context, replySnapshot) {
+                                              debugPrint(
+                                                  'Reply Snapshot: ${replySnapshot.data}');
+                                              if (!replySnapshot.hasData ||
+                                                  replySnapshot
+                                                      .data!.docs.isEmpty) {
+                                                return const SizedBox
+                                                    .shrink(); // Yanıt yoksa boş bırak
+                                              }
+
+                                              final replies =
+                                                  replySnapshot.data!.docs;
+
+                                              return Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      // Yanıtları aç/kapat mantığı eklenebilir
+                                                    },
+                                                    child: const Text(
+                                                      "Yanıtları göster",
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.orange,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  for (var reply in replies)
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 16, top: 8),
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          CircleAvatar(
+                                                            radius: 16,
+                                                            backgroundColor:
+                                                                Colors.orange
+                                                                    .shade200,
+                                                            child: Text(
+                                                              (reply['userName'] ??
+                                                                      'U')[0]
+                                                                  .toUpperCase(),
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 12,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 8),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  reply['userName'] ??
+                                                                      'Bilinmeyen Kullanıcı',
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .black87,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  reply['replyText'] ??
+                                                                      'Yanıt yok',
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    fontSize:
+                                                                        12,
+                                                                    color: Colors
+                                                                        .black87,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                ],
+                                              );
+                                            },
                                           ),
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 8),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 48),
-                                      child: Text(
-                                        commentText,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ),
-                                    const Divider(),
-
-                                    // Yanıt verme butonu
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 48),
-                                      child: TextButton(
-                                        onPressed: () {
-                                          _showReplyForm(commentId);
-                                        },
-                                        child: const Text(
-                                          "Yanıtla",
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.blue,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-
-                                    // Yanıtları göster bölümü
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 48),
-                                      child: StreamBuilder<QuerySnapshot>(
-                                        stream: FirebaseFirestore.instance
-                                            .collection('replys')
-                                            .where('parentCommentId',
-                                                isEqualTo: commentId)
-                                            .orderBy('timestamp',
-                                                descending: true)
-                                            .snapshots(),
-                                        builder: (context, replySnapshot) {
-                                          debugPrint(
-                                              'Reply Snapshot: ${replySnapshot.data}');
-                                          if (!replySnapshot.hasData ||
-                                              replySnapshot
-                                                  .data!.docs.isEmpty) {
-                                            return const SizedBox
-                                                .shrink(); // Yanıt yoksa boş bırak
-                                          }
-
-                                          final replies =
-                                              replySnapshot.data!.docs;
-
-                                          return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  // Yanıtları aç/kapat mantığı eklenebilir
-                                                },
-                                                child: const Text(
-                                                  "Yanıtları göster",
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.orange,
-                                                  ),
-                                                ),
-                                              ),
-                                              for (var reply in replies)
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 16, top: 8),
-                                                  child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      CircleAvatar(
-                                                        radius: 16,
-                                                        backgroundColor: Colors
-                                                            .orange.shade200,
-                                                        child: Text(
-                                                          (reply['userName'] ??
-                                                                  'U')[0]
-                                                              .toUpperCase(),
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 8),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text(
-                                                              reply['userName'] ??
-                                                                  'Bilinmeyen Kullanıcı',
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontSize: 12,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .black87,
-                                                              ),
-                                                            ),
-                                                            Text(
-                                                              reply['replyText'] ??
-                                                                  'Yanıt yok',
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontSize: 12,
-                                                                color: Colors
-                                                                    .black87,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
-                      ),
+                          ),
 
-                      SizedBox(height: 20),
+                          SizedBox(height: 20),
 
-                      TextField(
-                        controller: _commentController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey
-                              .shade100, // Arka plan rengini açık gri yapar
-                          hintText: "Satıcıya soru sor",
-                          hintStyle: TextStyle(
-                            color: Colors.grey, // İpucu metni rengini gri yapar
-                            fontSize: 16, // Metin boyutu
-                          ),
-                          prefixIcon: Icon(
-                            Icons.edit, // Kalem simgesi
-                            color: Colors.grey, // İkon rengi
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                                30), // Tam yuvarlak köşeler
-                            borderSide:
-                                BorderSide.none, // Kenar çizgisi kaldırıldı
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(
-                              color: Colors.grey
-                                  .shade300, // Odaklanıldığında daha belirgin bir renk
+                          TextField(
+                            controller: _commentController,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey
+                                  .shade100, // Arka plan rengini açık gri yapar
+                              hintText: "Satıcıya soru sor",
+                              hintStyle: TextStyle(
+                                color: Colors
+                                    .grey, // İpucu metni rengini gri yapar
+                                fontSize: 16, // Metin boyutu
+                              ),
+                              prefixIcon: Icon(
+                                Icons.edit, // Kalem simgesi
+                                color: Colors.grey, // İkon rengi
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                    30), // Tam yuvarlak köşeler
+                                borderSide:
+                                    BorderSide.none, // Kenar çizgisi kaldırıldı
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide(
+                                  color: Colors.grey
+                                      .shade300, // Odaklanıldığında daha belirgin bir renk
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
 /*
-                      // Miktar Seçim Butonları
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.remove_circle_outline),
-                            color: Colors.orange,
-                            onPressed: () {
-                              if (_quantity > 1) {
-                                _quantity--;
-                                // Scroll kontrolüne dokunmadan miktarı güncelle
-                                setState(() {});
-                              }
-                            },
-                          ),
-                          Text(
-                            '$_quantity',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          // Miktar kontrolü eklendi
-                          IconButton(
-                            icon: const Icon(Icons.add_circle_outline),
-                            color: Colors.orange,
-                            onPressed: () {
-                              setState(() {
-                                if (_quantity < int.parse(miktar)) {
-                                  _quantity++; // Miktarı arttır
-                                } else {
+                          // Miktar Seçim Butonları
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove_circle_outline),
+                                color: Colors.orange,
+                                onPressed: () {
+                                  if (_quantity > 1) {
+                                    _quantity--;
+                                    // Scroll kontrolüne dokunmadan miktarı güncelle
+                                    setState(() {});
+                                  }
+                                },
+                              ),
+                              Text(
+                                '$_quantity',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              // Miktar kontrolü eklendi
+                              IconButton(
+                                icon: const Icon(Icons.add_circle_outline),
+                                color: Colors.orange,
+                                onPressed: () {
+                                  setState(() {
+                                    if (_quantity < int.parse(miktar)) {
+                                      _quantity++; // Miktarı arttır
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content:
+                                                Text('Stok sınırına ulaşıldı!')),
+                                      );
+                                    }
+                                  });
+                                },
+                              ),
+                            ],
+                          ),*/
+/*
+                          // Sepete Ekle Butonu
+                          const SizedBox(height: 20),
+                          Center(
+                            child: ElevatedButton.icon(
+                              onPressed: () async {
+                                // Sepette olup olmadığını kontrol et
+                                final isInCart = await UserService()
+                                    .isProductInCart(widget.id!, widget.ilanId);
+
+                                if (isInCart) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                         content:
-                                            Text('Stok sınırına ulaşıldı!')),
+                                            Text('Sepetinizde bu ürün zaten var!')),
+                                  );
+                                } else {
+                                  // Sepete ekle
+                                  await UserService().addToCart(
+                                    context,
+                                    widget.id!,
+                                    widget.ilanId,
+                                    _quantity.toInt(),
                                   );
                                 }
-                              });
-                            },
-                          ),
-                        ],
-                      ),*/
-/*
-                      // Sepete Ekle Butonu
-                      const SizedBox(height: 20),
-                      Center(
-                        child: ElevatedButton.icon(
-                          onPressed: () async {
-                            // Sepette olup olmadığını kontrol et
-                            final isInCart = await UserService()
-                                .isProductInCart(widget.id!, widget.ilanId);
-
-                            if (isInCart) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content:
-                                        Text('Sepetinizde bu ürün zaten var!')),
-                              );
-                            } else {
-                              // Sepete ekle
-                              await UserService().addToCart(
-                                context,
-                                widget.id!,
-                                widget.ilanId,
-                                _quantity.toInt(),
-                              );
-                            }
-                          },
-                          icon: const Icon(Icons.credit_card,
-                              color: Colors.orange),
-                          label: const Text("Ödemeye Geç"),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.orange,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 12),
-                            textStyle: const TextStyle(
-                              fontSize: 16,
+                              },
+                              icon: const Icon(Icons.credit_card,
+                                  color: Colors.orange),
+                              label: const Text("Ödemeye Geç"),
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.orange,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 24, vertical: 12),
+                                textStyle: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),*/
+                          const SizedBox(height: 20),
+                          const Text(
+                            "Benzer İlanlar",
+                            style: TextStyle(
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
+                              color: Colors.black,
                             ),
                           ),
+                          SizedBox(height: 20),
+                          benzerIlanlarWidget(widget.ilanId, widget.id ?? ''),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Sabit kısımlar
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          // Ara butonuna tıklanınca yapılacak işlemler
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Colors.orange.shade300, // Daha az belirgin renk
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8), // Küçük boyut
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(20), // Yuvarlak köşeler
+                          ),
                         ),
-                      ),*/
-                      const SizedBox(height: 20),
-                      const Text(
-                        "Benzer İlanlar",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                        child: const Text(
+                          "Ara",
+                          style: TextStyle(
+                            color: Colors.white, // Yazı rengi
+                            fontSize: 14, // Küçük yazı boyutu
+                            fontWeight: FontWeight.normal, // Normal kalınlık
+                          ),
                         ),
                       ),
-                      SizedBox(height: 20),
-                      benzerIlanlarWidget(widget.ilanId, widget.id ?? ''),
+                      const SizedBox(width: 24), // Boşluk artırıldı
+                      ElevatedButton(
+                        onPressed: () {
+                          // Mesaj gönder butonuna tıklanınca yapılacak işlemler
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Colors.orange.shade300, // Daha az belirgin renk
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8), // Küçük boyut
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(20), // Yuvarlak köşeler
+                          ),
+                        ),
+                        child: const Text(
+                          "Mesaj Gönder",
+                          style: TextStyle(
+                            color: Colors.white, // Yazı rengi
+                            fontSize: 14, // Küçük yazı boyutu
+                            fontWeight: FontWeight.normal, // Normal kalınlık
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),
