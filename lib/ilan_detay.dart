@@ -6,6 +6,7 @@ import 'package:projekaganebey/services/user_services.dart';
 import 'package:projekaganebey/widgets/benzer_ilanlar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
+import 'package:flutter/services.dart';
 
 class IlanDetayPage extends StatefulWidget {
   final String ilanId;
@@ -31,6 +32,8 @@ class _IlanDetayPageState extends State<IlanDetayPage>
   int _currentPage = 0;
   bool isFavorited = false;
   // int _quantity = 1;
+  final GlobalKey _questionKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -666,9 +669,10 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                             },
                           ),
 
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
                           TextField(
+                            key: _questionKey,
                             controller: _commentController,
                             decoration: InputDecoration(
                               filled: true,
@@ -819,11 +823,31 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                           final phoneNumber = await FirestoreService()
                               .getUserPhoneByIlanId(widget.ilanId);
                           if (phoneNumber != null) {
+                            Clipboard.setData(ClipboardData(
+                                text: phoneNumber)); // Panoya kopyala
+                            debugPrint(phoneNumber + " telefon bu");
+
                             final Uri launchUri = Uri(
                               scheme: 'tel',
                               path: phoneNumber,
                             );
-                            await launchUrl(launchUri);
+
+                            // Telefon numarasının doğru bir şekilde açılabilir olup olmadığını kontrol et
+                            if (await canLaunchUrl(launchUri)) {
+                              await launchUrl(
+                                  launchUri); // Telefonu arama işlemi
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'Telefon numarası panoya kopyalandı!')),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Telefon uygulaması açılamadı!')),
+                              );
+                            }
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -833,45 +857,46 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Colors.orange.shade300, // Daha az belirgin renk
+                          backgroundColor: Colors.orange.shade300,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8), // Küçük boyut
+                              horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(20), // Yuvarlak köşeler
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
                         child: const Text(
                           "Ara",
                           style: TextStyle(
-                            color: Colors.white, // Yazı rengi
-                            fontSize: 14, // Küçük yazı boyutu
-                            fontWeight: FontWeight.normal, // Normal kalınlık
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal,
                           ),
                         ),
                       ),
                       const SizedBox(width: 24), // Boşluk artırıldı
                       ElevatedButton(
                         onPressed: () {
-                          // Mesaj gönder butonuna tıklanınca yapılacak işlemler
+                          // "Mesaj Gönder" butonuna tıklandığında kaydırma işlemi
+                          Scrollable.ensureVisible(
+                            _questionKey.currentContext!,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Colors.orange.shade300, // Daha az belirgin renk
+                          backgroundColor: Colors.orange.shade300,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8), // Küçük boyut
+                              horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(20), // Yuvarlak köşeler
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
                         child: const Text(
                           "Mesaj Gönder",
                           style: TextStyle(
-                            color: Colors.white, // Yazı rengi
-                            fontSize: 14, // Küçük yazı boyutu
-                            fontWeight: FontWeight.normal, // Normal kalınlık
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal,
                           ),
                         ),
                       ),
