@@ -51,14 +51,24 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   void _updateAdminInfo() async {
-    await _firestoreService.updateAdminInfo(
-      _usernameController.text,
-      _passwordController.text,
-    );
+    String newUsername = _usernameController.text;
+    String newPassword = _passwordController.text;
+
+    // Eğer şifre boşsa, sadece kullanıcı adını güncelle
+    if (newPassword.isEmpty) {
+      await _firestoreService.updateAdminInfo(
+          newUsername, password); // Eski şifreyi kullan
+    } else {
+      await _firestoreService.updateAdminInfo(newUsername, newPassword);
+    }
+
     setState(() {
-      username = _usernameController.text;
-      password = _passwordController.text;
+      username = newUsername;
+      password = newPassword.isEmpty
+          ? password
+          : newPassword; // Şifre boşsa eski şifreyi koru
     });
+
     // Başarılı güncelleme mesajı gösterebilirsiniz
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Admin bilgileri güncellendi.")),

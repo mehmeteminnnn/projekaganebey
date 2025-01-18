@@ -6,6 +6,7 @@ import 'package:projekaganebey/models/ilan_model.dart';
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   //final FirebaseStorage _storage = FirebaseStorage.instance;
+  final String adminId = 'CK6bCpvOHKMtACNj8SoZ';
 
   // İlan ekleme
   Future<void> addIlan(IlanModel ilan) async {
@@ -250,7 +251,7 @@ class FirestoreService {
   }
 
   Future<void> updateAdminInfo(String username, String password) async {
-    await _firestore.collection('admin').doc('admin_info').set({
+    await _firestore.collection('admin').doc(adminId).set({
       'username': username,
       'password': password,
     });
@@ -258,7 +259,7 @@ class FirestoreService {
 
   Future<Map<String, dynamic>> getAdminInfo() async {
     DocumentSnapshot snapshot =
-        await _firestore.collection('admin').doc('CK6bCpvOHKMtACNj8SoZ').get();
+        await _firestore.collection('admin').doc(adminId).get();
     return snapshot.data() as Map<String, dynamic>;
   }
 }
