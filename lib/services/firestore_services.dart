@@ -262,4 +262,37 @@ class FirestoreService {
         await _firestore.collection('admin').doc(adminId).get();
     return snapshot.data() as Map<String, dynamic>;
   }
+
+  // İlan ID'sine göre kullanıcının telefon numarasını alma
+  Future<String?> getUserPhoneByIlanId(String ilanId) async {
+    try {
+      // İlanın bilgilerini al
+      DocumentSnapshot ilanSnapshot =
+          await _firestore.collection('ilanlar').doc(ilanId).get();
+
+      if (!ilanSnapshot.exists) {
+        throw Exception('İlan bulunamadı');
+      }
+
+      // İlanı oluşturan kullanıcının ID'sini al
+      String? kullaniciId = ilanSnapshot['olusturanKullaniciId'];
+
+      if (kullaniciId == null) {
+        throw Exception('Kullanıcı ID bulunamadı');
+      }
+
+      // Kullanıcının telefon numarasını al
+      DocumentSnapshot userSnapshot =
+          await _firestore.collection('users').doc(kullaniciId).get();
+
+      if (!userSnapshot.exists) {
+        throw Exception('Kullanıcı bulunamadı');
+      }
+
+      return userSnapshot['phone'] as String?;
+    } catch (e) {
+      debugPrint('Hata: $e');
+      return null;
+    }
+  }
 }

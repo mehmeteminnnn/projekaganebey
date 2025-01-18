@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:projekaganebey/screens/satici.dart';
 import 'package:projekaganebey/services/user_services.dart';
 import 'package:projekaganebey/widgets/benzer_ilanlar.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:projekaganebey/services/firestore_services.dart';
 
 class IlanDetayPage extends StatefulWidget {
   final String ilanId;
@@ -28,7 +30,7 @@ class _IlanDetayPageState extends State<IlanDetayPage>
   final TextEditingController _replyController = TextEditingController();
   int _currentPage = 0;
   bool isFavorited = false;
-  int _quantity = 1;
+  // int _quantity = 1;
   @override
   void initState() {
     super.initState();
@@ -813,8 +815,22 @@ class _IlanDetayPageState extends State<IlanDetayPage>
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                          // Ara butonuna tıklanınca yapılacak işlemler
+                        onPressed: () async {
+                          final phoneNumber = await FirestoreService()
+                              .getUserPhoneByIlanId(widget.ilanId);
+                          if (phoneNumber != null) {
+                            final Uri launchUri = Uri(
+                              scheme: 'tel',
+                              path: phoneNumber,
+                            );
+                            await launchUrl(launchUri);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text('Telefon numarası bulunamadı!')),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
