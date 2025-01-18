@@ -4,6 +4,7 @@ import 'package:projekaganebey/models/ilan_model.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
 import 'package:projekaganebey/widgets/ilan_card.dart';
 import 'package:projekaganebey/widgets/kampanyalar_banner.dart';
+import 'package:projekaganebey/screens/notifications_page.dart';
 
 class AdsMDFLamPage extends StatefulWidget {
   @override
@@ -43,6 +44,19 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NotificationsPage()));
+              },
+              icon: Icon(
+                Icons.notifications,
+                color: Colors.blue,
+              ))
+        ],
         backgroundColor: Colors.white,
         title: Container(
           decoration: BoxDecoration(

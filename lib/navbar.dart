@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:projekaganebey/screens/ana_ekran.dart';
 import 'package:projekaganebey/screens/notifications_page.dart';
+import 'package:projekaganebey/screens/arama_page.dart';
 //import 'package:projekaganebey/bildirimler.dart';
 import 'package:projekaganebey/favorilerim.dart';
 import 'package:projekaganebey/ilan_ver.dart';
 import 'package:projekaganebey/screens/profil_ekrani.dart';
 //import 'package:projekaganebey/sepetim.dart';
+import 'package:projekaganebey/styles.dart';
 
 void main() => runApp(MyApp());
 
@@ -31,9 +33,9 @@ class MainScreen extends StatelessWidget {
     debugPrint("MainScreen id: $id");
     return [
       AdsMDFLamPage(id: id),
-      FavorilerimPage(id: id),
+      AramaPage(),
       IlanVerPage(id: id),
-      NotificationsPage(),
+      FavorilerimPage(id: id),
       ProfileScreen(id: id),
     ];
   }
@@ -47,8 +49,8 @@ class MainScreen extends StatelessWidget {
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.favorite),
-        title: ("Favorilerim"),
+        icon: Icon(Icons.search),
+        title: ("Arama"),
         activeColorPrimary: Colors.blue,
         inactiveColorPrimary: Colors.grey,
       ),
@@ -61,8 +63,8 @@ class MainScreen extends StatelessWidget {
         activeColorSecondary: Colors.blue,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.notifications),
-        title: ("Bildirimler"),
+        icon: Icon(Icons.favorite),
+        title: ("Favorilerim"),
         activeColorPrimary: Colors.blue,
         inactiveColorPrimary: Colors.grey,
       ),

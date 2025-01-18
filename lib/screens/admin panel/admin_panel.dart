@@ -3,6 +3,8 @@ import 'package:projekaganebey/screens/admin%20panel/banners.dart';
 import 'package:projekaganebey/screens/admin%20panel/notification_screen.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
 import 'package:projekaganebey/screens/giris_ekrani.dart';
+import 'package:projekaganebey/navbar.dart';
+import 'package:projekaganebey/styles.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -82,13 +84,9 @@ class _DashboardPageState extends State<DashboardPage> {
         elevation: 0,
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
-        title: const Text(
+        title: Text(
           "Admin Panel",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: appBarTextStyle,
         ),
         actions: [
           IconButton(

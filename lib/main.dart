@@ -41,10 +41,10 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp( 
       theme: ThemeData(
           scaffoldBackgroundColor: Colors.white,
-          appBarTheme: AppBarTheme(backgroundColor: Colors.white)),
+          appBarTheme: AppBarTheme(backgroundColor: Colors.white),),
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
     );
