@@ -32,8 +32,7 @@ void main() async {
     NotificationService().showNotification(message); // Bildirimi göster
   });
 
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler); 
-  
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   runApp(MyApp());
 }
@@ -41,10 +40,11 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp( 
+    return MaterialApp(
       theme: ThemeData(
-          scaffoldBackgroundColor: Colors.white,
-          appBarTheme: AppBarTheme(backgroundColor: Colors.white),),
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: AppBarTheme(backgroundColor: Colors.white),
+      ),
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
     );

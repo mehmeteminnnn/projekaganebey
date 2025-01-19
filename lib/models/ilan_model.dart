@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
-class IlanModel {
+class IlanModel with ChangeNotifier {
   String? id; // İlanın benzersiz ID'si
   String? baslik; // İlan başlığı
   String? aciklama; // İlan açıklaması
@@ -104,5 +105,13 @@ class IlanModel {
       'saticiFotografi': saticiFotografi,
       'saticiPuan': saticiPuan,
     };
+  }
+
+  void updateIlan(
+      String? newIlanId, String? newIlanBaslik, String? newUserName) {
+    id = newIlanId;
+    baslik = newIlanBaslik;
+    olusturanKullaniciId = newUserName;
+    notifyListeners();
   }
 }
