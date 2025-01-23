@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:projekaganebey/screens/banka_hesap.dart';
 import 'package:projekaganebey/ilanlar%C4%B1m.dart';
 import 'package:projekaganebey/screens/profilim_detay.dart';
-import 'package:projekaganebey/sattiklarim.dart';
 import 'package:projekaganebey/screens/settings.dart';
+import 'package:projekaganebey/screens/giris_ekrani.dart';
 
 class ProfileCard extends StatelessWidget {
   final IconData icon;
@@ -126,40 +126,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ProfileCard(
-                    icon: Icons.shopping_cart,
-                    title: 'Aldıklarım',
+                    icon: Icons.visibility,
+                    title: 'Yayında Olan İlanlar',
                     color: Colors.blue.shade50,
                     onTap: () {
-                      debugPrint("Aldıklarım tıklandı");
+                      debugPrint("Yayında Olan İlanlar tıklandı");
+                      // Yayında olan ilanlar sayfasına yönlendirme yapılabilir
                     },
                   ),
                   ProfileCard(
-                    icon: Icons.local_offer,
-                    title: 'Sattıklarım',
+                    icon: Icons.visibility_off,
+                    title: 'Yayında Olmayan İlanlar',
                     color: Colors.blue.shade50,
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SattiklarimPage()));
-                      debugPrint("Sattıklarım tıklandı");
+                      debugPrint("Yayında Olmayan İlanlar tıklandı");
+                      // Yayında olmayan ilanlar sayfasına yönlendirme yapılabilir
                     },
                   ),
                 ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: BankInfoCard(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => BankaHesapBilgileriPage(
-                                userId: widget.id!,
-                              )));
-                  debugPrint("Banka hesap bilgileri tıklandı");
-                },
               ),
             ),
             const SizedBox(height: 20.0),
@@ -196,7 +180,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     debugPrint("Yardım ve Destek tıklandı");
                   },
                 ),
-                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.logout, color: Colors.grey),
+                  title: const Text('Çıkış Yap'),
+                  onTap: () {
+                    // Çıkış yapma işlemi
+                    _logout();
+                  },
+                ),
                 ListTile(
                   leading: const CircleAvatar(
                     backgroundImage: AssetImage('assets/person.png'),
@@ -224,6 +215,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _logout() async {
+    // Çıkış yapma işlemleri burada yapılabilir
+    debugPrint("Çıkış yapıldı");
+
+    // Kullanıcıyı giriş ekranına yönlendirin
+    await Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+      (Route<dynamic> route) => false, // Tüm mevcut sayfaları kaldır
     );
   }
 }
