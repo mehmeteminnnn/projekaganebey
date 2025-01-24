@@ -5,6 +5,7 @@ import 'package:projekaganebey/firebase_options.dart';
 import 'package:projekaganebey/services/notification_services.dart';
 import 'package:projekaganebey/screens/splash_screen.dart';
 
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print('Arka planda bildirim geldi: ${message.notification?.title}');
@@ -33,7 +34,7 @@ void main() async {
   });
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
+ 
   runApp(MyApp());
 }
 

@@ -1,3 +1,4 @@
+import 'dart:async'; // Timer için gerekli
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,36 +26,56 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String _verificationId = '';
   final TextEditingController _smsController = TextEditingController();
+  int _countdown = 120; // 2 dakika geri sayım
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
     _verifyPhoneNumber();
+    _startCountdown(); // Geri sayımı başlat
+  }
+
+  // Geri sayım başlatma
+  void _startCountdown() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_countdown > 0) {
+        setState(() {
+          _countdown--;
+        });
+      } else {
+        _timer?.cancel(); // Geri sayım tamamlandığında timer'ı durdur
+      }
+    });
   }
 
   // Firebase telefon numarası doğrulama
   Future<void> _verifyPhoneNumber() async {
-    await _auth.verifyPhoneNumber(
-      phoneNumber: widget.phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        // Otomatik doğrulama başarılıysa giriş yap
-        await _auth.signInWithCredential(credential);
-        _registerUser(); // Kullanıcıyı sisteme kaydet
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        Fluttertoast.showToast(msg: "Doğrulama başarısız: ${e.message}");
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        setState(() {
-          _verificationId = verificationId;
-        });
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        setState(() {
-          _verificationId = verificationId;
-        });
-      },
-    );
+    try {
+      await _auth.verifyPhoneNumber(
+        phoneNumber: widget.phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          // Otomatik doğrulama başarılıysa giriş yap
+          await _auth.signInWithCredential(credential);
+          _registerUser(); // Kullanıcıyı sisteme kaydet
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          Fluttertoast.showToast(msg: "Doğrulama başarısız: ${e.message}");
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          setState(() {
+            _verificationId = verificationId;
+          });
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          setState(() {
+            _verificationId = verificationId;
+          });
+        },
+      );
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Hata: ${e.toString()}");
+    }
   }
 
   // SMS doğrulama kodu ile giriş
@@ -97,6 +118,12 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen> {
         Fluttertoast.showToast(msg: "Kayıt sırasında hata oluştu: $e");
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Timer'ı durdur
+    super.dispose();
   }
 
   @override
@@ -175,7 +202,7 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen> {
 
               // Alt Bilgi
               Text(
-                'Doğrulama kodunu almadınız mı? Kod gönderim süresi: 01:59',
+                'Doğrulama kodunu almadınız mı? Kod gönderim süresi: ${_countdown ~/ 60}:${(_countdown % 60).toString().padLeft(2, '0')}',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,

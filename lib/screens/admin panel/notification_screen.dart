@@ -3,6 +3,7 @@ import 'package:googleapis_auth/googleapis_auth.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:googleapis_auth/auth_io.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NotificationPage extends StatefulWidget {
   @override
@@ -47,40 +48,45 @@ class _NotificationPageState extends State<NotificationPage> {
     try {
       final accessToken = await getAccessToken(); // OAuth2 token almak
 
-      final String apiUrl =
-          'https://fcm.googleapis.com/v1/projects/kaganbey/messages:send';
+      // Firestore'dan tüm token'ları al
+      final userTokensSnapshot =
+          await FirebaseFirestore.instance.collection('user_tokens').get();
+      final tokens =
+          userTokensSnapshot.docs.map((doc) => doc['token'] as String).toList();
 
-      final Map<String, dynamic> message = {
-        'message': {
-          'notification': {
-            'title': title,
-            'body': body,
+      for (String token in tokens) {
+        final String apiUrl =
+            'https://fcm.googleapis.com/v1/projects/kaganbey/messages:send';
+
+        final Map<String, dynamic> message = {
+          'message': {
+            'notification': {
+              'title': title,
+              'body': body,
+            },
+            'token': token, // Her bir kullanıcı token'ına bildirim gönder
           },
-          'topic': 'all', // Tüm kullanıcılara bildirim göndermek için
-        },
-      };
+        };
 
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {
-          'Authorization': 'Bearer $accessToken',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(message),
-      );
+        final response = await http.post(
+          Uri.parse(apiUrl),
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(message),
+        );
 
-      if (response.statusCode == 200) {
-        setState(() {
-          successMessage = "Bildirim başarıyla gönderildi!";
-        });
-        titleController.clear(); // Başlık alanını sıfırla
-        bodyController.clear(); // Mesaj alanını sıfırla
-      } else {
-        setState(() {
-          successMessage = "Bildirim gönderme hatası: ${response.body}";
+        if (response.statusCode != 200) {
           debugPrint("Bildirim gönderme hatası: ${response.body}");
-        });
+        }
       }
+
+      setState(() {
+        successMessage = "Bildirimler başarıyla gönderildi!";
+      });
+      titleController.clear();
+      bodyController.clear();
     } catch (error) {
       setState(() {
         successMessage = "Bir hata oluştu: $error";
