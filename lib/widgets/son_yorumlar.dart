@@ -13,6 +13,7 @@ class SonYorumlar extends StatefulWidget {
 
 class _SonYorumlarState extends State<SonYorumlar> {
   late List<Map<String, dynamic>> comments = [];
+  final Map<String, bool> _showRepliesMap = {}; // Yanıtları gösterme durumu
 
   @override
   Widget build(BuildContext context) {
@@ -135,28 +136,22 @@ class _SonYorumlarState extends State<SonYorumlar> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 30),
-                        child: TextButton(
-                          onPressed: () {
-                            _showReplyModal(comment['id']);
-                          },
-                          child: const Text(
-                            "Yanıtla",
-                            style: TextStyle(color: Colors.blue, fontSize: 12),
-                          ),
-                        ),
-                      ),
-                      if (hasReply)
+                      if (hasReply) ...[
                         TextButton(
                           onPressed: () {
-                            _showReplies(context, comment['id']);
+                            setState(() {
+                              _showRepliesMap[comment['id']] =
+                                  !(_showRepliesMap[comment['id']] ?? false);
+                            });
                           },
                           child: const Text(
                             "Yanıtları Göster",
-                            style: TextStyle(color: Colors.blue),
+                            style: TextStyle(color: Colors.blue, fontSize: 12),
                           ),
                         ),
+                        if (_showRepliesMap[comment['id']] == true)
+                          _buildReplies(comment['id']),
+                      ],
                       const Divider(),
                     ],
                   ),
@@ -166,6 +161,63 @@ class _SonYorumlarState extends State<SonYorumlar> {
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildReplies(String commentId) {
+    return FutureBuilder<QuerySnapshot>(
+      future: FirebaseFirestore.instance
+          .collection('replys')
+          .where('parentCommentId', isEqualTo: commentId)
+          .get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Hata: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Text('Henüz yanıt yok.');
+        }
+
+        final replies = snapshot.data!.docs;
+
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: replies.length,
+          itemBuilder: (context, index) {
+            final reply = replies[index];
+            final replyText = reply['replyText'] ?? 'Yanıt yok';
+            final replyUserName = reply['userName'] ?? 'Bilinmeyen Kullanıcı';
+
+            return Padding(
+              padding: const EdgeInsets.only(left: 48, top: 4),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.orange.shade300,
+                    child: Text(
+                      replyUserName[0].toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ListTile(
+                      title: Text(replyUserName),
+                      subtitle: Text(replyText),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -220,57 +272,5 @@ class _SonYorumlarState extends State<SonYorumlar> {
         'hasReply': true,
       });
     }
-  }
-
-  void _showReplies(BuildContext context, String commentId) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Yanıtlar"),
-          content: FutureBuilder<QuerySnapshot>(
-            future: FirebaseFirestore.instance
-                .collection('replys')
-                .where('parentCommentId', isEqualTo: commentId)
-                .get(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Text('Hata: ${snapshot.error}');
-              } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return const Text('Henüz yanıt yok.');
-              }
-
-              final replies = snapshot.data!.docs;
-
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: replies.length,
-                itemBuilder: (context, index) {
-                  final reply = replies[index];
-                  final replyText = reply['replyText'] ?? 'Yanıt yok';
-                  final replyUserName =
-                      reply['userName'] ?? 'Bilinmeyen Kullanıcı';
-
-                  return ListTile(
-                    title: Text(replyUserName),
-                    subtitle: Text(replyText),
-                  );
-                },
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("Kapat"),
-            ),
-          ],
-        );
-      },
-    );
   }
 }

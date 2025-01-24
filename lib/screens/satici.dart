@@ -40,19 +40,23 @@ class SellerPage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 fontSize: 16)),
         actions: [
-          // Popup menu button
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == "report") {
-                // Şikayet ekranına gitme veya şikayet işlemi
                 _showReportDialog(context);
+              } else if (value == "rate") {
+                _showRatingDialog(context);
               }
             },
             itemBuilder: (BuildContext context) {
               return [
-                PopupMenuItem(
+                const PopupMenuItem(
                   value: "report",
                   child: Text("Satıcıyı Şikayet Et"),
+                ),
+                const PopupMenuItem(
+                  value: "rate",
+                  child: Text("Satıcıyı Değerlendir"),
                 ),
               ];
             },
@@ -64,22 +68,19 @@ class SellerPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Satıcı Bilgileri Kısmı
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  radius: 35, //Daha küçük bir avatar
-                  backgroundImage: (sellerPhoto.isNotEmpty
-                      ? NetworkImage(sellerPhoto)
-                      : null),
+                  radius: 35,
+                  backgroundImage:
+                      sellerPhoto.isNotEmpty ? NetworkImage(sellerPhoto) : null,
                   child: sellerPhoto.isEmpty
                       ? const Icon(Icons.person, size: 40)
                       : null,
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  // Metni sarmak için Expanded ekledik
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -87,9 +88,8 @@ class SellerPage extends StatelessWidget {
                         sellerData['name'] ?? 'Bilinmeyen Satıcı',
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
-                        overflow: TextOverflow
-                            .ellipsis, // Uzun metinler için kesme ekleyin
-                        maxLines: 1, // Bir satırda tutun
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                       const SizedBox(height: 6),
                       Row(
@@ -113,40 +113,39 @@ class SellerPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(width: 35),
-
+                const SizedBox(width: 35),
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.inventory, size: 25, color: Colors.blue),
-                    SizedBox(height: 4),
-                    Text(
+                    const Icon(Icons.inventory, size: 25, color: Colors.blue),
+                    const SizedBox(height: 4),
+                    const Text(
                       "Ürün Adedi",
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      "12",
+                      sellerData['productCount']?.toString() ?? "0",
                       style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                     ),
                   ],
                 ),
-                SizedBox(width: 20),
-                // Satış adedi
+                const SizedBox(width: 20),
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.shopping_cart, size: 25, color: Colors.green),
-                    SizedBox(height: 4),
-                    Text(
+                    const Icon(Icons.shopping_cart,
+                        size: 25, color: Colors.green),
+                    const SizedBox(height: 4),
+                    const Text(
                       "Satış Adedi",
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      "23",
+                      sellerData['salesCount']?.toString() ?? "0",
                       style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                     ),
                   ],
@@ -154,57 +153,11 @@ class SellerPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            /*Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                // Ürün adedi
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.inventory, size: 25, color: Colors.blue),
-                    SizedBox(height: 4),
-                    Text(
-                      "Ürün Adedi",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      "12",
-                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                    ),
-                  ],
-                ),
-                SizedBox(width: 20),
-                // Satış adedi
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.shopping_cart, size: 25, color: Colors.green),
-                    SizedBox(height: 4),
-                    Text(
-                      "Satış Adedi",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      "23",
-                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 20),*/
-            // Satıcının İlanları Başlığı
             const Text(
               "Satıcının İlanları:",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-
-            // İlanlar Grid Görünümü
             Expanded(
               child: FutureBuilder<List<Map<String, dynamic>>>(
                 future: _getListings(listingIds),
@@ -229,8 +182,9 @@ class SellerPage extends StatelessWidget {
                   }
 
                   return GridView.builder(
-                    padding: EdgeInsets.all(8.0),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    padding: const EdgeInsets.all(8.0),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 8.0,
                       crossAxisSpacing: 8.0,
@@ -263,34 +217,83 @@ class SellerPage extends StatelessWidget {
     );
   }
 
-  // Şikayet ekranı için bir dialog gösterme fonksiyonu
   void _showReportDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Satıcıyı Şikayet Et"),
-          content: Text("Satıcıyı şikayet etmek istediğinizden emin misiniz?"),
+          title: const Text("Satıcıyı Şikayet Et"),
+          content:
+              const Text("Satıcıyı şikayet etmek istediğinizden emin misiniz?"),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // Dialogu kapat
+                Navigator.pop(context);
               },
-              child: Text("İptal"),
+              child: const Text("İptal"),
             ),
             ElevatedButton(
               onPressed: () {
-                // Şikayet işlemini gerçekleştir
-                Navigator.pop(context); // Dialogu kapat
+                Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Şikayetiniz gönderildi.")),
+                  const SnackBar(content: Text("Şikayetiniz gönderildi.")),
                 );
               },
-              child: Text("Şikayet Et"),
+              child: const Text("Şikayet Et"),
             ),
           ],
         );
       },
     );
+  }
+
+  void _showRatingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Satıcıyı Değerlendir"),
+          content: const Text("Lütfen satıcıyı yıldızlarla değerlendirin."),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(5, (index) {
+                return IconButton(
+                  icon: const Icon(Icons.star, color: Colors.grey),
+                  onPressed: () {
+                    _rateSeller(index + 1, context);
+                    Navigator.of(context).pop();
+                  },
+                );
+              }),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("İptal"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _rateSeller(int rating, BuildContext context) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(sellerData['uid'])
+        .update({
+      'rating': rating,
+      'değerlendiren': FieldValue.increment(1),
+    });
+
+    /* ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Satıcı puanı güncellendi: $rating")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Puan güncellenirken hata oluştu.")),
+      );*/
   }
 }

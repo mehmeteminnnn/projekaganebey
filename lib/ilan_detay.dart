@@ -572,7 +572,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
     );
   }
 
-  void _showReplyForm(String commentId) {
+  /*void _showReplyForm(String commentId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -602,9 +602,9 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
         );
       },
     );
-  }
+  }*/
 
-  void _submitReply(String commentId) {
+  /*void _submitReply(String commentId) {
     FirebaseFirestore.instance.collection('replys').add({
       'parentCommentId': commentId,
       'replyText': _replyController.text,
@@ -612,7 +612,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
       'userName': 'Current User',
       'ilanId': widget.ilanId,
     });
-  }
+  }*/
 
   void _showQuestionModal() {
     showModalBottomSheet(
