@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projekaganebey/screens/giris_ekrani.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -10,6 +11,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    // Firebase Messaging ile abone olma
+    FirebaseMessaging.instance.subscribeToTopic('all').then((_) {
+      print("Cihaz 'all' topic'ine abone oldu.");
+    });
 
     // Splash ekranını birkaç saniye gösterdikten sonra Login ekranına geçiş
     Future.delayed(Duration(seconds: 3), () {
