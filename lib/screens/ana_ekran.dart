@@ -121,6 +121,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                             ? ilan.resimler![0]
                             : null,
                         ilanID: ilan.id!,
+                        kendiIlanim: false,
                         context: context,
                       );
                     },
@@ -168,6 +169,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                     ? ilan.resimler![0]
                                     : null,
                                 ilanID: ilan.id!,
+                                kendiIlanim: false,
                                 context: context,
                               );
                             },

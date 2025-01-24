@@ -105,7 +105,7 @@ class _IlanlarimPageState extends State<IlanlarimPage> {
                   itemCount: _ilanlar.length,
                   itemBuilder: (context, index) {
                     var ilan = _ilanlar[index];
-                    return buildIlanCard(
+                    return buildIlanCard(kendiIlanim: true,
                       baslik: ilan.baslik,
                       fiyat: ilan.fiyat,
                       resimUrl: ilan.resimler?.isNotEmpty == true

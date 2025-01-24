@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
-import 'package:projekaganebey/screens/banka_hesap.dart';
 import 'package:projekaganebey/ilanlar%C4%B1m.dart';
 import 'package:projekaganebey/screens/profilim_detay.dart';
 import 'package:projekaganebey/screens/settings.dart';
@@ -50,49 +49,6 @@ class ProfileCard extends StatelessWidget {
   }
 }
 
-class BankInfoCard extends StatelessWidget {
-  final VoidCallback? onTap;
-
-  const BankInfoCard({Key? key, this.onTap}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.9,
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.blue,
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Icon(Icons.credit_card, color: Colors.white),
-            SizedBox(height: 8.0),
-            Text(
-              'Banka hesap bilgileri',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              'Banka kartı ekle',
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 14.0,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class ProfileScreen extends StatefulWidget {
   final String? id;
   ProfileScreen({Key? key, this.id}) : super(key: key);
@@ -131,7 +87,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: 'Yayında Olan İlanlar',
                     color: Colors.blue.shade50,
                     onTap: () {
-                      debugPrint("Yayında Olan İlanlar tıklandı");
+                      //debugPrint("Yayında Olan İlanlar tıklandı");
+
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  IlanlarimPage(id: widget.id)));
+                      debugPrint("İlanlarım tıklandı");
+
                       // Yayında olan ilanlar sayfasına yönlendirme yapılabilir
                     },
                   ),
@@ -150,7 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 20.0),
             Column(
               children: [
-                ListTile(
+                /*ListTile(
                   leading: const Icon(Icons.bookmarks, color: Colors.grey),
                   title: const Text('İlanlarım'),
                   onTap: () {
@@ -161,7 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 IlanlarimPage(id: widget.id)));
                     debugPrint("İlanlarım tıklandı");
                   },
-                ),
+                ),*/
                 ListTile(
                   leading: const Icon(Icons.settings, color: Colors.grey),
                   title: const Text('Ayarlar'),

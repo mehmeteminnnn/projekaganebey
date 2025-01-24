@@ -13,9 +13,14 @@ class IlanDetayPage extends StatefulWidget {
   final String ilanId;
   final String? ilanbaslik;
   final String? id;
+  final bool? kendiIlanim;
 
   const IlanDetayPage(
-      {Key? key, required this.ilanId, this.ilanbaslik, this.id})
+      {Key? key,
+      required this.ilanId,
+      this.ilanbaslik,
+      this.id,
+      this.kendiIlanim})
       : super(key: key);
 
   @override
@@ -33,7 +38,9 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
 
   @override
   void initState() {
-    _checkIfFavorited();
+    if (widget.kendiIlanim != true) {
+      _checkIfFavorited();
+    }
     super.initState();
     _focusNode.addListener(() {
       if (_focusNode.hasFocus) {
@@ -100,53 +107,72 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
-          IconButton(
-            icon: Icon(
-              isFavorited ? Icons.favorite : Icons.favorite_border,
-              color: isFavorited ? Colors.red : null,
-            ),
-            onPressed: () async {
-              setState(() {
-                isFavorited = !isFavorited;
-              });
+          if (widget.kendiIlanim != true)
+            IconButton(
+              icon: Icon(
+                isFavorited ? Icons.favorite : Icons.favorite_border,
+                color: isFavorited ? Colors.red : null,
+              ),
+              onPressed: () async {
+                setState(() {
+                  isFavorited = !isFavorited;
+                });
 
-              final userRef =
-                  FirebaseFirestore.instance.collection('users').doc(widget.id);
+                final userRef = FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(widget.id);
 
-              try {
-                final userDoc = await userRef.get();
+                try {
+                  final userDoc = await userRef.get();
 
-                if (userDoc.exists) {
-                  if (isFavorited) {
-                    await userRef.update({
-                      'favorilerim': FieldValue.arrayUnion([widget.ilanId]),
+                  if (userDoc.exists) {
+                    if (isFavorited) {
+                      await userRef.update({
+                        'favorilerim': FieldValue.arrayUnion([widget.ilanId]),
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Favorilere eklendi!')),
+                      );
+                    } else {
+                      await userRef.update({
+                        'favorilerim': FieldValue.arrayRemove([widget.ilanId]),
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Favorilerden çıkarıldı!')),
+                      );
+                    }
+                  } else {
+                    await userRef.set({
+                      'favorilerim': [widget.ilanId],
                     });
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Favorilere eklendi!')),
                     );
-                  } else {
-                    await userRef.update({
-                      'favorilerim': FieldValue.arrayRemove([widget.ilanId]),
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Favorilerden çıkarıldı!')),
-                    );
                   }
-                } else {
-                  await userRef.set({
-                    'favorilerim': [widget.ilanId],
-                  });
+                } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Favorilere eklendi!')),
+                    SnackBar(content: Text('Bir hata oluştu: $e')),
                   );
                 }
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Bir hata oluştu: $e')),
-                );
-              }
-            },
-          ),
+              },
+            ),
+          if (widget.kendiIlanim == true)
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == 'edit') {
+                  // İlan düzenleme işlemleri
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return [
+                  const PopupMenuItem<String>(
+                    value: 'edit',
+                    child: Text('İlanı Düzenle'),
+                  ),
+                ];
+              },
+            ),
         ],
       ),
       body: FutureBuilder<DocumentSnapshot>(
@@ -156,8 +182,8 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(
-              child: Text('Bir hata oluştu: ${snapshot.error}'),
-            );
+                //  child: Text('Bir hata oluştu: ${snapshot.error}'),
+                );
           } else if (!snapshot.hasData || !snapshot.data!.exists) {
             return const Center(
               child: Text("İlan bulunamadı."),
