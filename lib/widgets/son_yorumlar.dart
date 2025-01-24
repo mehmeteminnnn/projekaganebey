@@ -28,12 +28,12 @@ class _SonYorumlarState extends State<SonYorumlar> {
           ),
         ),
         const SizedBox(height: 20),
-        StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
+        FutureBuilder<QuerySnapshot>(
+          future: FirebaseFirestore.instance
               .collection('comments')
               .where('ilanId', isEqualTo: widget.ilanId)
               .orderBy('timestamp', descending: true)
-              .snapshots(),
+              .get(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -54,6 +54,7 @@ class _SonYorumlarState extends State<SonYorumlar> {
             comments = snapshot.data!.docs.map((doc) {
               final data = doc.data() as Map<String, dynamic>;
               return {
+                'id': doc.id,
                 'userName': data['userName'] ?? 'Bilinmeyen Kullanıcı',
                 'comment': data['comment'] ?? 'Yorum yok',
                 'timestamp': data['timestamp'] as Timestamp?,
@@ -134,6 +135,18 @@ class _SonYorumlarState extends State<SonYorumlar> {
                           ),
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 30),
+                        child: TextButton(
+                          onPressed: () {
+                            _showReplyModal(comment['id']);
+                          },
+                          child: const Text(
+                            "Yanıtla",
+                            style: TextStyle(color: Colors.blue, fontSize: 12),
+                          ),
+                        ),
+                      ),
                       if (hasReply)
                         TextButton(
                           onPressed: () {
@@ -156,17 +169,70 @@ class _SonYorumlarState extends State<SonYorumlar> {
     );
   }
 
+  void _showReplyModal(String commentId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final TextEditingController replyController = TextEditingController();
+        return AlertDialog(
+          title: const Text("Yanıt Yaz"),
+          content: TextField(
+            controller: replyController,
+            decoration: const InputDecoration(
+              hintText: "Yanıtınızı yazın...",
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                if (replyController.text.isNotEmpty) {
+                  _addReply(commentId, replyController.text);
+                  Navigator.of(context).pop(); // Modalı kapat
+                }
+              },
+              child: const Text("Gönder"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Modalı kapat
+              },
+              child: const Text("İptal"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _addReply(String commentId, String replyText) async {
+    if (replyText.isNotEmpty) {
+      await FirebaseFirestore.instance.collection('replys').add({
+        'parentCommentId': commentId,
+        'replyText': replyText,
+        'timestamp': FieldValue.serverTimestamp(),
+        'userName': 'Mevcut Kullanıcı', // Kullanıcı adını dinamik olarak alın
+      });
+
+      await FirebaseFirestore.instance
+          .collection('comments')
+          .doc(commentId)
+          .update({
+        'hasReply': true,
+      });
+    }
+  }
+
   void _showReplies(BuildContext context, String commentId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Yanıtlar"),
-          content: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
+          content: FutureBuilder<QuerySnapshot>(
+            future: FirebaseFirestore.instance
                 .collection('replys')
                 .where('parentCommentId', isEqualTo: commentId)
-                .snapshots(),
+                .get(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());

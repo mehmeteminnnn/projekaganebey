@@ -401,11 +401,28 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                           const SizedBox(height: 20),
                           SonYorumlar(ilanId: widget.ilanId),
                           const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: () {
-                              _showQuestionModal();
-                            },
-                            child: const Text("Satıcıya Soru Sor"),
+                          GestureDetector(
+                            onTap: _showQuestionModal,
+                            child: Container(
+                              padding: const EdgeInsets.all(16.0),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Row(
+                                key: _questionKey,
+                                children: [
+                                  const Icon(Icons.edit, color: Colors.grey),
+                                  const SizedBox(width: 8),
+                                  const Expanded(
+                                    child: Text(
+                                      "Satıcıya soru sor",
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 20),
                           const Text(

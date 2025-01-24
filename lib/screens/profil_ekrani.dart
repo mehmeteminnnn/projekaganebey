@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:projekaganebey/screens/banka_hesap.dart';
 import 'package:projekaganebey/ilanlar%C4%B1m.dart';
 import 'package:projekaganebey/screens/profilim_detay.dart';
@@ -222,11 +223,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // Çıkış yapma işlemleri burada yapılabilir
     debugPrint("Çıkış yapıldı");
 
-    // Kullanıcıyı giriş ekranına yönlendirin
-    await Navigator.pushAndRemoveUntil(
+    PersistentNavBarNavigator.pushNewScreen(
+      context,
+      screen: LoginScreen(),
+      withNavBar: false, // Alt menü gizlenir
+      pageTransitionAnimation: PageTransitionAnimation.fade,
+    );
+
+    // Giriş ekranına dönüp diğer sayfaları temizlemek için
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => LoginScreen()),
-      (Route<dynamic> route) => false, // Tüm mevcut sayfaları kaldır
+      (Route<dynamic> route) => false,
     );
   }
 }
