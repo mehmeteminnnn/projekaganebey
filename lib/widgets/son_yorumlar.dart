@@ -136,6 +136,20 @@ class _SonYorumlarState extends State<SonYorumlar> {
                           ),
                         ),
                       ),
+                      // Yanıtla butonu
+                      Padding(
+                        padding: const EdgeInsets.only(left: 35),
+                        child: TextButton(
+                          onPressed: () {
+                            _showReplyModal(comment['id']);
+                          },
+                          child: const Text(
+                            "Yanıtla",
+                            style: TextStyle(color: Colors.blue, fontSize: 12),
+                          ),
+                        ),
+                      ),
+                      // Yanıtları göster butonu
                       if (hasReply) ...[
                         TextButton(
                           onPressed: () {
