@@ -32,7 +32,7 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen> {
   @override
   void initState() {
     super.initState();
-    _verifyPhoneNumber();
+
     _startCountdown(); // Geri sayımı başlat
   }
 

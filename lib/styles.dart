@@ -4,7 +4,5 @@ import 'package:flutter/material.dart';
 final TextStyle appBarTextStyle = TextStyle(
   fontSize: 20, // Yazı boyutu
   fontWeight: FontWeight.bold, // Yazı kalınlığı
-  color: Colors.white, // Yazı rengi
+  color: Colors.black, // Yazı rengi
 );
-
-// Diğer stil tanımları buraya eklenebilir

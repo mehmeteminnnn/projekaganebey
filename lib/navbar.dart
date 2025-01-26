@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:projekaganebey/screens/ana_ekran.dart';
 import 'package:projekaganebey/screens/notifications_page.dart';
-import 'package:projekaganebey/screens/arama_page.dart';
 //import 'package:projekaganebey/bildirimler.dart';
 import 'package:projekaganebey/favorilerim.dart';
 import 'package:projekaganebey/ilan_ver.dart';
 import 'package:projekaganebey/screens/profil_ekrani.dart';
 //import 'package:projekaganebey/sepetim.dart';
 import 'package:projekaganebey/styles.dart';
+import "package:projekaganebey/screens/search_screen.dart";
 
 void main() => runApp(MyApp());
 
@@ -33,7 +33,7 @@ class MainScreen extends StatelessWidget {
     debugPrint("MainScreen id: $id");
     return [
       AdsMDFLamPage(id: id),
-      AramaPage(),
+      SearchPage(),
       IlanVerPage(id: id),
       FavorilerimPage(id: id),
       ProfileScreen(id: id),

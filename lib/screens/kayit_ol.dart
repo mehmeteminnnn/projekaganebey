@@ -186,7 +186,7 @@ class RegisterScreen extends StatelessWidget {
                 ),
                 child: Text(
                   'Kayıt Ol',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
             ),

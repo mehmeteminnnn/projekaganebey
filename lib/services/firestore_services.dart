@@ -295,4 +295,30 @@ class FirestoreService {
       return null;
     }
   }
+
+// Koleksiyondaki belge sayısını al
+  Future<int> getDocumentCount(String collectionName) async {
+    try {
+      QuerySnapshot snapshot =
+          await _firestore.collection(collectionName).get();
+      return snapshot.docs.length;
+    } catch (e) {
+      print("Error getting document count for $collectionName: $e");
+      return 0;
+    }
+  }
+
+  Future<int> getDocumentCountByProducer(
+      String category, String producer) async {
+    try {
+      final snapshot = await _firestore
+          .collection(category) // Örneğin "mdf" koleksiyonu
+          .where('uretici', isEqualTo: producer)
+          .get();
+      return snapshot.docs.length;
+    } catch (e) {
+      print('Error fetching document count for $producer in $category: $e');
+      return 0;
+    }
+  }
 }
