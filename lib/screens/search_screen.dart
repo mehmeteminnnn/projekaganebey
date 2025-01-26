@@ -136,7 +136,7 @@ class _SearchPageState extends State<SearchPage> {
     final count = _categoryCounts[collectionName] ?? 0;
 
     return ListTile(
-      leading: Icon(icon, size: 40, color: Colors.amber),
+      leading: Icon(icon, size: 40, color: Colors.blueAccent),
       title: Text(title),
       trailing: Text('($count) >'),
       onTap: () {
@@ -144,7 +144,8 @@ class _SearchPageState extends State<SearchPage> {
           context,
           MaterialPageRoute(
             builder: (context) => FilterProductPage(
-                category: collectionName,title:title), // title = kategori ismi
+                category: collectionName,
+                title: title), // title = kategori ismi
           ),
         );
       },
@@ -157,14 +158,14 @@ class _SearchPageState extends State<SearchPage> {
         width: 60,
         height: 60,
         decoration: BoxDecoration(
-          color: Colors.amber,
+          color: Colors.blueAccent,
           borderRadius: BorderRadius.circular(8.0),
         ),
       ),
       title: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
       trailing: Text(
         price,
-        style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+        style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold),
       ),
       onTap: () {},
     );

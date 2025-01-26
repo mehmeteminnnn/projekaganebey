@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
+import 'package:projekaganebey/styles.dart';
 
 class FilterProductPage extends StatefulWidget {
   final String category; // Örneğin "mdf"
@@ -60,7 +61,10 @@ class _FilterPageState extends State<FilterProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.title.toUpperCase()} Filtreleri'),
+        title: Text(
+          '${widget.title.toUpperCase()} Filtreleri',
+          style: appBarTextStyle,
+        ),
         centerTitle: true,
       ),
       body: _isLoading
@@ -68,8 +72,10 @@ class _FilterPageState extends State<FilterProductPage> {
           : ListView(
               children: [
                 ListTile(
-                  title:
-                      Text('Tüm "${widget.category.toUpperCase()}" İlanları'),
+                  title: Text(
+                    'Tüm "${widget.title.toUpperCase()}" İlanları',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                   trailing: Text(
                     '(${_counts.values.fold(0, (sum, count) => sum + count)}) >',
                     style: TextStyle(
@@ -79,7 +85,9 @@ class _FilterPageState extends State<FilterProductPage> {
                 Divider(),
                 ...producers.map((producer) {
                   return ListTile(
-                    title: Text(producer),
+                    title: Text(producer,
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
                     trailing: Text('(${_counts[producer] ?? 0}) >'),
                     onTap: () {
                       // Tıklanan üreticinin detaylarına yönlendirme yapılabilir
