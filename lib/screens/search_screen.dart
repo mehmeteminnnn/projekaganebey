@@ -138,7 +138,8 @@ class _SearchPageState extends State<SearchPage> {
     return ListTile(
       leading: Icon(icon, size: 40, color: Colors.blueAccent),
       title: Text(title),
-      trailing: Text('($count) >'),
+      trailing: Text('($count) >',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
       onTap: () {
         Navigator.push(
           context,

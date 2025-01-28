@@ -12,18 +12,24 @@ class AdsMDFLamPage extends StatefulWidget {
 
   final List<Map<String, dynamic>>? filteredAds;
   final String? id;
+  final String? category;
+  final String? producer;
+  final bool filtre;
 
-  AdsMDFLamPage({this.filteredAds, this.id});
+  AdsMDFLamPage(
+      {this.filteredAds,
+      this.id,
+      this.category,
+      this.producer,
+      this.filtre = false});
 }
 
 class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
   final FirestoreService _firestoreService = FirestoreService();
-  String? selectedChip;
   String searchQuery = ''; // Arama metni
-  List<IlanModel>? filteredIlanlar;
   final int notificationCount = 5; // Bildirim sayısı
 
-  // Firestore'dan ilanları arama
+  /* // Firestore'dan ilanları arama
   Future<void> _searchAds(String query) async {
     if (query.isEmpty) {
       setState(() {
@@ -39,6 +45,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
       filteredIlanlar = results;
     });
   }
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +72,6 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
           ),
           padding: EdgeInsets.symmetric(horizontal: 16.0),
           child: TextField(
-            onChanged: _searchAds,
             decoration: InputDecoration(
               hintText: 'Kelime veya ilan no ile ara',
               border: InputBorder.none,
@@ -83,112 +89,170 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildFilterChip('MDF LAM'),
-                _buildFilterChip('PANEL'),
-                _buildFilterChip('SUNTA'),
-                _buildFilterChip('OSB'),
-                GestureDetector(
-                  onTap: () {
+                // Sıralama Kısmı
+                Row(
+                  children: [
+                    /*
+          _buildFilterChip('MDF LAM'),
+          _buildFilterChip('PANEL'),
+          _buildFilterChip('SUNTA'),
+          _buildFilterChip('OSB'),
+          */
+                    TextButton(
+                      onPressed: () {
+                        // Sıralama işlemi burada yapılacak
+                        print("Sıralama butonuna tıklandı");
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.sort, color: Colors.blueAccent),
+                          SizedBox(
+                              width: 4), // İkon ile yazı arasına boşluk ekler
+                          Text(
+                            "Sırala",
+                            style: TextStyle(color: Colors.blueAccent),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Filtreleme Kısmı
+                TextButton(
+                  onPressed: () {
                     // Filtre sayfasına yönlendirme
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => FilterPage()),
                     );
                   },
-                  child: Icon(Icons.filter_list, color: Colors.blueAccent),
+                  child: Row(
+                    children: [
+                      Icon(Icons.filter_list, color: Colors.blueAccent),
+                      SizedBox(width: 4), // İkon ile yazı arasına boşluk ekler
+                      Text(
+                        "Filtrele",
+                        style: TextStyle(color: Colors.blueAccent),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
           Expanded(
-            child: filteredIlanlar != null && filteredIlanlar!.isNotEmpty
-                ? GridView.builder(
-                    padding: EdgeInsets.all(8.0),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 8.0,
-                      crossAxisSpacing: 8.0,
-                      childAspectRatio: 1,
-                    ),
-                    itemCount: filteredIlanlar!.length,
-                    itemBuilder: (context, index) {
-                      final ilan = filteredIlanlar![index];
-                      return buildIlanCard(
-                        userId: widget.id,
-                        baslik: ilan.baslik,
-                        fiyat: ilan.fiyat,
-                        resimUrl: ilan.resimler?.isNotEmpty == true
-                            ? ilan.resimler![0]
-                            : null,
-                        ilanID: ilan.id!,
-                        kendiIlanim: false,
-                        context: context,
-                      );
-                    },
-                  )
-                : widget.filteredAds != null && widget.filteredAds!.isEmpty
-                    ? Center(
-                        child: Text('Aradığınız ilan bulunamadı.'),
-                      )
-                    : FutureBuilder<List<IlanModel>>(
-                        future: _firestoreService
-                            .fetchIlanlarByCategory(selectedChip),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return Center(
-                              child: Text('Hata: ${snapshot.error}'),
-                            );
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.isEmpty) {
-                            return Center(
-                              child: Text('Henüz ilan bulunmuyor.'),
-                            );
-                          }
-
-                          final ilanlar = snapshot.data!;
-                          return GridView.builder(
-                            padding: EdgeInsets.all(8.0),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 8.0,
-                              crossAxisSpacing: 8.0,
-                              childAspectRatio: 1,
-                            ),
-                            itemCount: ilanlar.length,
-                            itemBuilder: (context, index) {
-                              final ilan = ilanlar[index];
-                              return buildIlanCard(
-                                userId: widget.id,
-                                baslik: ilan.baslik,
-                                fiyat: ilan.fiyat,
-                                resimUrl: ilan.resimler?.isNotEmpty == true
-                                    ? ilan.resimler![0]
-                                    : null,
-                                ilanID: ilan.id!,
-                                kendiIlanim: false,
-                                context: context,
-                              );
-                            },
+              child: widget.filtre == false
+                  // Filtre false ise, tüm ilanları göster
+                  ? FutureBuilder<List<IlanModel>>(
+                      future: _firestoreService.fetchAllIlanlar(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text('Hata: ${snapshot.error}'),
                           );
-                        },
-                      ),
-          ),
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Center(
+                            child: Text('Henüz ilan bulunmuyor.'),
+                          );
+                        }
+
+                        final ilanlar = snapshot.data!;
+                        return GridView.builder(
+                          padding: EdgeInsets.all(8.0),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 8.0,
+                            crossAxisSpacing: 8.0,
+                            childAspectRatio: 1,
+                          ),
+                          itemCount: ilanlar.length,
+                          itemBuilder: (context, index) {
+                            final ilan = ilanlar[index];
+                            return buildIlanCard(
+                              userId: widget.id,
+                              baslik: ilan.baslik,
+                              fiyat: ilan.fiyat,
+                              resimUrl: ilan.resimler?.isNotEmpty == true
+                                  ? ilan.resimler![0]
+                                  : null,
+                              ilanID: ilan.id!,
+                              kendiIlanim: false,
+                              context: context,
+                            );
+                          },
+                        );
+                      },
+                    )
+                  : widget.filteredAds == null &&
+                          (widget.category?.isNotEmpty ?? false)
+                      // Filtre true ise, kategori ve üreticiye göre ilanları göster
+                      ? FutureBuilder<List<IlanModel>>(
+                          future: _firestoreService
+                              .fetchIlanlarByCategoryAndProducer(
+                                  widget.category, widget.producer),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                child: Text('Hata: ${snapshot.error}'),
+                              );
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return Center(
+                                child: Text('Henüz ilan bulunmuyor.'),
+                              );
+                            }
+
+                            final ilanlar = snapshot.data!;
+                            return GridView.builder(
+                              padding: EdgeInsets.all(8.0),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 8.0,
+                                crossAxisSpacing: 8.0,
+                                childAspectRatio: 1,
+                              ),
+                              itemCount: ilanlar.length,
+                              itemBuilder: (context, index) {
+                                final ilan = ilanlar[index];
+                                return buildIlanCard(
+                                  userId: widget.id,
+                                  baslik: ilan.baslik,
+                                  fiyat: ilan.fiyat,
+                                  resimUrl: ilan.resimler?.isNotEmpty == true
+                                      ? ilan.resimler![0]
+                                      : null,
+                                  ilanID: ilan.id!,
+                                  kendiIlanim: false,
+                                  context: context,
+                                );
+                              },
+                            );
+                          },
+                        )
+                      : Center(
+                          child: Text('Aradığınız ilan bulunamadı.'),
+                        )),
         ],
       ),
     );
   }
 
-  Widget _buildFilterChip(String label) {
+  /* Widget _buildFilterChip(String label) {
     return FilterChip(
       label: Text(
         label,
         style: TextStyle(
-          fontWeight:
-              selectedChip == label ? FontWeight.bold : FontWeight.normal,
+          fontWeight: selectedChip == label ? FontWeight.bold : FontWeight.normal,
           color: selectedChip == label ? Colors.black : Colors.grey,
         ),
       ),
@@ -202,5 +266,5 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
         });
       },
     );
-  }
+  } */
 }

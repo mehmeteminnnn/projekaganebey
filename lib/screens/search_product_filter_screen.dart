@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projekaganebey/screens/ana_ekran.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
 import 'package:projekaganebey/styles.dart';
 
@@ -79,7 +80,9 @@ class _FilterPageState extends State<FilterProductPage> {
                   trailing: Text(
                     '(${_counts.values.fold(0, (sum, count) => sum + count)}) >',
                     style: TextStyle(
-                        color: Colors.blue, fontWeight: FontWeight.bold),
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16),
                   ),
                 ),
                 Divider(),
@@ -88,9 +91,18 @@ class _FilterPageState extends State<FilterProductPage> {
                     title: Text(producer,
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
-                    trailing: Text('(${_counts[producer] ?? 0}) >'),
+                    trailing: Text('(${_counts[producer] ?? 0}) >',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 14)),
                     onTap: () {
-                      // Tıklanan üreticinin detaylarına yönlendirme yapılabilir
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AdsMDFLamPage(
+                                    category: widget.category,
+                                    producer: producer,
+                                    filtre: true,
+                                  )));
                     },
                   );
                 }).toList(),

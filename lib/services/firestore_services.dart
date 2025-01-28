@@ -57,16 +57,25 @@ class FirestoreService {
     }
   }
 
-  // Kategoriye göre ilanları getirme
-  Future<List<IlanModel>> fetchIlanlarByCategory(String? category) async {
+  // Kategori ve üreticiye göre ilanları getirme
+  Future<List<IlanModel>> fetchIlanlarByCategoryAndProducer(
+      String? category, String? producer) async {
+    if (category == null || category.isEmpty) {
+      throw Exception('Kategori adı boş olamaz');
+    }
+
     QuerySnapshot snapshot;
 
-    if (category == null || category.isEmpty) {
-      snapshot = await _firestore.collection('ilanlar').get();
-    } else {
+    // Eğer üretici belirtilmişse filtre uygula
+    if (producer != null && producer.isNotEmpty) {
       snapshot = await _firestore
-          .collection('ilanlar')
-          .where('kategori', isEqualTo: category)
+          .collection(category) // Kategoriye göre koleksiyon seçiliyor
+          .where('uretici', isEqualTo: producer) // Üreticiye göre filtreleme
+          .get();
+    } else {
+      // Eğer üretici belirtilmemişse sadece kategoriye göre filtre uygula
+      snapshot = await _firestore
+          .collection(category) // Kategoriye göre koleksiyon seçiliyor
           .get();
     }
 
@@ -320,5 +329,24 @@ class FirestoreService {
       print('Error fetching document count for $producer in $category: $e');
       return 0;
     }
+  }
+
+  Future<List<IlanModel>> fetchAllIlanlar() async {
+    // Koleksiyon isimlerini bir listeye koyuyoruz
+    List<String> collections = ['mdf_lam', 'osb', 'panel', 'sunta'];
+    List<IlanModel> allIlanlar = [];
+
+    for (String collection in collections) {
+      // Her koleksiyon için veri çekiyoruz
+      QuerySnapshot snapshot = await _firestore.collection(collection).get();
+
+      // Her koleksiyondaki belgeleri IlanModel'e dönüştürüp listeye ekliyoruz
+      allIlanlar.addAll(snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return IlanModel.fromMap(data, doc.id);
+      }).toList());
+    }
+
+    return allIlanlar;
   }
 }
