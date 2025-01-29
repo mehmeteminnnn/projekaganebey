@@ -38,6 +38,10 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
     } else if (_selectedSort == 'oldest') {
       ilanlar.sort((a, b) => (a.olusturulmaTarihi ?? DateTime(0))
           .compareTo(b.olusturulmaTarihi ?? DateTime(0)));
+    } else if (_selectedSort == 'price_asc') {
+      ilanlar.sort((a, b) => (a.fiyat ?? 0).compareTo(b.fiyat ?? 0));
+    } else if (_selectedSort == 'price_desc') {
+      ilanlar.sort((a, b) => (b.fiyat ?? 0).compareTo(a.fiyat ?? 0));
     }
     return ilanlar;
   }
@@ -147,6 +151,38 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                           SizedBox(width: 8),
                           Text(
                             'En Eskiler',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<String>(
+                      value: 'price_asc',
+                      child: Row(
+                        children: [
+                          Icon(Icons.trending_up, color: Colors.grey, size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            'Fiyat (Düşükten Yükseğe)',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<String>(
+                      value: 'price_desc',
+                      child: Row(
+                        children: [
+                          Icon(Icons.trending_down, color: Colors.grey, size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            'Fiyat (Yüksekten Düşüğe)',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.black87,
