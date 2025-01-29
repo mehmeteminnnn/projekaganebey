@@ -28,6 +28,19 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
   final FirestoreService _firestoreService = FirestoreService();
   String searchQuery = ''; // Arama metni
   final int notificationCount = 5; // Bildirim sayısı
+  String _selectedSort = 'newest'; // Varsayılan sıralama seçeneği
+
+  // Sıralama fonksiyonu
+  List<IlanModel> _sortIlanlar(List<IlanModel> ilanlar) {
+    if (_selectedSort == 'newest') {
+      ilanlar.sort((a, b) => (b.olusturulmaTarihi ?? DateTime(0))
+          .compareTo(a.olusturulmaTarihi ?? DateTime(0)));
+    } else if (_selectedSort == 'oldest') {
+      ilanlar.sort((a, b) => (a.olusturulmaTarihi ?? DateTime(0))
+          .compareTo(b.olusturulmaTarihi ?? DateTime(0)));
+    }
+    return ilanlar;
+  }
 
   /* // Firestore'dan ilanları arama
   Future<void> _searchAds(String query) async {
@@ -90,27 +103,54 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 // Sıralama Kısmı
-                Row(
-                  children: [
-                    /*
-          _buildFilterChip('MDF LAM'),
-          _buildFilterChip('PANEL'),
-          _buildFilterChip('SUNTA'),
-          _buildFilterChip('OSB'),
-          */
-                    TextButton(
-                      onPressed: () {
-                        // Sıralama işlemi burada yapılacak
-                        print("Sıralama butonuna tıklandı");
-                      },
+                PopupMenuButton<String>(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  elevation: 1,
+                  child: Row(
+                    children: [
+                      Icon(Icons.sort, color: Colors.blueAccent),
+                      Text(
+                        "Sırala",
+                        style: TextStyle(color: Colors.blueAccent),
+                      ),
+                    ],
+                  ),
+                  onSelected: (String value) {
+                    setState(() {
+                      _selectedSort = value;
+                    });
+                  },
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                    PopupMenuItem<String>(
+                      value: 'newest',
                       child: Row(
                         children: [
-                          Icon(Icons.sort, color: Colors.blueAccent),
-                          SizedBox(
-                              width: 4), // İkon ile yazı arasına boşluk ekler
+                          Icon(Icons.arrow_upward, color: Colors.grey, size: 20),
+                          SizedBox(width: 8),
                           Text(
-                            "Sırala",
-                            style: TextStyle(color: Colors.blueAccent),
+                            'En Yeniler',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<String>(
+                      value: 'oldest',
+                      child: Row(
+                        children: [
+                          Icon(Icons.arrow_downward, color: Colors.grey, size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            'En Eskiler',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black87,
+                            ),
                           ),
                         ],
                       ),
@@ -161,7 +201,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                           );
                         }
 
-                        final ilanlar = snapshot.data!;
+                        final ilanlar = _sortIlanlar(snapshot.data!);
                         return GridView.builder(
                           padding: EdgeInsets.all(8.0),
                           gridDelegate:
@@ -212,7 +252,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                               );
                             }
 
-                            final ilanlar = snapshot.data!;
+                            final ilanlar = _sortIlanlar(snapshot.data!);
                             return GridView.builder(
                               padding: EdgeInsets.all(8.0),
                               gridDelegate:
