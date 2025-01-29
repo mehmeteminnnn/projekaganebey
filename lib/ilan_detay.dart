@@ -14,13 +14,15 @@ class IlanDetayPage extends StatefulWidget {
   final String? ilanbaslik;
   final String? id;
   final bool? kendiIlanim;
+  final String? kategori;
 
   const IlanDetayPage(
       {Key? key,
       required this.ilanId,
       this.ilanbaslik,
       this.id,
-      this.kendiIlanim})
+      this.kendiIlanim,
+      this.kategori})
       : super(key: key);
 
   @override
@@ -35,13 +37,16 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
   bool isFavorited = false;
   final GlobalKey _questionKey = GlobalKey();
   final FocusNode _focusNode = FocusNode();
+  String? koleksiyon;
 
   @override
   void initState() {
+    super.initState();
     if (widget.kendiIlanim != true) {
       _checkIfFavorited();
     }
-    super.initState();
+    _loadCollectionName(); // Koleksiyon adını çek
+
     _focusNode.addListener(() {
       if (_focusNode.hasFocus) {
         debugPrint("TextField odaklandı");
@@ -51,19 +56,28 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
     });
   }
 
-  @override
-  void dispose() {
-    _pageController.dispose();
-    _commentController.dispose();
-    _focusNode.dispose();
-    super.dispose();
+  Future<void> _loadCollectionName() async {
+    final foundCollection = await findCollectionByIlanId(widget.ilanId);
+    if (mounted) {
+      setState(() {
+        koleksiyon = foundCollection;
+      });
+    }
+    debugPrint('Koleksiyon bulundu: $koleksiyon');
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    //_checkIfFavorited();
-    debugPrint('ilanId: ${widget.ilanId}, id: ${widget.id}');
+  Future<String?> findCollectionByIlanId(String ilanId) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    List<String> koleksiyonlar = ["mdf_lam", "osb", "panel", "sunta"];
+
+    for (String koleksiyon in koleksiyonlar) {
+      var snapshot = await firestore.collection(koleksiyon).doc(ilanId).get();
+      if (snapshot.exists) {
+        return koleksiyon; // İlan hangi koleksiyonda bulunduysa onu döndür
+      }
+    }
+
+    return null; // Eğer ilan hiçbir koleksiyonda bulunamazsa null döner
   }
 
   void _checkIfFavorited() async {
@@ -88,9 +102,13 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
 
   @override
   Widget build(BuildContext context) {
-    final ilanRef =
-        FirebaseFirestore.instance.collection('ilanlar').doc(widget.ilanId);
+    if (koleksiyon == null) {
+      return const Center(
+          child: CircularProgressIndicator()); // Yüklenme durumu
+    }
 
+    final ilanRef =
+        FirebaseFirestore.instance.collection(koleksiyon!).doc(widget.ilanId);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(

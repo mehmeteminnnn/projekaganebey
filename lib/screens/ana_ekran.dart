@@ -184,6 +184,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                               ilanID: ilan.id!,
                               kendiIlanim: false,
                               context: context,
+                              category: ilan.kategori,
                             );
                           },
                         );

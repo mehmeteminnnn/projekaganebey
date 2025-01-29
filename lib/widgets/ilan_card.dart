@@ -4,6 +4,7 @@ import 'package:projekaganebey/functions/favori.dart';
 import 'package:projekaganebey/ilan_detay.dart';
 
 Widget buildIlanCard({
+  String? category,
   bool? kendiIlanim,
   String? userId,
   String? baslik,
@@ -24,6 +25,7 @@ Widget buildIlanCard({
             ilanId: ilanID,
             ilanbaslik: baslik,
             kendiIlanim: kendiIlanim ?? false,
+            kategori: category,
           ),
         ),
       );
