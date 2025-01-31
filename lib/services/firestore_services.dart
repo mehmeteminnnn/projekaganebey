@@ -57,33 +57,7 @@ class FirestoreService {
     }
   }
 
-  // Kategori ve üreticiye göre ilanları getirme
-  Future<List<IlanModel>> fetchIlanlarByCategoryAndProducer(
-      String? category, String? producer) async {
-    if (category == null || category.isEmpty) {
-      throw Exception('Kategori adı boş olamaz');
-    }
-
-    QuerySnapshot snapshot;
-
-    // Eğer üretici belirtilmişse filtre uygula
-    if (producer != null && producer.isNotEmpty) {
-      snapshot = await _firestore
-          .collection(category) // Kategoriye göre koleksiyon seçiliyor
-          .where('uretici', isEqualTo: producer) // Üreticiye göre filtreleme
-          .get();
-    } else {
-      // Eğer üretici belirtilmemişse sadece kategoriye göre filtre uygula
-      snapshot = await _firestore
-          .collection(category) // Kategoriye göre koleksiyon seçiliyor
-          .get();
-    }
-
-    return snapshot.docs
-        .map((doc) =>
-            IlanModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
-        .toList();
-  }
+  
 
   Future<List<IlanModel>> searchIlanlar(String query) async {
     final collection = FirebaseFirestore.instance.collection('ilanlar');
@@ -332,21 +306,54 @@ class FirestoreService {
   }
 
   Future<List<IlanModel>> fetchAllIlanlar() async {
-    // Koleksiyon isimlerini bir listeye koyuyoruz
-    List<String> collections = ['mdf_lam', 'osb', 'panel', 'sunta'];
-    List<IlanModel> allIlanlar = [];
+  // Koleksiyon isimlerini bir listeye koyuyoruz
+  List<String> collections = ['mdf_lam', 'osb', 'panel', 'sunta'];
+  List<IlanModel> allIlanlar = [];
 
-    for (String collection in collections) {
-      // Her koleksiyon için veri çekiyoruz
-      QuerySnapshot snapshot = await _firestore.collection(collection).get();
+  for (String collection in collections) {
+    // Her koleksiyon için en fazla 10 belgeyi çekiyoruz
+    QuerySnapshot snapshot = await _firestore.collection(collection).limit(10).get();
 
-      // Her koleksiyondaki belgeleri IlanModel'e dönüştürüp listeye ekliyoruz
-      allIlanlar.addAll(snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        return IlanModel.fromMap(data, doc.id);
-      }).toList());
-    }
-
-    return allIlanlar;
+    // Her koleksiyondaki belgeleri IlanModel'e dönüştürüp listeye ekliyoruz
+    allIlanlar.addAll(snapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      return IlanModel.fromMap(data, doc.id);
+    }).toList());
   }
+
+  return allIlanlar;
+}
+
+// Kategori ve üreticiye göre ilanları getirme (Maksimum 10 ilan)
+Future<List<IlanModel>> fetchIlanlarByCategoryAndProducer(
+    String? category, String? producer) async {
+  if (category == null || category.isEmpty) {
+    throw Exception('Kategori adı boş olamaz');
+  }
+
+  QuerySnapshot snapshot;
+
+  // Eğer üretici belirtilmişse filtre uygula
+  if (producer != null && producer.isNotEmpty) {
+    snapshot = await _firestore
+        .collection(category) // Kategoriye göre koleksiyon seçiliyor
+        .where('uretici', isEqualTo: producer) // Üreticiye göre filtreleme
+        .limit(10) // En fazla 10 ilan al
+        .get();
+  } else {
+    // Eğer üretici belirtilmemişse sadece kategoriye göre filtre uygula
+    snapshot = await _firestore
+        .collection(category) // Kategoriye göre koleksiyon seçiliyor
+        .limit(10) // En fazla 10 ilan al
+        .get();
+  }
+
+  return snapshot.docs
+      .map((doc) =>
+          IlanModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+      .toList();
+}
+
+
+
 }
