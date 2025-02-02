@@ -12,13 +12,14 @@ class AdsMDFLamPage extends StatefulWidget {
   final String? category;
   final String? producer;
   final bool filtre;
-
+  final bool hepsimi;
   AdsMDFLamPage({
     this.filteredAds,
     this.id,
     this.category,
     this.producer,
     this.filtre = false,
+    this.hepsimi = false,
   });
 
   @override
@@ -264,7 +265,9 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                     ? FutureBuilder<List<IlanModel>>(
                         future:
                             _firestoreService.fetchIlanlarByCategoryAndProducer(
-                                widget.category, widget.producer),
+                                widget.category,
+                                widget.producer,
+                                widget.hepsimi),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {

@@ -33,7 +33,7 @@ class MainScreen extends StatelessWidget {
     debugPrint("MainScreen id: $id");
     return [
       AdsMDFLamPage(id: id),
-      SearchPage(),
+      SearchPage(id:id),
       IlanVerPage(id: id),
       FavorilerimPage(id: id),
       ProfileScreen(id: id),

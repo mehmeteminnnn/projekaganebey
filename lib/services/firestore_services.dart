@@ -348,31 +348,61 @@ class FirestoreService {
 
 // Kategori ve üreticiye göre ilanları getirme (Maksimum 10 ilan)
   Future<List<IlanModel>> fetchIlanlarByCategoryAndProducer(
-      String? category, String? producer) async {
+      String? category, String? producer, bool hepsimi) async {
     if (category == null || category.isEmpty) {
       throw Exception('Kategori adı boş olamaz');
     }
 
-    QuerySnapshot snapshot;
+    Query query =
+        _firestore.collection(category); // Kategoriye göre koleksiyon seç
 
-    // Eğer üretici belirtilmişse filtre uygula
-    if (producer != null && producer.isNotEmpty) {
-      snapshot = await _firestore
-          .collection(category) // Kategoriye göre koleksiyon seçiliyor
-          .where('uretici', isEqualTo: producer) // Üreticiye göre filtreleme
-          .limit(10) // En fazla 10 ilan al
-          .get();
-    } else {
-      // Eğer üretici belirtilmemişse sadece kategoriye göre filtre uygula
-      snapshot = await _firestore
-          .collection(category) // Kategoriye göre koleksiyon seçiliyor
-          .limit(10) // En fazla 10 ilan al
-          .get();
+    if (!hepsimi && producer != null && producer.isNotEmpty) {
+      query = query.where('uretici',
+          isEqualTo: producer); // Üreticiye göre filtrele
     }
+
+    QuerySnapshot snapshot = await query.limit(20).get(); // 10 ilan ile sınırla
 
     return snapshot.docs
         .map((doc) =>
             IlanModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
         .toList();
+  }
+
+  Future<String?> getUserNameById(String userId) async {
+    try {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(userId).get();
+
+      if (userDoc.exists) {
+        return userDoc.get('name') as String?;
+      } else {
+        return null; // Kullanıcı bulunamazsa null döndür
+      }
+    } catch (e) {
+      print("Hata: $e");
+      return null;
+    }
+  }
+
+  // Random ilanları getir
+  Future<List<IlanModel>> getRandomIlanlar(String collection, int limit) async {
+    try {
+      // Koleksiyondaki tüm ilanları al
+      QuerySnapshot snapshot = await _firestore.collection(collection).get();
+
+      // Dökümanları karıştır ve limit kadar al
+      final docs = snapshot.docs..shuffle();
+      final randomDocs = docs.take(limit).toList();
+
+      // IlanModel listesine dönüştür
+      return randomDocs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return IlanModel.fromMap(data, doc.id);
+      }).toList();
+    } catch (e) {
+      print("Hata: $e");
+      return [];
+    }
   }
 }

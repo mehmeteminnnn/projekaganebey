@@ -4,6 +4,7 @@ import 'package:projekaganebey/ilanlar%C4%B1m.dart';
 import 'package:projekaganebey/screens/profilim_detay.dart';
 import 'package:projekaganebey/screens/settings.dart';
 import 'package:projekaganebey/screens/giris_ekrani.dart';
+import 'package:projekaganebey/services/firestore_services.dart';
 
 class ProfileCard extends StatelessWidget {
   final IconData icon;
@@ -51,7 +52,11 @@ class ProfileCard extends StatelessWidget {
 
 class ProfileScreen extends StatefulWidget {
   final String? id;
-  ProfileScreen({Key? key, this.id}) : super(key: key);
+
+  ProfileScreen({
+    Key? key,
+    this.id,
+  }) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -165,7 +170,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  subtitle: const Text('Mehmet Emin Tok'),
+                  subtitle: FutureBuilder<String?>(
+                    future: FirestoreService().getUserNameById(widget.id!),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Text('Yükleniyor...');
+                      }
+                      return Text(snapshot.data ?? 'İsim bulunamadı');
+                    },
+                  ),
                   onTap: () {
                     Navigator.push(
                         context,

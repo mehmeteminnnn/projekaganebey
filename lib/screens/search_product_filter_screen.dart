@@ -84,6 +84,15 @@ class _FilterPageState extends State<FilterProductPage> {
                         fontWeight: FontWeight.bold,
                         fontSize: 16),
                   ),
+                  onTap: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AdsMDFLamPage(
+                                category: widget.category,
+                                filtre: true,
+                                hepsimi: true)));
+                  },
                 ),
                 Divider(),
                 ...producers.map((producer) {
@@ -95,13 +104,14 @@ class _FilterPageState extends State<FilterProductPage> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 14)),
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => AdsMDFLamPage(
                                     category: widget.category,
                                     producer: producer,
                                     filtre: true,
+                                    hepsimi: false,
                                   )));
                     },
                   );
