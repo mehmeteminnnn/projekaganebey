@@ -100,36 +100,6 @@ class _FilterPageState extends State<FilterPage> {
         children: [
           ExpansionTile(
             title: Text(
-              'Üreticiler',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Colors.black.withOpacity(0.8),
-              ),
-            ),
-            children: List.generate(manufacturers.length, (index) {
-              return CheckboxListTile(
-                title: Text(
-                  manufacturers[index],
-                  style: TextStyle(
-                    color: Color(0xFF404040),
-                    fontSize: 16,
-                    fontFamily: 'Satoshi',
-                    fontWeight: FontWeight.w500,
-                    height: 0,
-                  ),
-                ),
-                value: manufacturerSelections[index],
-                onChanged: (bool? value) {
-                  setState(() {
-                    manufacturerSelections[index] = value ?? false;
-                  });
-                },
-              );
-            }),
-          ),
-          ExpansionTile(
-            title: Text(
               'Boyut ve Desen',
               style: TextStyle(
                 fontWeight: FontWeight.bold,

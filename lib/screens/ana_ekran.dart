@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'package:projekaganebey/screens/filtreleme_screen.dart';
 import 'package:projekaganebey/models/ilan_model.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
@@ -93,7 +93,8 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                   child: Row(
                     children: [
                       Icon(Icons.sort, color: Colors.blueAccent),
-                      Text("Sırala", style: TextStyle(color: Colors.blueAccent)),
+                      Text("Sırala",
+                          style: TextStyle(color: Colors.blueAccent)),
                     ],
                   ),
                   onSelected: (String value) {
@@ -101,12 +102,14 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                       _selectedSort = value;
                     });
                   },
-                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
                     PopupMenuItem<String>(
                       value: 'newest',
                       child: Row(
                         children: [
-                          Icon(Icons.arrow_upward, color: Colors.grey, size: 20),
+                          Icon(Icons.arrow_upward,
+                              color: Colors.grey, size: 20),
                           SizedBox(width: 8),
                           Text('En Yeniler', style: TextStyle(fontSize: 14)),
                         ],
@@ -116,7 +119,8 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                       value: 'oldest',
                       child: Row(
                         children: [
-                          Icon(Icons.arrow_downward, color: Colors.grey, size: 20),
+                          Icon(Icons.arrow_downward,
+                              color: Colors.grey, size: 20),
                           SizedBox(width: 8),
                           Text('En Eskiler', style: TextStyle(fontSize: 14)),
                         ],
@@ -128,7 +132,8 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                         children: [
                           Icon(Icons.trending_up, color: Colors.grey, size: 20),
                           SizedBox(width: 8),
-                          Text('Fiyat (Düşükten Yükseğe)', style: TextStyle(fontSize: 14)),
+                          Text('Fiyat (Düşükten Yükseğe)',
+                              style: TextStyle(fontSize: 14)),
                         ],
                       ),
                     ),
@@ -136,9 +141,11 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                       value: 'price_desc',
                       child: Row(
                         children: [
-                          Icon(Icons.trending_down, color: Colors.grey, size: 20),
+                          Icon(Icons.trending_down,
+                              color: Colors.grey, size: 20),
                           SizedBox(width: 8),
-                          Text('Fiyat (Yüksekten Düşüğe)', style: TextStyle(fontSize: 14)),
+                          Text('Fiyat (Yüksekten Düşüğe)',
+                              style: TextStyle(fontSize: 14)),
                         ],
                       ),
                     ),
@@ -155,7 +162,8 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                     children: [
                       Icon(Icons.filter_list, color: Colors.blueAccent),
                       SizedBox(width: 4),
-                      Text("Filtrele", style: TextStyle(color: Colors.blueAccent)),
+                      Text("Filtrele",
+                          style: TextStyle(color: Colors.blueAccent)),
                     ],
                   ),
                 ),
@@ -163,7 +171,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
             ),
           ),
           Expanded(
-            child: widget.filtre == false
+            child: widget.filtre == false && widget.filteredAds == null
                 ? FutureBuilder<List<IlanModel>>(
                     future: _firestoreService.fetchAllIlanlar(),
                     builder: (context, snapshot) {
@@ -176,7 +184,8 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                       }
 
                       final ilanlar = _sortIlanlar(snapshot.data!);
-                      final gosterilecekIlanlar = ilanlar.take(_ilanSayisi).toList();
+                      final gosterilecekIlanlar =
+                          ilanlar.take(_ilanSayisi).toList();
                       final hepsiGosterildi = _ilanSayisi >= ilanlar.length;
 
                       return Column(
@@ -184,13 +193,15 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                           Expanded(
                             child: GridView.builder(
                               padding: EdgeInsets.all(8.0),
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
                                 mainAxisSpacing: 8.0,
                                 crossAxisSpacing: 8.0,
                                 childAspectRatio: 1,
                               ),
-                              itemCount: gosterilecekIlanlar.length + (hepsiGosterildi ? 0 : 1),
+                              itemCount: gosterilecekIlanlar.length +
+                                  (hepsiGosterildi ? 0 : 1),
                               itemBuilder: (context, index) {
                                 if (index < gosterilecekIlanlar.length) {
                                   final ilan = gosterilecekIlanlar[index];
@@ -198,7 +209,9 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                     userId: widget.id,
                                     baslik: ilan.baslik,
                                     fiyat: ilan.fiyat,
-                                    resimUrl: ilan.resimler?.isNotEmpty == true ? ilan.resimler![0] : null,
+                                    resimUrl: ilan.resimler?.isNotEmpty == true
+                                        ? ilan.resimler![0]
+                                        : null,
                                     ilanID: ilan.id!,
                                     kendiIlanim: false,
                                     context: context,
@@ -206,19 +219,25 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                 } else {
                                   return Center(
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Expanded(
                                           child: Container(
                                             alignment: Alignment.center,
                                             child: OutlinedButton(
                                               style: OutlinedButton.styleFrom(
-                                                foregroundColor: Colors.blueAccent,
-                                                side: BorderSide(color: Colors.blueAccent),
+                                                foregroundColor:
+                                                    Colors.blueAccent,
+                                                side: BorderSide(
+                                                    color: Colors.blueAccent),
                                                 shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(8),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
                                                 ),
-                                                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 12,
+                                                    horizontal: 20),
                                               ),
                                               onPressed: () {
                                                 setState(() {
@@ -241,20 +260,27 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                     },
                   )
                 : widget.filteredAds == null &&
-                          (widget.category?.isNotEmpty ?? false)
+                        (widget.category?.isNotEmpty ?? false)
                     ? FutureBuilder<List<IlanModel>>(
-                        future: _firestoreService.fetchIlanlarByCategoryAndProducer(widget.category, widget.producer),
+                        future:
+                            _firestoreService.fetchIlanlarByCategoryAndProducer(
+                                widget.category, widget.producer),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return Center(child: CircularProgressIndicator());
                           } else if (snapshot.hasError) {
-                            return Center(child: Text('Hata: ${snapshot.error}'));
-                          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            return Center(child: Text('Henüz ilan bulunmuyor.'));
+                            return Center(
+                                child: Text('Hata: ${snapshot.error}'));
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.isEmpty) {
+                            return Center(
+                                child: Text('Henüz ilan bulunmuyor.'));
                           }
 
                           final ilanlar = _sortIlanlar(snapshot.data!);
-                          final gosterilecekIlanlar = ilanlar.take(_ilanSayisi).toList();
+                          final gosterilecekIlanlar =
+                              ilanlar.take(_ilanSayisi).toList();
                           final hepsiGosterildi = _ilanSayisi >= ilanlar.length;
 
                           return Column(
@@ -262,13 +288,15 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                               Expanded(
                                 child: GridView.builder(
                                   padding: EdgeInsets.all(8.0),
-                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2,
                                     mainAxisSpacing: 8.0,
                                     crossAxisSpacing: 8.0,
                                     childAspectRatio: 1,
                                   ),
-                                  itemCount: gosterilecekIlanlar.length + (hepsiGosterildi ? 0 : 1),
+                                  itemCount: gosterilecekIlanlar.length +
+                                      (hepsiGosterildi ? 0 : 1),
                                   itemBuilder: (context, index) {
                                     if (index < gosterilecekIlanlar.length) {
                                       final ilan = gosterilecekIlanlar[index];
@@ -277,7 +305,10 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                         userId: widget.id,
                                         baslik: ilan.baslik,
                                         fiyat: ilan.fiyat,
-                                        resimUrl: ilan.resimler?.isNotEmpty == true ? ilan.resimler![0] : null,
+                                        resimUrl:
+                                            ilan.resimler?.isNotEmpty == true
+                                                ? ilan.resimler![0]
+                                                : null,
                                         ilanID: ilan.id!,
                                         kendiIlanim: false,
                                         context: context,
@@ -285,26 +316,38 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                     } else {
                                       return Center(
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Expanded(
                                               child: Container(
                                                 alignment: Alignment.center,
                                                 child: OutlinedButton(
-                                                  style: OutlinedButton.styleFrom(
-                                                    foregroundColor: Colors.blueAccent,
-                                                    side: BorderSide(color: Colors.blueAccent),
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(8),
+                                                  style:
+                                                      OutlinedButton.styleFrom(
+                                                    foregroundColor:
+                                                        Colors.blueAccent,
+                                                    side: BorderSide(
+                                                        color:
+                                                            Colors.blueAccent),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
                                                     ),
-                                                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 12,
+                                                            horizontal: 20),
                                                   ),
                                                   onPressed: () {
                                                     setState(() {
                                                       _ilanSayisi += 6;
                                                     });
                                                   },
-                                                  child: Text("Daha Fazla Göster"),
+                                                  child:
+                                                      Text("Daha Fazla Göster"),
                                                 ),
                                               ),
                                             ),
@@ -319,7 +362,37 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                           );
                         },
                       )
-                    : Center(child: Text('Henüz ilan bulunmuyor.')),
+                    : widget.filteredAds != null
+                        ? GridView.builder(
+                            padding: const EdgeInsets.all(8.0),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount:
+                                  2, // Kaç sütun olacağını belirleyin
+                              mainAxisSpacing: 8.0,
+                              crossAxisSpacing: 8.0,
+                              childAspectRatio: 1,
+                            ),
+                            itemCount: widget.filteredAds?.length ?? 0,
+                            itemBuilder: (context, index) {
+                              final ilan = widget.filteredAds![index];
+                              debugPrint('Ilan: ${ilan}');
+
+                              return buildIlanCard(
+                                userId: widget.id,
+                                baslik: ilan['baslik'] ?? 'Başlık Yok',
+                                fiyat: (ilan['fiyat'] != null)
+                                    ? ilan['fiyat'].toDouble()
+                                    : 0.0,
+                                resimUrl: (ilan['resimler'] != null &&
+                                        ilan['resimler'].isNotEmpty)
+                                    ? ilan['resimler'][0]
+                                    : null,
+                                ilanID: ilan['id'] ?? "",
+                                context: context,
+                              );
+                            })
+                        : Center(child: Text('Henüz ilan bulunmuyor.')),
           ),
         ],
       ),
