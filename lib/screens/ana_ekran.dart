@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; 
 import 'package:projekaganebey/screens/filtreleme_screen.dart';
 import 'package:projekaganebey/models/ilan_model.dart';
 import 'package:projekaganebey/services/firestore_services.dart';
@@ -7,9 +7,6 @@ import 'package:projekaganebey/widgets/kampanyalar_banner.dart';
 import 'package:projekaganebey/screens/notifications_page.dart';
 
 class AdsMDFLamPage extends StatefulWidget {
-  @override
-  _AdsMDFLamPageState createState() => _AdsMDFLamPageState();
-
   final List<Map<String, dynamic>>? filteredAds;
   final String? id;
   final String? category;
@@ -23,6 +20,9 @@ class AdsMDFLamPage extends StatefulWidget {
     this.producer,
     this.filtre = false,
   });
+
+  @override
+  _AdsMDFLamPageState createState() => _AdsMDFLamPageState();
 }
 
 class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
@@ -57,11 +57,8 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                 MaterialPageRoute(builder: (context) => NotificationsPage()),
               );
             },
-            icon: Icon(
-              Icons.notifications,
-              color: Colors.blue,
-            ),
-          )
+            icon: Icon(Icons.notifications, color: Colors.blue),
+          ),
         ],
         backgroundColor: Colors.white,
         title: Container(
@@ -88,7 +85,6 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                // **Sırala Butonu** (Aynı konumda kaldı)
                 PopupMenuButton<String>(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -97,10 +93,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                   child: Row(
                     children: [
                       Icon(Icons.sort, color: Colors.blueAccent),
-                      Text(
-                        "Sırala",
-                        style: TextStyle(color: Colors.blueAccent),
-                      ),
+                      Text("Sırala", style: TextStyle(color: Colors.blueAccent)),
                     ],
                   ),
                   onSelected: (String value) {
@@ -151,8 +144,6 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                     ),
                   ],
                 ),
-
-                // **Filtreleme Butonu**
                 TextButton(
                   onPressed: () {
                     Navigator.push(
@@ -172,63 +163,163 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<IlanModel>>(
-              future: _firestoreService.fetchAllIlanlar(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Hata: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('Henüz ilan bulunmuyor.'));
-                }
+            child: widget.filtre == false
+                ? FutureBuilder<List<IlanModel>>(
+                    future: _firestoreService.fetchAllIlanlar(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Hata: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(child: Text('Henüz ilan bulunmuyor.'));
+                      }
 
-                final ilanlar = _sortIlanlar(snapshot.data!);
-                final gosterilecekIlanlar = ilanlar.take(_ilanSayisi).toList();
-                final hepsiGosterildi = _ilanSayisi >= ilanlar.length;
+                      final ilanlar = _sortIlanlar(snapshot.data!);
+                      final gosterilecekIlanlar = ilanlar.take(_ilanSayisi).toList();
+                      final hepsiGosterildi = _ilanSayisi >= ilanlar.length;
 
-                return Column(
-                  children: [
-                    Expanded(
-                      child: GridView.builder(
-                        padding: EdgeInsets.all(8.0),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 8.0,
-                          crossAxisSpacing: 8.0,
-                          childAspectRatio: 1,
-                        ),
-                        itemCount: gosterilecekIlanlar.length,
-                        itemBuilder: (context, index) {
-                          final ilan = gosterilecekIlanlar[index];
-                          return buildIlanCard(
-                            userId: widget.id,
-                            baslik: ilan.baslik,
-                            fiyat: ilan.fiyat,
-                            resimUrl: ilan.resimler?.isNotEmpty == true ? ilan.resimler![0] : null,
-                            ilanID: ilan.id!,
-                            kendiIlanim: false,
-                            context: context,
+                      return Column(
+                        children: [
+                          Expanded(
+                            child: GridView.builder(
+                              padding: EdgeInsets.all(8.0),
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 8.0,
+                                crossAxisSpacing: 8.0,
+                                childAspectRatio: 1,
+                              ),
+                              itemCount: gosterilecekIlanlar.length + (hepsiGosterildi ? 0 : 1),
+                              itemBuilder: (context, index) {
+                                if (index < gosterilecekIlanlar.length) {
+                                  final ilan = gosterilecekIlanlar[index];
+                                  return buildIlanCard(
+                                    userId: widget.id,
+                                    baslik: ilan.baslik,
+                                    fiyat: ilan.fiyat,
+                                    resimUrl: ilan.resimler?.isNotEmpty == true ? ilan.resimler![0] : null,
+                                    ilanID: ilan.id!,
+                                    kendiIlanim: false,
+                                    context: context,
+                                  );
+                                } else {
+                                  return Center(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            child: OutlinedButton(
+                                              style: OutlinedButton.styleFrom(
+                                                foregroundColor: Colors.blueAccent,
+                                                side: BorderSide(color: Colors.blueAccent),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                                              ),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _ilanSayisi += 6;
+                                                });
+                                              },
+                                              child: Text("Daha Fazla Göster"),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  )
+                : widget.filteredAds == null &&
+                          (widget.category?.isNotEmpty ?? false)
+                    ? FutureBuilder<List<IlanModel>>(
+                        future: _firestoreService.fetchIlanlarByCategoryAndProducer(widget.category, widget.producer),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(child: Text('Hata: ${snapshot.error}'));
+                          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            return Center(child: Text('Henüz ilan bulunmuyor.'));
+                          }
+
+                          final ilanlar = _sortIlanlar(snapshot.data!);
+                          final gosterilecekIlanlar = ilanlar.take(_ilanSayisi).toList();
+                          final hepsiGosterildi = _ilanSayisi >= ilanlar.length;
+
+                          return Column(
+                            children: [
+                              Expanded(
+                                child: GridView.builder(
+                                  padding: EdgeInsets.all(8.0),
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: 8.0,
+                                    crossAxisSpacing: 8.0,
+                                    childAspectRatio: 1,
+                                  ),
+                                  itemCount: gosterilecekIlanlar.length + (hepsiGosterildi ? 0 : 1),
+                                  itemBuilder: (context, index) {
+                                    if (index < gosterilecekIlanlar.length) {
+                                      final ilan = gosterilecekIlanlar[index];
+                                      debugPrint('Ilan: ${ilan.resimler![0]}');
+                                      return buildIlanCard(
+                                        userId: widget.id,
+                                        baslik: ilan.baslik,
+                                        fiyat: ilan.fiyat,
+                                        resimUrl: ilan.resimler?.isNotEmpty == true ? ilan.resimler![0] : null,
+                                        ilanID: ilan.id!,
+                                        kendiIlanim: false,
+                                        context: context,
+                                      );
+                                    } else {
+                                      return Center(
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                child: OutlinedButton(
+                                                  style: OutlinedButton.styleFrom(
+                                                    foregroundColor: Colors.blueAccent,
+                                                    side: BorderSide(color: Colors.blueAccent),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(8),
+                                                    ),
+                                                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                                                  ),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      _ilanSayisi += 6;
+                                                    });
+                                                  },
+                                                  child: Text("Daha Fazla Göster"),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
                           );
                         },
-                      ),
-                    ),
-                    if (!hepsiGosterildi)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              _ilanSayisi += 6;
-                            });
-                          },
-                          child: Text("Daha Fazla Göster"),
-                        ),
-                      ),
-                  ],
-                );
-              },
-            ),
+                      )
+                    : Center(child: Text('Henüz ilan bulunmuyor.')),
           ),
         ],
       ),
