@@ -12,15 +12,27 @@ class SellerPage extends StatelessWidget {
   Future<List<Map<String, dynamic>>> _getListings(
       List<dynamic> listingIds) async {
     final List<Map<String, dynamic>> listings = [];
-    for (var listingId in listingIds) {
-      var doc = await FirebaseFirestore.instance
-          .collection('ilanlar')
-          .doc(listingId)
-          .get();
-      if (doc.exists) {
-        listings.add(doc.data() as Map<String, dynamic>);
-      }
+    final List<String> collections = [
+      'ilanlar',
+      'mdf_lam',
+      'osb_panel',
+      'sunta'
+    ];
+
+    for (var collection in collections) {
+      final results = await Future.wait(
+        listingIds.map((listingId) async {
+          var doc = await FirebaseFirestore.instance
+              .collection(collection)
+              .doc(listingId)
+              .get();
+          return doc.exists ? doc.data() as Map<String, dynamic>? : null;
+        }),
+      );
+
+      listings.addAll(results.whereType<Map<String, dynamic>>());
     }
+
     return listings;
   }
 
@@ -115,7 +127,9 @@ class SellerPage extends StatelessWidget {
                 ),
                 const SizedBox(width: 35),
                 Column(
-                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  //mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(Icons.inventory, size: 25, color: Colors.blue),
                     const SizedBox(height: 4),
@@ -127,25 +141,6 @@ class SellerPage extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       sellerData['productCount']?.toString() ?? "0",
-                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 20),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.shopping_cart,
-                        size: 25, color: Colors.green),
-                    const SizedBox(height: 4),
-                    const Text(
-                      "Satış Adedi",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      sellerData['salesCount']?.toString() ?? "0",
                       style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                     ),
                   ],

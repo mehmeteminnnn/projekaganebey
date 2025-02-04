@@ -28,11 +28,20 @@ class _FavorilerimPageState extends State<FavorilerimPage> {
   }
 
   Future<Map<String, dynamic>?> _getIlanDetaylari(String ilanId) async {
-    final doc = await FirebaseFirestore.instance
-        .collection('ilanlar')
-        .doc(ilanId)
-        .get();
-    return doc.exists ? doc.data() : null;
+    List<String> koleksiyonlar = ['mdf_lam', 'osb', 'panel', 'sunta'];
+
+    for (String koleksiyon in koleksiyonlar) {
+      final doc = await FirebaseFirestore.instance
+          .collection(koleksiyon)
+          .doc(ilanId)
+          .get();
+
+      if (doc.exists) {
+        return doc.data();
+      }
+    }
+
+    return null; // Hiçbir koleksiyonda ilan bulunamazsa null döndür
   }
 
   @override

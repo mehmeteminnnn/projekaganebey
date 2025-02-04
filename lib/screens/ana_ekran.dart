@@ -30,6 +30,9 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
   final FirestoreService _firestoreService = FirestoreService();
   String _selectedSort = 'newest'; // Varsayılan sıralama
   int _ilanSayisi = 6; // Başlangıçta gösterilecek ilan sayısı
+  List<IlanModel> searchResults = [];
+  bool isSearching = false;
+  TextEditingController _searchController = TextEditingController();
 
   List<IlanModel> _sortIlanlar(List<IlanModel> ilanlar) {
     if (_selectedSort == 'newest') {
@@ -44,6 +47,22 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
       ilanlar.sort((a, b) => (b.fiyat ?? 0).compareTo(a.fiyat ?? 0));
     }
     return ilanlar;
+  }
+
+  void _searchIlanlar(String query) async {
+    if (query.isNotEmpty) {
+      List<IlanModel> results =
+          await FirestoreService().searchIlanlarByTitle(query);
+      setState(() {
+        searchResults = results;
+        isSearching = true;
+      });
+    } else {
+      setState(() {
+        searchResults = [];
+        isSearching = false;
+      });
+    }
   }
 
   @override
@@ -69,11 +88,13 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
           ),
           padding: EdgeInsets.symmetric(horizontal: 16.0),
           child: TextField(
+            controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Kelime veya ilan no ile ara',
               border: InputBorder.none,
               icon: Icon(Icons.search, color: Colors.grey),
             ),
+            onChanged: _searchIlanlar, // Arama işlemi
           ),
         ),
       ),
@@ -172,7 +193,34 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
             ),
           ),
           Expanded(
-            child: widget.filtre == false && widget.filteredAds == null
+            /*child: (isSearching && searchResults.isEmpty)
+      ? Center(child: Text("Sonuç bulunamadı"))
+      : GridView.builder(
+          padding: EdgeInsets.all(2.0),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 8.0,
+            crossAxisSpacing: 8.0,
+            childAspectRatio: 1,
+          ),
+          itemCount:  searchResults.length ,
+          itemBuilder: (context, index) {
+            final ilan =  searchResults[index] ;
+            return buildIlanCard(
+              userId: widget.id,
+              baslik: ilan.baslik,
+              fiyat: ilan.fiyat,
+              resimUrl: ilan.resimler?.isNotEmpty == true
+                  ? ilan.resimler![0]
+                  : null,
+              ilanID: ilan.id!,
+              kendiIlanim: false,
+              context: context,
+            );
+          },
+        )
+        else*/
+            child: (widget.filtre == false && widget.filteredAds == null)
                 ? FutureBuilder<List<IlanModel>>(
                     future: _firestoreService.fetchAllIlanlar(),
                     builder: (context, snapshot) {
@@ -193,7 +241,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                         children: [
                           Expanded(
                             child: GridView.builder(
-                              padding: EdgeInsets.all(8.0),
+                              padding: EdgeInsets.all(2.0),
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
@@ -218,38 +266,28 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                     context: context,
                                   );
                                 } else {
-                                  return Center(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            child: OutlinedButton(
-                                              style: OutlinedButton.styleFrom(
-                                                foregroundColor:
-                                                    Colors.blueAccent,
-                                                side: BorderSide(
-                                                    color: Colors.blueAccent),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 12,
-                                                    horizontal: 20),
-                                              ),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _ilanSayisi += 6;
-                                                });
-                                              },
-                                              child: Text("Daha Fazla Göster"),
-                                            ),
-                                          ),
+                                  return // En üste ve sağa boşluk bırak
+                                      Align(
+                                    alignment: Alignment
+                                        .topCenter, // En üste ve sağa hizala
+                                    child: OutlinedButton(
+                                      style: OutlinedButton.styleFrom(
+                                        foregroundColor: Colors.blueAccent,
+                                        side: BorderSide(
+                                            color: Colors.blueAccent),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
-                                      ],
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 12, horizontal: 20),
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _ilanSayisi += 6;
+                                        });
+                                      },
+                                      child: Text("Daha Fazla Göster"),
                                     ),
                                   );
                                 }
@@ -317,44 +355,27 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                         context: context,
                                       );
                                     } else {
-                                      return Center(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                              child: Container(
-                                                alignment: Alignment.center,
-                                                child: OutlinedButton(
-                                                  style:
-                                                      OutlinedButton.styleFrom(
-                                                    foregroundColor:
-                                                        Colors.blueAccent,
-                                                    side: BorderSide(
-                                                        color:
-                                                            Colors.blueAccent),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                    ),
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 12,
-                                                            horizontal: 20),
-                                                  ),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _ilanSayisi += 6;
-                                                    });
-                                                  },
-                                                  child:
-                                                      Text("Daha Fazla Göster"),
-                                                ),
-                                              ),
+                                      return Align(
+                                        alignment: Alignment
+                                            .topCenter, // En üste ve sağa hizala
+                                        child: OutlinedButton(
+                                          style: OutlinedButton.styleFrom(
+                                            foregroundColor: Colors.blueAccent,
+                                            side: BorderSide(
+                                                color: Colors.blueAccent),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
-                                          ],
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 12, horizontal: 20),
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              _ilanSayisi += 6;
+                                            });
+                                          },
+                                          child: Text("Daha Fazla Göster"),
                                         ),
                                       );
                                     }

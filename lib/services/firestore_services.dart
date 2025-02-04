@@ -126,37 +126,51 @@ class FirestoreService {
       return []; // Liste boşsa boş bir liste döndür
     }
 
-    QuerySnapshot snapshot = await _firestore
-        .collection('ilanlar')
-        .where(FieldPath.documentId, whereIn: ilanIdList)
-        .get();
+    final List<String> collections = [
+      'ilanlar',
+      'mdf_lam',
+      'osb_panel',
+      'sunta'
+    ];
+    List<IlanModel> ilanlar = [];
 
-    return snapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      return IlanModel.fromMap(data, doc.id);
-    }).toList();
+    for (var collection in collections) {
+      QuerySnapshot snapshot = await _firestore
+          .collection(collection)
+          .where(FieldPath.documentId, whereIn: ilanIdList)
+          .get();
+
+      ilanlar.addAll(snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return IlanModel.fromMap(data, doc.id);
+      }));
+    }
+
+    return ilanlar;
   }
 
   Future<List<IlanModel>> searchIlanlarByTitle(String query) async {
-    // Firestore'dan ilanları çekiyoruz (bu arama henüz harf duyarsız değil)
-    final snapshot = await FirebaseFirestore.instance
-        .collection('ilanlar')
-        .get(); // 'baslik' ile ilgili herhangi bir filtreleme yapılmaz
+    List<String> koleksiyonlar = ['mdf_lam', 'osb', 'panel', 'sunta'];
+    List<IlanModel> tumIlanlar = [];
 
-    // Arama terimini küçük harfe çeviriyoruz
     String searchQuery = query.toLowerCase();
 
-    // Veritabanından gelen veriyi filtreliyoruz
-    final filteredData = snapshot.docs.where((doc) {
-      // Başlıkları küçük harfe çevirerek karşılaştırıyoruz
-      String title = doc['baslik'].toLowerCase();
-      return title.contains(searchQuery);
-    }).toList();
+    for (String koleksiyon in koleksiyonlar) {
+      final snapshot = await FirebaseFirestore.instance
+          .collection(koleksiyon)
+          .get(); // Tüm ilanları çekiyoruz
 
-    // Filtrelenmiş verileri IlanModel'e dönüştürüyoruz
-    return filteredData
-        .map((doc) => IlanModel.fromMap(doc.data(), doc.id))
-        .toList();
+      final filteredData = snapshot.docs.where((doc) {
+        String title = doc['baslik'].toLowerCase();
+        return title.contains(searchQuery);
+      }).toList();
+
+      // Filtrelenmiş ilanları modele çevirerek listeye ekliyoruz
+      tumIlanlar.addAll(
+          filteredData.map((doc) => IlanModel.fromMap(doc.data(), doc.id)));
+    }
+
+    return tumIlanlar; // Tüm koleksiyonlardan gelen ilanları döndürüyoruz
   }
 
   // Toplam kullanıcı sayısını al
@@ -269,45 +283,45 @@ class FirestoreService {
 
 //bu kısım
   // İlan ID'sine göre kullanıcının telefon numarasını alma
- Future<String?> getUserPhoneByIlanId(String ilanId) async {
-  try {
-    List<String> koleksiyonlar = ['mdf_lam', 'osb', 'panel', 'sunta'];
-    DocumentSnapshot? ilanSnapshot;
+  Future<String?> getUserPhoneByIlanId(String ilanId) async {
+    try {
+      List<String> koleksiyonlar = ['mdf_lam', 'osb', 'panel', 'sunta'];
+      DocumentSnapshot? ilanSnapshot;
 
-    // İlanın hangi koleksiyonda olduğunu bul
-    for (String koleksiyon in koleksiyonlar) {
-      ilanSnapshot = await _firestore.collection(koleksiyon).doc(ilanId).get();
-      if (ilanSnapshot.exists) {
-        break; // İlk bulduğu koleksiyonla devam et
+      // İlanın hangi koleksiyonda olduğunu bul
+      for (String koleksiyon in koleksiyonlar) {
+        ilanSnapshot =
+            await _firestore.collection(koleksiyon).doc(ilanId).get();
+        if (ilanSnapshot.exists) {
+          break; // İlk bulduğu koleksiyonla devam et
+        }
       }
+
+      if (ilanSnapshot == null || !ilanSnapshot.exists) {
+        throw Exception('İlan bulunamadı');
+      }
+
+      // İlanı oluşturan kullanıcının ID'sini al
+      String? kullaniciId = ilanSnapshot['olusturanKullaniciId'];
+
+      if (kullaniciId == null) {
+        throw Exception('Kullanıcı ID bulunamadı');
+      }
+
+      // Kullanıcının telefon numarasını al
+      DocumentSnapshot userSnapshot =
+          await _firestore.collection('users').doc(kullaniciId).get();
+
+      if (!userSnapshot.exists) {
+        throw Exception('Kullanıcı bulunamadı');
+      }
+
+      return userSnapshot['phone'] as String?;
+    } catch (e) {
+      debugPrint('Hata: $e');
+      return null;
     }
-
-    if (ilanSnapshot == null || !ilanSnapshot.exists) {
-      throw Exception('İlan bulunamadı');
-    }
-
-    // İlanı oluşturan kullanıcının ID'sini al
-    String? kullaniciId = ilanSnapshot['olusturanKullaniciId'];
-
-    if (kullaniciId == null) {
-      throw Exception('Kullanıcı ID bulunamadı');
-    }
-
-    // Kullanıcının telefon numarasını al
-    DocumentSnapshot userSnapshot =
-        await _firestore.collection('users').doc(kullaniciId).get();
-
-    if (!userSnapshot.exists) {
-      throw Exception('Kullanıcı bulunamadı');
-    }
-
-    return userSnapshot['phone'] as String?;
-  } catch (e) {
-    debugPrint('Hata: $e');
-    return null;
   }
-}
-
 
 // Koleksiyondaki belge sayısını al
   Future<int> getDocumentCount(String collectionName) async {

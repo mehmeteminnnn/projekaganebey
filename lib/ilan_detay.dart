@@ -92,9 +92,9 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
     } catch (e) {
       Future.microtask(() {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
+          /* ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Bir hata oluştu: $e')),
-          );
+          );*/
         }
       });
     }
@@ -468,8 +468,8 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 20),
-                          const Text(
+                          const SizedBox(height: 80),
+                          /* const Text(
                             "Benzer İlanlar",
                             style: TextStyle(
                               fontSize: 18,
@@ -478,7 +478,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                             ),
                           ),
                           SizedBox(height: 20),
-                          benzerIlanlarWidget(widget.ilanId, widget.id ?? ''),
+                          benzerIlanlarWidget(widget.ilanId, widget.id ?? ''),*/
                         ],
                       ),
                     ),
