@@ -95,25 +95,37 @@ class UserService {
 
   Future<Map<String, dynamic>?> getCreatorInfo(String ilanId) async {
     try {
-      // İlanlar koleksiyonundan ilanId'ye sahip dokümanı al
-      final ilanDoc = await _firestore.collection('ilanlar').doc(ilanId).get();
+      List<String> koleksiyonlar = ['mdf_lam', 'osb', 'panel', 'sunta'];
+      DocumentSnapshot? ilanDoc;
 
-      if (ilanDoc.exists) {
-        // İlan dokümanından olusturanKullaniciId'yi al
-        final creatorId = ilanDoc.data()?['olusturanKullaniciId'];
-
-        if (creatorId != null) {
-          // Users koleksiyonundan kullanıcı bilgilerini al
-          final userDoc =
-              await _firestore.collection('users').doc(creatorId).get();
-
-          if (userDoc.exists) {
-            // Kullanıcı bilgilerini döndür
-            return userDoc.data() as Map<String, dynamic>;
-          }
+      // İlanın hangi koleksiyonda olduğunu bul
+      for (String koleksiyon in koleksiyonlar) {
+        ilanDoc = await _firestore.collection(koleksiyon).doc(ilanId).get();
+        if (ilanDoc.exists) {
+          break; // İlk bulunan koleksiyonla devam et
         }
       }
-      return null; // Eğer ilan veya kullanıcı bulunamazsa null döndür
+
+      if (ilanDoc == null || !ilanDoc.exists) {
+        throw Exception('İlan bulunamadı');
+      }
+
+      // İlan dokümanından olusturanKullaniciId'yi al
+      final String? creatorId = ilanDoc['olusturanKullaniciId'];
+
+      if (creatorId == null) {
+        throw Exception('Kullanıcı ID bulunamadı');
+      }
+
+      // Users koleksiyonundan kullanıcı bilgilerini al
+      final userDoc = await _firestore.collection('users').doc(creatorId).get();
+
+      if (!userDoc.exists) {
+        throw Exception('Kullanıcı bulunamadı');
+      }
+
+      // Kullanıcı bilgilerini döndür
+      return userDoc.data() as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Kullanıcı bilgilerini alırken bir hata oluştu: $e');
     }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
-import 'package:projekaganebey/ilanlar%C4%B1m.dart';
-import 'package:projekaganebey/screens/profilim_detay.dart';
-import 'package:projekaganebey/screens/settings.dart';
-import 'package:projekaganebey/screens/giris_ekrani.dart';
-import 'package:projekaganebey/services/firestore_services.dart';
+import 'package:Depot/ilanlar%C4%B1m.dart';
+import 'package:Depot/screens/profilim_detay.dart';
+import 'package:Depot/screens/settings.dart';
+import 'package:Depot/screens/giris_ekrani.dart';
+import 'package:Depot/services/firestore_services.dart';
 
 class ProfileCard extends StatelessWidget {
   final IconData icon;

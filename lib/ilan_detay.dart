@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:projekaganebey/screens/satici.dart';
-import 'package:projekaganebey/services/user_services.dart';
-import 'package:projekaganebey/widgets/benzer_ilanlar.dart';
+import 'package:Depot/screens/satici.dart';
+import 'package:Depot/services/user_services.dart';
+import 'package:Depot/widgets/benzer_ilanlar.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:projekaganebey/services/firestore_services.dart';
+import 'package:Depot/services/firestore_services.dart';
 import 'package:flutter/services.dart';
-import 'package:projekaganebey/widgets/son_yorumlar.dart';
+import 'package:Depot/widgets/son_yorumlar.dart';
 import 'package:intl/intl.dart';
 
 class IlanDetayPage extends StatefulWidget {
@@ -113,7 +113,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          '${widget.ilanbaslik}',
+          '${widget.ilanbaslik ?? "Yeni İlan"}',
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,

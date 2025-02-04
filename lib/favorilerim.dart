@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:projekaganebey/ilan_detay.dart';
+import 'package:Depot/ilan_detay.dart';
 
 class FavorilerimPage extends StatefulWidget {
   final String? id;

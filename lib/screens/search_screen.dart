@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:projekaganebey/screens/search_product_filter_screen.dart';
-import 'package:projekaganebey/models/ilan_model.dart';
-import 'package:projekaganebey/ilan_detay.dart';
+import 'package:Depot/screens/search_product_filter_screen.dart';
+import 'package:Depot/models/ilan_model.dart';
+import 'package:Depot/ilan_detay.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

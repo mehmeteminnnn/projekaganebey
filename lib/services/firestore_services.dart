@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:projekaganebey/models/ilan_model.dart';
+import 'package:Depot/models/ilan_model.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -267,38 +267,47 @@ class FirestoreService {
     return snapshot.data() as Map<String, dynamic>;
   }
 
+//bu kısım
   // İlan ID'sine göre kullanıcının telefon numarasını alma
-  Future<String?> getUserPhoneByIlanId(String ilanId) async {
-    try {
-      // İlanın bilgilerini al
-      DocumentSnapshot ilanSnapshot =
-          await _firestore.collection('ilanlar').doc(ilanId).get();
+ Future<String?> getUserPhoneByIlanId(String ilanId) async {
+  try {
+    List<String> koleksiyonlar = ['mdf_lam', 'osb', 'panel', 'sunta'];
+    DocumentSnapshot? ilanSnapshot;
 
-      if (!ilanSnapshot.exists) {
-        throw Exception('İlan bulunamadı');
+    // İlanın hangi koleksiyonda olduğunu bul
+    for (String koleksiyon in koleksiyonlar) {
+      ilanSnapshot = await _firestore.collection(koleksiyon).doc(ilanId).get();
+      if (ilanSnapshot.exists) {
+        break; // İlk bulduğu koleksiyonla devam et
       }
-
-      // İlanı oluşturan kullanıcının ID'sini al
-      String? kullaniciId = ilanSnapshot['olusturanKullaniciId'];
-
-      if (kullaniciId == null) {
-        throw Exception('Kullanıcı ID bulunamadı');
-      }
-
-      // Kullanıcının telefon numarasını al
-      DocumentSnapshot userSnapshot =
-          await _firestore.collection('users').doc(kullaniciId).get();
-
-      if (!userSnapshot.exists) {
-        throw Exception('Kullanıcı bulunamadı');
-      }
-
-      return userSnapshot['phone'] as String?;
-    } catch (e) {
-      debugPrint('Hata: $e');
-      return null;
     }
+
+    if (ilanSnapshot == null || !ilanSnapshot.exists) {
+      throw Exception('İlan bulunamadı');
+    }
+
+    // İlanı oluşturan kullanıcının ID'sini al
+    String? kullaniciId = ilanSnapshot['olusturanKullaniciId'];
+
+    if (kullaniciId == null) {
+      throw Exception('Kullanıcı ID bulunamadı');
+    }
+
+    // Kullanıcının telefon numarasını al
+    DocumentSnapshot userSnapshot =
+        await _firestore.collection('users').doc(kullaniciId).get();
+
+    if (!userSnapshot.exists) {
+      throw Exception('Kullanıcı bulunamadı');
+    }
+
+    return userSnapshot['phone'] as String?;
+  } catch (e) {
+    debugPrint('Hata: $e');
+    return null;
   }
+}
+
 
 // Koleksiyondaki belge sayısını al
   Future<int> getDocumentCount(String collectionName) async {

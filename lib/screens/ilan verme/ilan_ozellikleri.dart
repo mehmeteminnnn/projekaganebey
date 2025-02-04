@@ -2,9 +2,9 @@ import 'dart:io';
 //import 'dart:nativewrappers/_internal/vm/lib/core_patch.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:projekaganebey/constants/constants.dart';
-import 'package:projekaganebey/ilan_ozellikleri2.dart';
-import 'package:projekaganebey/models/ilan_model.dart';
+import 'package:Depot/constants/constants.dart';
+import 'package:Depot/models/ilan_model.dart';
+import 'package:Depot/screens/ilan%20verme/ilan_ozellikleri2.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class IlanOzellikleriPage extends StatefulWidget {
@@ -226,7 +226,9 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ProductPage(
-                                    images: widget.images, ilan: widget.ilan, id: widget.id)));
+                                    images: widget.images,
+                                    ilan: widget.ilan,
+                                    id: widget.id)));
                       }
                     : null,
                 child: Text(

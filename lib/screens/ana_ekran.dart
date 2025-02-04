@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:projekaganebey/screens/filtreleme_screen.dart';
-import 'package:projekaganebey/models/ilan_model.dart';
-import 'package:projekaganebey/services/firestore_services.dart';
-import 'package:projekaganebey/widgets/ilan_card.dart';
-import 'package:projekaganebey/widgets/kampanyalar_banner.dart';
-import 'package:projekaganebey/screens/notifications_page.dart';
+import 'package:Depot/screens/filtreleme_screen.dart';
+import 'package:Depot/models/ilan_model.dart';
+import 'package:Depot/services/firestore_services.dart';
+import 'package:Depot/widgets/ilan_card.dart';
+import 'package:Depot/widgets/kampanyalar_banner.dart';
+import 'package:Depot/screens/notifications_page.dart';
 
 class AdsMDFLamPage extends StatefulWidget {
   final List<Map<String, dynamic>>? filteredAds;

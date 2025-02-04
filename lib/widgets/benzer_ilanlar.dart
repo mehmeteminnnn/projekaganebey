@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:projekaganebey/ilan_detay.dart';
-import 'package:projekaganebey/models/ilan_model.dart';
-import 'package:projekaganebey/services/firestore_services.dart';
+import 'package:Depot/ilan_detay.dart';
+import 'package:Depot/models/ilan_model.dart';
+import 'package:Depot/services/firestore_services.dart';
 
 Widget benzerIlanlarWidget(String ilanId, String kullaniciId) {
   final FirestoreService _firestoreService = FirestoreService();

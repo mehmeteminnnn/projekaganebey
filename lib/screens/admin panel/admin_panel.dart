@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:projekaganebey/screens/admin%20panel/banners.dart';
-import 'package:projekaganebey/screens/admin%20panel/notification_screen.dart';
-import 'package:projekaganebey/services/firestore_services.dart';
-import 'package:projekaganebey/screens/giris_ekrani.dart';
-import 'package:projekaganebey/navbar.dart';
-import 'package:projekaganebey/styles.dart';
+import 'package:Depot/screens/admin%20panel/banners.dart';
+import 'package:Depot/screens/admin%20panel/notification_screen.dart';
+import 'package:Depot/services/firestore_services.dart';
+import 'package:Depot/screens/giris_ekrani.dart';
+import 'package:Depot/navbar.dart';
+import 'package:Depot/styles.dart';
 
 class DashboardPage extends StatefulWidget {
   @override

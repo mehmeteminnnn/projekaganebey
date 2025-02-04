@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projekaganebey/screens/giris_ekrani.dart';
+import 'package:Depot/screens/giris_ekrani.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class SplashScreen extends StatefulWidget {

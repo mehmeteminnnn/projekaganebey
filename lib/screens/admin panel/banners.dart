@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projekaganebey/services/firestore_services.dart';
+import 'package:Depot/services/firestore_services.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';

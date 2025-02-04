@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:projekaganebey/adreslerim.dart';
+import 'package:Depot/adreslerim.dart';
 
 class AyarlarPage extends StatelessWidget {
   @override

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:projekaganebey/firebase_options.dart';
-import 'package:projekaganebey/services/notification_services.dart';
-import 'package:projekaganebey/screens/splash_screen.dart';
-
+import 'package:Depot/firebase_options.dart';
+import 'package:Depot/services/notification_services.dart';
+import 'package:Depot/screens/splash_screen.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -34,7 +33,7 @@ void main() async {
   });
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
- 
+
   runApp(MyApp());
 }
 

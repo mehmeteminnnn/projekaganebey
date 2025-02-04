@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:projekaganebey/functions/favori.dart';
-import 'package:projekaganebey/ilan_detay.dart';
+import 'package:Depot/functions/favori.dart';
+import 'package:Depot/ilan_detay.dart';
 
 Widget buildIlanCard({
   String? category,

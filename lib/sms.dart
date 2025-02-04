@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pin_code_fields/flutter_pin_code_fields.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:projekaganebey/navbar.dart';
+import 'package:Depot/navbar.dart';
 
 class SmsVerificationScreen extends StatefulWidget {
   final String phoneNumber;

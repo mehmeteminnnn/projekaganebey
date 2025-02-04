@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:projekaganebey/models/ilan_model.dart';
-import 'package:projekaganebey/services/firestore_services.dart';
-import 'package:projekaganebey/widgets/ilan_card.dart';
+import 'package:Depot/models/ilan_model.dart';
+import 'package:Depot/services/firestore_services.dart';
+import 'package:Depot/widgets/ilan_card.dart';
 
 class IlanlarimPage extends StatefulWidget {
   final String? id;
@@ -105,7 +105,8 @@ class _IlanlarimPageState extends State<IlanlarimPage> {
                   itemCount: _ilanlar.length,
                   itemBuilder: (context, index) {
                     var ilan = _ilanlar[index];
-                    return buildIlanCard(kendiIlanim: true,
+                    return buildIlanCard(
+                      kendiIlanim: true,
                       baslik: ilan.baslik,
                       fiyat: ilan.fiyat,
                       resimUrl: ilan.resimler?.isNotEmpty == true

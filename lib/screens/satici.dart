@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:projekaganebey/services/user_services.dart';
-import 'package:projekaganebey/widgets/ilan_card.dart';
+import 'package:Depot/services/user_services.dart';
+import 'package:Depot/widgets/ilan_card.dart';
 
 class SellerPage extends StatelessWidget {
   final Map<String, dynamic> sellerData;

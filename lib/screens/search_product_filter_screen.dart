@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:projekaganebey/screens/ana_ekran.dart';
-import 'package:projekaganebey/services/firestore_services.dart';
-import 'package:projekaganebey/styles.dart';
+import 'package:Depot/screens/ana_ekran.dart';
+import 'package:Depot/services/firestore_services.dart';
+import 'package:Depot/styles.dart';
 
 class FilterProductPage extends StatefulWidget {
   final String category; // Örneğin "mdf"

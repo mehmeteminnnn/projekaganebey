@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projekaganebey/models/notification_model.dart';
+import 'package:Depot/models/notification_model.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class NotificationsPage extends StatefulWidget {

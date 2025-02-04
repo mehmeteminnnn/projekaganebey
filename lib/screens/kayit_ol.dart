@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projekaganebey/sms.dart';
+import 'package:Depot/sms.dart';
 
 class RegisterScreen extends StatelessWidget {
   final _phoneController = TextEditingController();

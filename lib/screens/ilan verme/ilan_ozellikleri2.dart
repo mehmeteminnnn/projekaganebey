@@ -7,9 +7,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:projekaganebey/ilan_detay.dart';
-import 'package:projekaganebey/ilan_hazir.dart';
-import 'package:projekaganebey/models/ilan_model.dart';
+import 'package:Depot/ilan_detay.dart';
+import 'package:Depot/ilan_hazir.dart';
+import 'package:Depot/models/ilan_model.dart';
 import 'package:turkish/turkish.dart';
 
 class ProductPage extends StatefulWidget {
@@ -90,6 +90,17 @@ class _ProductPageState extends State<ProductPage> {
     });
   }
 
+  String convertCategory(String category) {
+    Map<String, String> categoryMap = {
+      'MDF LAM': 'mdf_lam',
+      'OSB': 'osb',
+      'SUNTA': 'sunta',
+      'PANEL': 'panel',
+    };
+
+    return categoryMap[category] ?? category.toLowerCase().replaceAll(' ', '_');
+  }
+
   Future<void> saveIlanToFirestore() async {
     try {
       String? userId = widget.id;
@@ -109,12 +120,13 @@ class _ProductPageState extends State<ProductPage> {
       widget.ilan.resimler = _imageUrls; // Resim URL'lerini IlanModel'e ekle
 
       // Yeni ilanı 'ilanlar' koleksiyonuna ekle ve ID'sini al
-      DocumentReference ilanDocRef =
-          await _firestore.collection('ilanlar').add(widget.ilan.toMap());
+      DocumentReference ilanDocRef = await _firestore
+          .collection(convertCategory(widget.ilan.kategori!))
+          .add(widget.ilan.toMap());
       String ilanId = ilanDocRef.id;
 
       // Kullanıcının 'users' koleksiyonundaki dökümanını güncelle
-      await _firestore.collection('users').doc(userId).set({
+      await _firestore.collection(convertCategory("users")).doc(userId).set({
         'ilanlar': FieldValue.arrayUnion([ilanId])
       }, SetOptions(merge: true));
 
