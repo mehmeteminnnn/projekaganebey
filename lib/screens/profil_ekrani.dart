@@ -1,3 +1,4 @@
+import 'package:Depot/yayinda_olmayan.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:Depot/ilanlar%C4%B1m.dart';
@@ -110,6 +111,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     color: Colors.blue.shade50,
                     onTap: () {
                       debugPrint("Yayında Olmayan İlanlar tıklandı");
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  OlmayanIlanlarimPage(id: widget.id)));
                       // Yayında olmayan ilanlar sayfasına yönlendirme yapılabilir
                     },
                   ),

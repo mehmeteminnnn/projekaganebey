@@ -120,18 +120,34 @@ class FirestoreService {
     return tumIlanlar;
   }
 
+  Future<List<IlanModel>> fetchIlanlarByYayindaOlmayan(
+      List<String> ilanIdList) async {
+    if (ilanIdList.isEmpty) {
+      return []; // Liste boşsa boş bir liste döndür
+    }
+    debugPrint('ilanIdList: $ilanIdList');
+    List<IlanModel> ilanlar = [];
+
+    QuerySnapshot snapshot = await _firestore
+        .collection("yayindaOlmayan")
+        .where(FieldPath.documentId, whereIn: ilanIdList)
+        .get();
+
+    ilanlar.addAll(snapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      return IlanModel.fromMap(data, doc.id);
+    }));
+
+    return ilanlar;
+  }
+
   // Belirli bir listeye göre ilanları getirme
   Future<List<IlanModel>> fetchIlanlarByIdList(List<String> ilanIdList) async {
     if (ilanIdList.isEmpty) {
       return []; // Liste boşsa boş bir liste döndür
     }
 
-    final List<String> collections = [
-      'ilanlar',
-      'mdf_lam',
-      'osb_panel',
-      'sunta'
-    ];
+    final List<String> collections = ['osb', 'mdf_lam', 'panel', 'sunta'];
     List<IlanModel> ilanlar = [];
 
     for (var collection in collections) {
@@ -346,6 +362,78 @@ class FirestoreService {
     } catch (e) {
       print('Error fetching document count for $producer in $category: $e');
       return 0;
+    }
+  }
+
+  Future<void> ilanKaldir(String ilanId) async {
+    try {
+      List<String> kategoriler = ["mdf_lam", "osb", "sunta", "panel"];
+      String? kullaniciId;
+      String? ilanKategorisi;
+      Map<String, dynamic>? ilanVerisi;
+
+      // 1️⃣ İlanı ilgili kategoriden bul
+      for (String kategori in kategoriler) {
+        DocumentSnapshot ilanSnapshot =
+            await _firestore.collection(kategori).doc(ilanId).get();
+        if (ilanSnapshot.exists) {
+          kullaniciId = ilanSnapshot.get("olusturanKullaniciId");
+          ilanKategorisi = kategori;
+          ilanVerisi = ilanSnapshot.data() as Map<String, dynamic>;
+          ilanVerisi["kategori"] =
+              kategori; // İlanın hangi kategoriden olduğunu kaydedelim
+          print("İlan $kategori kategorisinde bulundu.");
+          break;
+        }
+      }
+
+      // 2️⃣ Eğer ilan bulunamadıysa işlem yapma
+      if (kullaniciId == null || ilanKategorisi == null || ilanVerisi == null) {
+        print("İlan bulunamadı!");
+        return;
+      }
+
+      // 3️⃣ Önce ilanı 'yayindaOlmayan' koleksiyonuna kaydet
+      await _firestore.collection("yayindaOlmayan").doc(ilanId).set(ilanVerisi);
+      print("İlan yayindaOlmayan koleksiyonuna kaydedildi.");
+
+      // 4️⃣ Kullanıcıyı Firestore'dan al
+      DocumentReference kullaniciRef =
+          _firestore.collection("users").doc(kullaniciId);
+      DocumentSnapshot kullaniciSnapshot = await kullaniciRef.get();
+
+      if (!kullaniciSnapshot.exists) {
+        print("Kullanıcı bulunamadı!");
+        return;
+      }
+
+      // 5️⃣ Kullanıcının ilanlar listesinden ilanId'yi çıkar
+      List<dynamic> ilanlarListesi =
+          (kullaniciSnapshot.data() as Map<String, dynamic>)["ilanlar"] ?? [];
+      ilanlarListesi.remove(ilanId);
+
+      // 6️⃣ Eğer yayindaOlmayan alanı yoksa oluştur, varsa listeye ekle
+      List<dynamic> yayindaOlmayanListesi = (kullaniciSnapshot.data()
+              as Map<String, dynamic>)["yayindaOlmayan"] ??
+          [];
+
+      if (!yayindaOlmayanListesi.contains(ilanId)) {
+        yayindaOlmayanListesi.add(ilanId);
+      }
+
+      // 7️⃣ Güncellenmiş verileri Firestore'a yaz
+      await kullaniciRef.set({
+        "ilanlar": ilanlarListesi,
+        "yayindaOlmayan": yayindaOlmayanListesi,
+      }, SetOptions(merge: true)); // 🔥 **Mevcut verilere ekleme yap!**
+
+      print("Kullanıcı verileri güncellendi.");
+
+      // 8️⃣ Son olarak ilanı sil
+      await _firestore.collection(ilanKategorisi).doc(ilanId).delete();
+      print("İlan $ilanKategorisi kategorisinden silindi.");
+    } catch (e) {
+      print("Hata oluştu: $e");
     }
   }
 

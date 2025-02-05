@@ -80,6 +80,35 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
     return null; // Eğer ilan hiçbir koleksiyonda bulunamazsa null döner
   }
 
+  void _ilanKaldirUyari(BuildContext context, String ilanId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Emin misiniz?"),
+          content: const Text(
+              "Bu ilanı yayından kaldırmak istediğinizden emin misiniz?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Uyarıyı kapat
+              },
+              child: const Text("İptal"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Uyarıyı kapat
+                FirestoreService()
+                    .ilanKaldir(ilanId); // Firestore işlemine başla
+              },
+              child: const Text("Evet, Kaldır"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _checkIfFavorited() async {
     try {
       final favorited =
@@ -180,6 +209,8 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
               onSelected: (value) {
                 if (value == 'edit') {
                   // İlan düzenleme işlemleri
+                } else if (value == 'remove') {
+                  _ilanKaldirUyari(context, widget.ilanId); // Uyarı göster
                 }
               },
               itemBuilder: (BuildContext context) {
@@ -188,9 +219,13 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                     value: 'edit',
                     child: Text('İlanı Düzenle'),
                   ),
+                  const PopupMenuItem<String>(
+                    value: 'remove',
+                    child: Text('İlanı Yayından Kaldır'),
+                  ),
                 ];
               },
-            ),
+            )
         ],
       ),
       body: FutureBuilder<DocumentSnapshot>(
