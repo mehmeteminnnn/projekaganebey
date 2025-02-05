@@ -105,6 +105,7 @@ class _OlmayanIlanlarimPageState extends State<OlmayanIlanlarimPage> {
                   itemBuilder: (context, index) {
                     var ilan = _ilanlar[index];
                     return buildIlanCard(
+                      yayindaOlmayan: true,
                       kendiIlanim: true,
                       baslik: ilan.baslik,
                       fiyat: ilan.fiyat,

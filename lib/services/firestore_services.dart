@@ -365,6 +365,83 @@ class FirestoreService {
     }
   }
 
+  Future<void> ilanYayinaAl(String ilanId) async {
+  try {
+    List<String> kategoriler = ["mdf_lam", "osb", "sunta", "panel"];
+    String? kullaniciId;
+    String? ilanKategorisi;
+    Map<String, dynamic>? ilanVerisi;
+
+    // 1️⃣ Önce ilanı 'yayindaOlmayan' koleksiyonundan bul
+    DocumentSnapshot ilanSnapshot =
+        await _firestore.collection("yayindaOlmayan").doc(ilanId).get();
+
+    if (ilanSnapshot.exists) {
+      kullaniciId = ilanSnapshot.get("olusturanKullaniciId");
+      ilanKategorisi = ilanSnapshot.get("kategori"); // Kategoriyi al
+      ilanVerisi = ilanSnapshot.data() as Map<String, dynamic>;
+
+      print("İlan yayindaOlmayan koleksiyonunda bulundu.");
+    } else {
+      print("İlan yayindaOlmayan koleksiyonunda bulunamadı!");
+      return;
+    }
+
+    // 2️⃣ Eğer ilanın kategorisi geçerli değilse işlem yapma
+    if (kullaniciId == null || ilanKategorisi == null || ilanVerisi == null) {
+      print("İlan veya kullanıcı bilgileri eksik!");
+      return;
+    }
+
+    // 3️⃣ İlanı ilgili kategorisine geri ekle
+    await _firestore.collection(ilanKategorisi).doc(ilanId).set(ilanVerisi);
+    print("İlan tekrar $ilanKategorisi kategorisine eklendi.");
+
+    // 4️⃣ Kullanıcıyı Firestore'dan al
+    DocumentReference kullaniciRef =
+        _firestore.collection("users").doc(kullaniciId);
+    DocumentSnapshot kullaniciSnapshot = await kullaniciRef.get();
+
+    if (!kullaniciSnapshot.exists) {
+      print("Kullanıcı bulunamadı!");
+      return;
+    }
+
+    // 5️⃣ Kullanıcının yayında olmayan ilan listesinden ilanId'yi çıkar
+    List<dynamic> yayindaOlmayanListesi =
+        (kullaniciSnapshot.data() as Map<String, dynamic>)["yayindaOlmayan"] ?? [];
+    yayindaOlmayanListesi.remove(ilanId);
+
+    // 6️⃣ Eğer ilanlar listesi yoksa oluştur, varsa ekle
+    List<dynamic> ilanlarListesi =
+        (kullaniciSnapshot.data() as Map<String, dynamic>)["ilanlar"] ?? [];
+
+    if (!ilanlarListesi.contains(ilanId)) {
+      ilanlarListesi.add(ilanId);
+    }
+
+    // 7️⃣ Güncellenmiş verileri Firestore'a yaz
+    await kullaniciRef.set({
+      "ilanlar": ilanlarListesi,
+      "yayindaOlmayan": yayindaOlmayanListesi,
+    }, SetOptions(merge: true)); // 🔥 **Mevcut verilere ekleme yap!**
+
+    print("Kullanıcı verileri güncellendi.");
+
+    // 8️⃣ Son olarak ilanı 'yayindaOlmayan' koleksiyonundan sil
+    await _firestore.collection("yayindaOlmayan").doc(ilanId).delete();
+    print("İlan yayindaOlmayan koleksiyonundan kaldırıldı.");
+  } catch (e) {
+    print("Hata oluştu: $e");
+  }
+}
+
+
+
+
+
+
+
   Future<void> ilanKaldir(String ilanId) async {
     try {
       List<String> kategoriler = ["mdf_lam", "osb", "sunta", "panel"];
@@ -445,7 +522,7 @@ class FirestoreService {
     for (String collection in collections) {
       // Her koleksiyon için en fazla 10 belgeyi çekiyoruz
       QuerySnapshot snapshot =
-          await _firestore.collection(collection).limit(10).get();
+          await _firestore.collection(collection).limit(15).get();
 
       // Her koleksiyondaki belgeleri IlanModel'e dönüştürüp listeye ekliyoruz
       allIlanlar.addAll(snapshot.docs.map((doc) {

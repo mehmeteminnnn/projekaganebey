@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Depot/functions/favori.dart';
 import 'package:Depot/ilan_detay.dart';
+import 'package:Depot/services/firestore_services.dart';
 
 Widget buildIlanCard({
   String? category,
@@ -12,24 +13,26 @@ Widget buildIlanCard({
   String? resimUrl,
   required String ilanID,
   required BuildContext context,
+  bool? yayindaOlmayan,
 }) {
   return GestureDetector(
-    onTap: () {
-      debugPrint("ilanID: $ilanID, userId: $userId");
-      // İlan detay sayfasına yönlendirme
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => IlanDetayPage(
-            id: userId,
-            ilanId: ilanID,
-            ilanbaslik: baslik,
-            kendiIlanim: kendiIlanim ?? false,
-            kategori: category,
-          ),
-        ),
-      );
-    },
+    onTap: yayindaOlmayan == true
+        ? null
+        : () {
+            debugPrint("ilanID: $ilanID, userId: $userId");
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => IlanDetayPage(
+                  id: userId,
+                  ilanId: ilanID,
+                  ilanbaslik: baslik,
+                  kendiIlanim: kendiIlanim ?? false,
+                  kategori: category,
+                ),
+              ),
+            );
+          },
     child: Card(
       color: Colors.white,
       child: Stack(
@@ -66,6 +69,28 @@ Widget buildIlanCard({
               ),
             ],
           ),
+          if (yayindaOlmayan == true)
+            Positioned(
+              top: 8,
+              right: 8,
+              child: PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'tekrar_yayinla') {
+                    FirestoreService().ilanYayinaAl(ilanID);
+                  }
+                },
+                itemBuilder: (BuildContext context) {
+                  return [
+                    if (yayindaOlmayan == true)
+                      const PopupMenuItem<String>(
+                        value: 'tekrar_yayinla',
+                        child: Text('Tekrar Yayınla'),
+                      ),
+                  ];
+                },
+                icon: const Icon(Icons.more_vert),
+              ),
+            ),
           if (kendiIlanim != true)
             Positioned(
               top: 0,
@@ -77,21 +102,17 @@ Widget buildIlanCard({
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   }
 
-                  // Verinin olup olmadığını ve documentin var olup olmadığını kontrol ediyoruz
                   if (snapshot.hasData &&
                       snapshot.data != null &&
                       snapshot.data!.exists) {
-                    // favorilerim alanı varsa, yoksa boş bir liste ile başlatıyoruz
                     List<dynamic> favorilerim =
                         snapshot.data!['favorilerim'] ?? [];
 
-                    // favorilerim içinde ilanID var mı diye kontrol ediyoruz
                     bool isFavori = favorilerim.contains(ilanID);
 
-                    // Favori durumu ile ilgili işlemleri burada yapabilirsiniz
                     return IconButton(
                       icon: Icon(
                         isFavori ? Icons.favorite : Icons.favorite_border,
@@ -106,7 +127,6 @@ Widget buildIlanCard({
                       },
                     );
                   } else {
-                    // Eğer veri yoksa ya da document bulunmazsa favori butonu burada görüntüleniyor
                     return IconButton(
                       icon:
                           const Icon(Icons.favorite_border, color: Colors.red),

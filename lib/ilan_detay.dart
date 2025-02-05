@@ -8,6 +8,9 @@ import 'package:Depot/services/firestore_services.dart';
 import 'package:flutter/services.dart';
 import 'package:Depot/widgets/son_yorumlar.dart';
 import 'package:intl/intl.dart';
+import 'package:Depot/constants/constants.dart';
+import 'dart:convert';
+import 'package:turkish/turkish.dart';
 
 class IlanDetayPage extends StatefulWidget {
   final String ilanId;
@@ -208,9 +211,11 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
             PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'edit') {
-                  // İlan düzenleme işlemleri
+                  ilanRef.get().then((snapshot) {
+                    _showEditDialog(context, snapshot);
+                  });
                 } else if (value == 'remove') {
-                  _ilanKaldirUyari(context, widget.ilanId); // Uyarı göster
+                  _ilanKaldirUyari(context, widget.ilanId);
                 }
               },
               itemBuilder: (BuildContext context) {
@@ -520,104 +525,104 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                   ],
                 ),
               ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 150,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            final phoneNumber = await FirestoreService()
-                                .getUserPhoneByIlanId(widget.ilanId);
-                            if (phoneNumber != null) {
-                              Clipboard.setData(
-                                  ClipboardData(text: phoneNumber));
-                              debugPrint(phoneNumber + " telefon bu");
+              if (widget.kendiIlanim != null && widget.kendiIlanim == false)
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 150,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              final phoneNumber = await FirestoreService()
+                                  .getUserPhoneByIlanId(widget.ilanId);
+                              if (phoneNumber != null) {
+                                Clipboard.setData(
+                                    ClipboardData(text: phoneNumber));
+                                debugPrint(phoneNumber + " telefon bu");
 
-                              final Uri launchUri = Uri(
-                                scheme: 'tel',
-                                path: phoneNumber,
-                              );
-
-                              if (await canLaunchUrl(launchUri)) {
-                                await launchUrl(launchUri);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          'Telefon numarası panoya kopyalandı!')),
+                                final Uri launchUri = Uri(
+                                  scheme: 'tel',
+                                  path: phoneNumber,
                                 );
+
+                                if (await canLaunchUrl(launchUri)) {
+                                  await launchUrl(launchUri);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Telefon numarası panoya kopyalandı!')),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Telefon uygulaması açılamadı!')),
+                                  );
+                                }
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                      content: Text(
-                                          'Telefon uygulaması açılamadı!')),
+                                      content:
+                                          Text('Telefon numarası bulunamadı!')),
                                 );
                               }
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content:
-                                        Text('Telefon numarası bulunamadı!')),
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange.shade300,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text(
+                              "Ara",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        SizedBox(
+                          width: 150,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Scrollable.ensureVisible(
+                                _questionKey.currentContext!,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
                               );
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange.shade300,
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange.shade300,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
-                          ),
-                          child: const Text(
-                            "Ara",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      SizedBox(
-                        width: 150,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // "Mesaj Gönder" butonuna tıklandığında kaydırma işlemi
-                            Scrollable.ensureVisible(
-                              _questionKey.currentContext!,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange.shade300,
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: const Text(
-                            "Mesaj Gönder",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal,
+                            child: const Text(
+                              "Mesaj Gönder",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
             ],
           );
         },
@@ -763,6 +768,220 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
         const SizedBox(width: 20),
         Expanded(child: _buildFeature(title2, value2)),
       ],
+    );
+  }
+
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label, {
+    int maxLines = 1,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200, // Hafif gri arka plan
+        borderRadius: BorderRadius.circular(12), // Yuvarlak köşeler
+      ),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(color: Colors.grey.shade600),
+          border: InputBorder.none, // Border kaldırıldı
+        ),
+        maxLines: maxLines,
+        keyboardType: keyboardType,
+      ),
+    );
+  }
+
+  Widget _buildDropdown(
+    String label,
+    String? selectedValue,
+    List<String> items,
+    Function(String?) onChanged,
+  ) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200, // Hafif gri arka plan
+        borderRadius: BorderRadius.circular(12), // Yuvarlak köşeler
+      ),
+      child: DropdownButtonFormField<String>(
+        value: selectedValue,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(color: Colors.grey.shade600),
+          border: InputBorder.none, // Border kaldırıldı
+        ),
+        items: items.map((item) {
+          return DropdownMenuItem<String>(
+            value: item,
+            child: Text(
+              item,
+              style: TextStyle(fontWeight: FontWeight.normal),
+            ),
+          );
+        }).toList(),
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  void _showEditDialog(BuildContext context, DocumentSnapshot ilanData) async {
+    // Text controller'ları oluştur
+    final baslikController = TextEditingController(text: ilanData['baslik']);
+    final aciklamaController =
+        TextEditingController(text: ilanData['aciklama']);
+    final fiyatController =
+        TextEditingController(text: ilanData['fiyat'].toString());
+    final genislikController =
+        TextEditingController(text: ilanData['genislik'].toString());
+    final yukseklikController =
+        TextEditingController(text: ilanData['yukseklik'].toString());
+    final miktarController =
+        TextEditingController(text: ilanData['miktar'].toString());
+
+    // İl ve ilçe için değişkenler
+    String selectedIl = ilanData['il'];
+    String selectedIlce = ilanData['ilce'];
+    String selectedUretici = ilanData['uretici'];
+    String selectedRenk = ilanData['renk'];
+    String? selectedCityId;
+    List<Map<String, dynamic>> cities = [];
+    List<dynamic> districts = [];
+
+    // İlleri yükle
+    String cityJson = await rootBundle.loadString('assets/il.json');
+    cities = List<Map<String, dynamic>>.from(jsonDecode(cityJson));
+    cities.sort((a, b) => turkish.comparator(a['name'], b['name']));
+
+    // Seçili ilin ID'sini bul
+    var selectedCity = cities.firstWhere(
+      (city) => city['name'] == selectedIl,
+      orElse: () => {'id': '', 'name': selectedIl},
+    );
+    selectedCityId = selectedCity['id'].toString();
+
+    // İlçeleri yükle
+    String districtJson = await rootBundle.loadString('assets/ilce.json');
+    List<dynamic> allDistricts = jsonDecode(districtJson);
+    districts =
+        allDistricts.where((d) => d['il_id'] == selectedCityId).toList();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'İlanı Düzenle',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: Colors.black87,
+            ),
+          ),
+          contentPadding:
+              EdgeInsets.all(30), // Dialog içeriğine padding ekledik
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildTextField(baslikController, 'Başlık'),
+                SizedBox(height: 10), // Alanlar arasında boşluk
+                _buildTextField(aciklamaController, 'Açıklama', maxLines: 3),
+                SizedBox(height: 10),
+                _buildTextField(fiyatController, 'Fiyat',
+                    keyboardType: TextInputType.number),
+                SizedBox(height: 10),
+                _buildTextField(genislikController, 'Genişlik',
+                    keyboardType: TextInputType.number),
+                SizedBox(height: 10),
+                _buildTextField(yukseklikController, 'Yükseklik',
+                    keyboardType: TextInputType.number),
+                SizedBox(height: 10),
+                _buildTextField(miktarController, 'Miktar',
+                    keyboardType: TextInputType.number),
+                SizedBox(height: 10),
+                _buildDropdown(
+                    'İl',
+                    selectedIl,
+                    cities.map((city) => city['name'].toString()).toList(),
+                    (value) => setState(() {
+                          selectedIl = value!;
+                        })),
+                SizedBox(height: 10),
+                _buildDropdown(
+                    'İlçe',
+                    selectedIlce,
+                    districts
+                        .map((district) => district['name'].toString())
+                        .toList(),
+                    (value) => selectedIlce = value!),
+                SizedBox(height: 10),
+                _buildDropdown(
+                    'Üretici',
+                    selectedUretici,
+                    AppConstants.manufacturers,
+                    (value) => selectedUretici = value!),
+                SizedBox(height: 10),
+                _buildDropdown('Renk', selectedRenk, AppConstants.colorOptions,
+                    (value) => selectedRenk = value!),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'İptal',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orangeAccent,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                final updatedData = {
+                  'baslik': baslikController.text,
+                  'aciklama': aciklamaController.text,
+                  'fiyat': double.parse(fiyatController.text),
+                  'genislik': double.parse(genislikController.text),
+                  'yukseklik': double.parse(yukseklikController.text),
+                  'miktar': int.parse(miktarController.text),
+                  'il': selectedIl,
+                  'ilce': selectedIlce,
+                  'uretici': selectedUretici,
+                  'renk': selectedRenk,
+                };
+
+                await FirebaseFirestore.instance
+                    .collection(koleksiyon!)
+                    .doc(widget.ilanId)
+                    .update(updatedData);
+
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text('İlan başarıyla güncellendi',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                );
+              },
+              child: Text(
+                'Kaydet',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orangeAccent,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
