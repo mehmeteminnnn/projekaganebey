@@ -14,17 +14,17 @@ class _EditInfoScreenState extends State<EditInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bilgileri Düzenle'),
+        title: const Text('Bilgileri Düzenle'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
               TextFormField(
                 initialValue: _name,
-                decoration: InputDecoration(labelText: 'Ad Soyad'),
+                decoration: const InputDecoration(labelText: 'Ad Soyad'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Lütfen adınızı girin';
@@ -37,7 +37,7 @@ class _EditInfoScreenState extends State<EditInfoScreen> {
               ),
               TextFormField(
                 initialValue: _email,
-                decoration: InputDecoration(labelText: 'E-posta'),
+                decoration: const InputDecoration(labelText: 'E-posta'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Lütfen e-posta adresinizi girin';
@@ -50,18 +50,18 @@ class _EditInfoScreenState extends State<EditInfoScreen> {
                   _email = value!;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     // Veritabanına güncellemeyi buradan yapabilirsin
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Bilgiler güncellendi')),
+                      const SnackBar(content: Text('Bilgiler güncellendi')),
                     );
                   }
                 },
-                child: Text('Kaydet'),
+                child: const Text('Kaydet'),
               ),
             ],
           ),

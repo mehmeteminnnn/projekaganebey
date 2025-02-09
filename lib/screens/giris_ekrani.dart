@@ -7,6 +7,7 @@ import 'package:Depot/navbar.dart';
 import 'package:Depot/screens/admin%20panel/admin_panel.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:Depot/test.dart';
+import 'package:Depot/screens/search_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -16,6 +17,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _obscureText = true;
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
@@ -25,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return Center(
+        return const Center(
           child: CircularProgressIndicator(), // Yükleme animasyonu
         );
       },
@@ -105,48 +107,57 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset('assets/daire.png', width: 100),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
 
             // E-posta alanı
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
                 labelText: 'E-posta',
-                labelStyle: TextStyle(color: Colors.grey),
+                labelStyle: const TextStyle(color: Colors.grey),
                 filled: true,
                 fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
                 ),
-                prefixIcon: Icon(Icons.email, color: Colors.blueAccent),
+                prefixIcon: const Icon(Icons.email, color: Colors.blueAccent),
               ),
               keyboardType: TextInputType.emailAddress,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Şifre alanı
             TextField(
               controller: _passwordController,
-              obscureText: true,
+              obscureText: _obscureText,
               decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  icon: Icon(
+                      _obscureText ? Icons.visibility_off : Icons.visibility),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                ),
                 labelText: 'Şifre',
-                labelStyle: TextStyle(color: Colors.grey),
+                labelStyle: const TextStyle(color: Colors.grey),
                 filled: true,
                 fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
                 ),
-                prefixIcon: Icon(Icons.lock, color: Colors.blueAccent),
+                prefixIcon: const Icon(Icons.lock, color: Colors.blueAccent),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Giriş butonu
             SizedBox(
@@ -158,15 +169,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 15),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
                 ),
-                child: Text(
+                child: const Text(
                   'Giriş Yap',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Kayıt ol bağlantısı
             TextButton(
@@ -176,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   MaterialPageRoute(builder: (context) => RegisterScreen()),
                 );
               },
-              child: Text(
+              child: const Text(
                 'Hesabınız yok mu? Kayıt olun',
                 style: TextStyle(color: Colors.blueAccent),
               ),

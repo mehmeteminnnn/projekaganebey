@@ -79,9 +79,9 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'Arama',
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
@@ -116,10 +116,10 @@ class _SearchPageState extends State<SearchPage> {
                     _buildCategoryItem('OSB', 'osb', 'assets/osb.jpg'),
                   ],
                 ),
-                Divider(),
+                const Divider(),
                 // İlgilenebileceğiniz İlanlar
-                Padding(
-                  padding: const EdgeInsets.symmetric(
+                const Padding(
+                  padding: EdgeInsets.symmetric(
                       horizontal: 16.0, vertical: 8.0),
                   child: Text(
                     'İlgilenebileceğiniz İlanlar',
@@ -128,7 +128,7 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 ListView.builder(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: _randomIlanlar.length,
                   itemBuilder: (context, index) {
                     final ilan = _randomIlanlar[index];
@@ -136,13 +136,13 @@ class _SearchPageState extends State<SearchPage> {
                     return Column(
                       children: [
                         Container(
-                          padding: EdgeInsets.symmetric(vertical: 8.0),
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: _buildAdItem(ilan),
                         ),
                         if (index !=
                             _randomIlanlar.length -
                                 1) // Son item değilse divider ekle
-                          Divider(
+                          const Divider(
                               height: 1,
                               thickness: 1,
                               indent: 16,
@@ -152,7 +152,7 @@ class _SearchPageState extends State<SearchPage> {
                   },
                 ),
 
-                Divider(),
+                const Divider(),
                 // Son Gezindiğiniz İlanlar
               ],
             ),
@@ -170,13 +170,13 @@ class _SearchPageState extends State<SearchPage> {
       leading: Image.asset(assetImage, width: 40, height: 40),
       title: Text(
         title,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
         ),
       ),
       trailing: Text('($count) >',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
       onTap: () {
         Navigator.push(
           context,
@@ -210,14 +210,14 @@ class _SearchPageState extends State<SearchPage> {
         ilan.baslik ?? 'Başlıksız İlan',
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
         ),
       ),
       trailing: Text(
         '${ilan.fiyat?.toString() ?? '0'} ₺',
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.blueAccent,
           fontWeight: FontWeight.bold,
         ),

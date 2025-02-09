@@ -38,7 +38,8 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen> {
 
   // Geri sayım başlatma
   void _startCountdown() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    debugPrint(widget.phoneNumber);
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_countdown > 0) {
         setState(() {
           _countdown--;
@@ -55,17 +56,20 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen> {
       await _auth.verifyPhoneNumber(
         phoneNumber: widget.phoneNumber,
         verificationCompleted: (PhoneAuthCredential credential) async {
-          // Otomatik doğrulama başarılıysa giriş yap
+          debugPrint("Otomatik doğrulama başarılı");
           await _auth.signInWithCredential(credential);
           _registerUser(); // Kullanıcıyı sisteme kaydet
         },
         verificationFailed: (FirebaseAuthException e) {
-          Fluttertoast.showToast(msg: "Doğrulama başarısız: ${e.message}");
+          Fluttertoast.showToast(
+              msg: "Doğrulama başarısız: ${e.message}, Hata Kodu: ${e.code}");
+          print("Hata Kodu: ${e.code}, Hata Mesajı: ${e.message}");
         },
         codeSent: (String verificationId, int? resendToken) {
           setState(() {
             _verificationId = verificationId;
           });
+          Fluttertoast.showToast(msg: "Doğrulama kodu gönderildi.");
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           setState(() {
@@ -130,16 +134,16 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'SMS Doğrulaması',
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       extendBodyBehindAppBar: true,
       body: Container(
@@ -159,7 +163,7 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Başlık ve Açıklama
-              Text(
+              const Text(
                 'Doğrulama Gerekli',
                 style: TextStyle(
                   fontSize: 24,
@@ -167,16 +171,16 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen> {
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 '${widget.phoneNumber} numarasına bir doğrulama kodu gönderildi.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   color: Colors.white70,
                 ),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
 
               // Pin Kodu Girişi
               PinCodeFields(
@@ -198,13 +202,13 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen> {
                   }
                 },
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
 
               // Alt Bilgi
               Text(
                 'Doğrulama kodunu almadınız mı? Kod gönderim süresi: ${_countdown ~/ 60}:${(_countdown % 60).toString().padLeft(2, '0')}',
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   color: Colors.white70,
                 ),
@@ -214,7 +218,7 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen> {
                   // Kod yeniden gönderme işlemi
                   _verifyPhoneNumber(); // Yeni kod gönderme
                 },
-                child: Text(
+                child: const Text(
                   'Tekrar Gönder',
                   style: TextStyle(
                     color: Colors.white,

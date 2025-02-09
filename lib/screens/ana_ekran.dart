@@ -77,7 +77,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                 MaterialPageRoute(builder: (context) => NotificationsPage()),
               );
             },
-            icon: Icon(Icons.notifications, color: Colors.blue),
+            icon: const Icon(Icons.notifications, color: Colors.blue),
           ),
         ],
         backgroundColor: Colors.white,
@@ -86,10 +86,10 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(8.0),
           ),
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: TextField(
             controller: _searchController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Kelime veya ilan no ile ara',
               border: InputBorder.none,
               icon: Icon(Icons.search, color: Colors.grey),
@@ -112,7 +112,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   elevation: 1,
-                  child: Row(
+                  child: const Row(
                     children: [
                       Icon(Icons.sort, color: Colors.blueAccent),
                       Text("Sırala",
@@ -126,7 +126,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                   },
                   itemBuilder: (BuildContext context) =>
                       <PopupMenuEntry<String>>[
-                    PopupMenuItem<String>(
+                    const PopupMenuItem<String>(
                       value: 'newest',
                       child: Row(
                         children: [
@@ -137,7 +137,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                         ],
                       ),
                     ),
-                    PopupMenuItem<String>(
+                    const PopupMenuItem<String>(
                       value: 'oldest',
                       child: Row(
                         children: [
@@ -148,7 +148,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                         ],
                       ),
                     ),
-                    PopupMenuItem<String>(
+                    const PopupMenuItem<String>(
                       value: 'price_asc',
                       child: Row(
                         children: [
@@ -159,7 +159,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                         ],
                       ),
                     ),
-                    PopupMenuItem<String>(
+                    const PopupMenuItem<String>(
                       value: 'price_desc',
                       child: Row(
                         children: [
@@ -180,7 +180,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                       MaterialPageRoute(builder: (context) => FilterPage()),
                     );
                   },
-                  child: Row(
+                  child: const Row(
                     children: [
                       Icon(Icons.filter_list, color: Colors.blueAccent),
                       SizedBox(width: 4),
@@ -194,11 +194,11 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
           ),
           Expanded(
             child: (isSearching && searchResults.isEmpty)
-                ? Center(child: Text("Sonuç bulunamadı"))
+                ? const Center(child: Text("Sonuç bulunamadı"))
                 : (isSearching && searchResults.isNotEmpty)
                     ? GridView.builder(
-                        padding: EdgeInsets.all(2.0),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        padding: const EdgeInsets.all(2.0),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           mainAxisSpacing: 8.0,
                           crossAxisSpacing: 8.0,
@@ -226,14 +226,14 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
-                                return Center(
+                                return const Center(
                                     child: CircularProgressIndicator());
                               } else if (snapshot.hasError) {
                                 return Center(
                                     child: Text('Hata: ${snapshot.error}'));
                               } else if (!snapshot.hasData ||
                                   snapshot.data!.isEmpty) {
-                                return Center(
+                                return const Center(
                                     child: Text('Henüz ilan bulunmuyor.'));
                               }
 
@@ -247,9 +247,9 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                 children: [
                                   Expanded(
                                     child: GridView.builder(
-                                      padding: EdgeInsets.all(2.0),
+                                      padding: const EdgeInsets.all(2.0),
                                       gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2,
                                         mainAxisSpacing: 8.0,
                                         crossAxisSpacing: 8.0,
@@ -284,13 +284,13 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                               style: OutlinedButton.styleFrom(
                                                 foregroundColor:
                                                     Colors.blueAccent,
-                                                side: BorderSide(
+                                                side: const BorderSide(
                                                     color: Colors.blueAccent),
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(8),
                                                 ),
-                                                padding: EdgeInsets.symmetric(
+                                                padding: const EdgeInsets.symmetric(
                                                     vertical: 12,
                                                     horizontal: 20),
                                               ),
@@ -299,7 +299,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                                   _ilanSayisi += 6;
                                                 });
                                               },
-                                              child: Text("Daha Fazla Göster"),
+                                              child: const Text("Daha Fazla Göster"),
                                             ),
                                           );
                                         }
@@ -321,14 +321,14 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return Center(
+                                    return const Center(
                                         child: CircularProgressIndicator());
                                   } else if (snapshot.hasError) {
                                     return Center(
                                         child: Text('Hata: ${snapshot.error}'));
                                   } else if (!snapshot.hasData ||
                                       snapshot.data!.isEmpty) {
-                                    return Center(
+                                    return const Center(
                                         child: Text('Henüz ilan bulunmuyor.'));
                                   }
 
@@ -342,9 +342,9 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                     children: [
                                       Expanded(
                                         child: GridView.builder(
-                                          padding: EdgeInsets.all(8.0),
+                                          padding: const EdgeInsets.all(8.0),
                                           gridDelegate:
-                                              SliverGridDelegateWithFixedCrossAxisCount(
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
                                             crossAxisCount: 2,
                                             mainAxisSpacing: 8.0,
                                             crossAxisSpacing: 8.0,
@@ -382,7 +382,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                                       OutlinedButton.styleFrom(
                                                     foregroundColor:
                                                         Colors.blueAccent,
-                                                    side: BorderSide(
+                                                    side: const BorderSide(
                                                         color:
                                                             Colors.blueAccent),
                                                     shape:
@@ -392,7 +392,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                                               8),
                                                     ),
                                                     padding:
-                                                        EdgeInsets.symmetric(
+                                                        const EdgeInsets.symmetric(
                                                             vertical: 12,
                                                             horizontal: 20),
                                                   ),
@@ -402,7 +402,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                                     });
                                                   },
                                                   child:
-                                                      Text("Daha Fazla Göster"),
+                                                      const Text("Daha Fazla Göster"),
                                                 ),
                                               );
                                             }
@@ -443,7 +443,7 @@ class _AdsMDFLamPageState extends State<AdsMDFLamPage> {
                                         context: context,
                                       );
                                     })
-                                : Center(child: Text('Henüz ilan bulunmuyor.')),
+                                : const Center(child: Text('Henüz ilan bulunmuyor.')),
           ),
         ],
       ),

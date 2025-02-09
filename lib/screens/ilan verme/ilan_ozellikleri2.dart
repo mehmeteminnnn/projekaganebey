@@ -132,7 +132,7 @@ class _ProductPageState extends State<ProductPage> {
 
       // Kullanıcıya başarı mesajı göster
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('İlan başarıyla kaydedildi!')),
+        const SnackBar(content: Text('İlan başarıyla kaydedildi!')),
       );
 
       // İlan detay sayfasına yönlendir
@@ -154,9 +154,9 @@ class _ProductPageState extends State<ProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'İlan Bilgileri',
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
@@ -165,7 +165,7 @@ class _ProductPageState extends State<ProductPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -179,11 +179,11 @@ class _ProductPageState extends State<ProductPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     "Yüklenen Fotoğraflar",
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   SizedBox(
                     height: 80,
                     child: ListView.builder(
@@ -210,15 +210,15 @@ class _ProductPageState extends State<ProductPage> {
                   ),
                 ],
               ),
-              SizedBox(height: 16),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // Seçilenler Bölümü
-              Text(
+              const Text(
                 'Seçilenler',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 '${widget.ilan.kategori} > ${widget.ilan.uretici} > [${widget.ilan.yukseklik?.toInt()}][${widget.ilan.genislik?.toInt()}]*${widget.ilan.miktar} > ${widget.ilan.renk}',
                 style: TextStyle(color: Colors.grey[700]),
@@ -226,55 +226,55 @@ class _ProductPageState extends State<ProductPage> {
               Divider(thickness: 1, color: Colors.grey[300]),
 
               // Ürün Başlığı Bölümü
-              Text(
+              const Text(
                 'Ürün Başlığı',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               TextField(
                 controller: _titleController,
                 maxLength: 50,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Ürün başlığını girin',
                   border: OutlineInputBorder(),
                   counterText: '',
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // Ürün Açıklaması Bölümü
-              Text(
+              const Text(
                 'Ürün Açıklaması',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               TextField(
                 controller: _descriptionController,
                 maxLines: 4,
                 maxLength: 140,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Açıklama girin',
                   border: OutlineInputBorder(),
                   counterText: '0/140',
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // Konum Bölümü
-              Text(
+              const Text(
                 'Konum',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text(
                   selectedCityId != null && selectedDistrictId != null
                       ? '${districts.firstWhere((d) => d['id'] == selectedDistrictId)['name']}, ${cities.firstWhere((c) => c['id'] == selectedCityId)['name']}'
                       : 'Şehir ve İlçe Seçin',
-                  style: TextStyle(color: Colors.black, fontSize: 14),
+                  style: const TextStyle(color: Colors.black, fontSize: 14),
                 ),
-                trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: _showCityDistrictSelector, // Modal'ı açan fonksiyon
               ),
 
@@ -290,7 +290,7 @@ class _ProductPageState extends State<ProductPage> {
                   ),
                   Text(
                     '${widget.ilan.fiyat} ₺',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.orange,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -298,7 +298,7 @@ class _ProductPageState extends State<ProductPage> {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Devam Et Butonu
               Center(
@@ -310,9 +310,9 @@ class _ProductPageState extends State<ProductPage> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     padding:
-                        EdgeInsets.symmetric(horizontal: 100, vertical: 12),
+                        const EdgeInsets.symmetric(horizontal: 100, vertical: 12),
                   ),
-                  child: Text(
+                  child: const Text(
                     'Devam et',
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
@@ -329,7 +329,7 @@ class _ProductPageState extends State<ProductPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (BuildContext context) {
@@ -347,15 +347,15 @@ class _ProductPageState extends State<ProductPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Başlık
-                  Text(
+                  const Text(
                     'Konum Seçin',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   // Şehir Dropdown
                   DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Şehir Seçin',
                       border: OutlineInputBorder(),
                     ),
@@ -374,11 +374,11 @@ class _ProductPageState extends State<ProductPage> {
                       );
                     }).toList(),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   // İlçe Dropdown
                   DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'İlçe Seçin',
                       border: OutlineInputBorder(),
                     ),
@@ -395,7 +395,7 @@ class _ProductPageState extends State<ProductPage> {
                       );
                     }).toList(),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   // Onaylama Butonu
                   Center(
@@ -407,17 +407,17 @@ class _ProductPageState extends State<ProductPage> {
                           setState(() {});
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                               content:
                                   Text('Lütfen hem şehir hem de ilçe seçin.'),
                             ),
                           );
                         }
                       },
-                      child: Text('Onayla'),
+                      child: const Text('Onayla'),
                       style: ElevatedButton.styleFrom(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 100, vertical: 12),
+                            const EdgeInsets.symmetric(horizontal: 100, vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),

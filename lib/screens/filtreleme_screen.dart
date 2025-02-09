@@ -23,7 +23,7 @@ class _FilterPageState extends State<FilterPage> {
 
   List<bool> manufacturerSelections = List.generate(15, (_) => false);
   String? selectedDesenYonu;
-  RangeValues fiyatRange = RangeValues(0, 10000); // Price range
+  RangeValues fiyatRange = const RangeValues(0, 10000); // Price range
   String? selectedColor;
   String? selectedDistrictId;
   //String? enteredNeighborhood;
@@ -83,13 +83,13 @@ class _FilterPageState extends State<FilterPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Filtreler",
+        title: const Text("Filtreler",
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             )),
         leading: IconButton(
-          icon: Icon(Icons.close),
+          icon: const Icon(Icons.close),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -113,19 +113,19 @@ class _FilterPageState extends State<FilterPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Boyut seç',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
 
                     // Height Row
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Yükseklik',
+                        const Text('Yükseklik',
                             style: TextStyle(fontWeight: FontWeight.w500)),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Row(
                           children: [
                             Flexible(
@@ -133,7 +133,7 @@ class _FilterPageState extends State<FilterPage> {
                                 children: [
                                   TextField(
                                     decoration: InputDecoration(
-                                      hintStyle: TextStyle(
+                                      hintStyle: const TextStyle(
                                           fontSize: 12, color: Colors.grey),
                                       hintText: 'min',
                                       border: OutlineInputBorder(
@@ -143,22 +143,22 @@ class _FilterPageState extends State<FilterPage> {
                                           color: Colors.grey.shade400,
                                         ),
                                       ),
-                                      contentPadding: EdgeInsets.symmetric(
+                                      contentPadding: const EdgeInsets.symmetric(
                                         vertical: 6, // Daha dar boşluk
                                         horizontal: 6,
                                       ),
                                     ),
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 14), // Daha küçük yazı boyutu
                                     keyboardType: TextInputType.number,
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                 ],
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
                                   horizontal: 4.0), // Daha dar aralık
                               child: Text('-',
                                   style: TextStyle(
@@ -169,7 +169,7 @@ class _FilterPageState extends State<FilterPage> {
                                 children: [
                                   TextField(
                                     decoration: InputDecoration(
-                                      hintStyle: TextStyle(
+                                      hintStyle: const TextStyle(
                                           fontSize: 12, color: Colors.grey),
                                       hintText: 'max',
                                       border: OutlineInputBorder(
@@ -178,16 +178,16 @@ class _FilterPageState extends State<FilterPage> {
                                           color: Colors.grey.shade400,
                                         ),
                                       ),
-                                      contentPadding: EdgeInsets.symmetric(
+                                      contentPadding: const EdgeInsets.symmetric(
                                         vertical: 6,
                                         horizontal: 6,
                                       ),
                                     ),
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 14),
+                                    style: const TextStyle(fontSize: 14),
                                     keyboardType: TextInputType.number,
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                 ],
                               ),
                             ),
@@ -195,15 +195,15 @@ class _FilterPageState extends State<FilterPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
                     // Width Row
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Genişlik',
+                        const Text('Genişlik',
                             style: TextStyle(fontWeight: FontWeight.w500)),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Row(
                           children: [
                             Expanded(
@@ -211,7 +211,7 @@ class _FilterPageState extends State<FilterPage> {
                                 children: [
                                   TextField(
                                     decoration: InputDecoration(
-                                      hintStyle: TextStyle(
+                                      hintStyle: const TextStyle(
                                           fontSize: 12, color: Colors.grey),
                                       hintText: 'min',
                                       border: OutlineInputBorder(
@@ -219,20 +219,20 @@ class _FilterPageState extends State<FilterPage> {
                                         borderSide: BorderSide(
                                             color: Colors.grey.shade400),
                                       ),
-                                      contentPadding: EdgeInsets.symmetric(
+                                      contentPadding: const EdgeInsets.symmetric(
                                           vertical: 12, horizontal: 8),
                                     ),
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 16),
+                                    style: const TextStyle(fontSize: 16),
                                     keyboardType: TextInputType.number,
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                 ],
                               ),
                             ),
-                            Padding(
+                            const Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                                  EdgeInsets.symmetric(horizontal: 8.0),
                               child: Text('-', style: TextStyle(fontSize: 18)),
                             ),
                             Expanded(
@@ -240,7 +240,7 @@ class _FilterPageState extends State<FilterPage> {
                                 children: [
                                   TextField(
                                     decoration: InputDecoration(
-                                      hintStyle: TextStyle(
+                                      hintStyle: const TextStyle(
                                           fontSize: 12, color: Colors.grey),
                                       hintText: 'max',
                                       border: OutlineInputBorder(
@@ -248,14 +248,14 @@ class _FilterPageState extends State<FilterPage> {
                                         borderSide: BorderSide(
                                             color: Colors.grey.shade400),
                                       ),
-                                      contentPadding: EdgeInsets.symmetric(
+                                      contentPadding: const EdgeInsets.symmetric(
                                           vertical: 12, horizontal: 8),
                                     ),
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 16),
+                                    style: const TextStyle(fontSize: 16),
                                     keyboardType: TextInputType.number,
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                 ],
                               ),
                             ),
@@ -263,14 +263,14 @@ class _FilterPageState extends State<FilterPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
                     // Pattern Direction
-                    Text(
+                    const Text(
                       'Desen yönü',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Row(
                       children: [
                         ChoiceChip(
@@ -287,7 +287,7 @@ class _FilterPageState extends State<FilterPage> {
                             });
                           },
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         ChoiceChip(
                           label: Text('Dikey',
                               style: TextStyle(
@@ -324,11 +324,11 @@ class _FilterPageState extends State<FilterPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Fiyat Aralığı',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Row(
                       children: [
                         Expanded(
@@ -339,20 +339,20 @@ class _FilterPageState extends State<FilterPage> {
                             },
                             decoration: InputDecoration(
                               hintStyle:
-                                  TextStyle(fontSize: 12, color: Colors.grey),
+                                  const TextStyle(fontSize: 12, color: Colors.grey),
                               hintText: 'min',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              contentPadding: EdgeInsets.symmetric(
+                              contentPadding: const EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 8),
                             ),
-                            style: TextStyle(fontSize: 14),
+                            style: const TextStyle(fontSize: 14),
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: TextField(
                             controller: maxpriceController,
@@ -362,15 +362,15 @@ class _FilterPageState extends State<FilterPage> {
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
                               hintStyle:
-                                  TextStyle(fontSize: 12, color: Colors.grey),
+                                  const TextStyle(fontSize: 12, color: Colors.grey),
                               hintText: 'max',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              contentPadding: EdgeInsets.symmetric(
+                              contentPadding: const EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 8),
                             ),
-                            style: TextStyle(fontSize: 14),
+                            style: const TextStyle(fontSize: 14),
                             keyboardType: TextInputType.number,
                           ),
                         ),
@@ -433,18 +433,18 @@ class _FilterPageState extends State<FilterPage> {
                         color: Colors.grey[700],
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.grey[200],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: DropdownButtonFormField<String>(
-                        hint: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        hint: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
                           child: Text('İl Seçin'),
                         ),
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: InputBorder.none,
                         ),
                         items: cities.map((city) {
@@ -463,7 +463,7 @@ class _FilterPageState extends State<FilterPage> {
                         value: selectedIl,
                       ),
                     ),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                     Text(
                       'İlçe Seç',
                       style: TextStyle(
@@ -472,18 +472,18 @@ class _FilterPageState extends State<FilterPage> {
                         color: Colors.grey[700],
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.grey[200],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: DropdownButtonFormField<String>(
-                        hint: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        hint: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
                           child: Text('İlçe Seçin'),
                         ),
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: InputBorder.none,
                         ),
                         value: selectedDistrictId,
@@ -505,13 +505,13 @@ class _FilterPageState extends State<FilterPage> {
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Center(
             child: SizedBox(
               width: 150,
               child: ElevatedButton(
                 onPressed: applyFilters,
-                child: Text('Filtrele', style: TextStyle(color: Colors.white)),
+                child: const Text('Filtrele', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(

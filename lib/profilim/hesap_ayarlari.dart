@@ -12,14 +12,14 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hesap Ayarları'),
+        title: const Text('Hesap Ayarları'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             SwitchListTile(
-              title: Text('Bildirimleri Aç/Kapat'),
+              title: const Text('Bildirimleri Aç/Kapat'),
               value: _notificationsEnabled,
               onChanged: (bool value) {
                 setState(() {

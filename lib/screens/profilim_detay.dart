@@ -85,7 +85,7 @@ class _ProfilDetayPageState extends State<ProfilDetayPage> {
               children: [
                 Row(
                   children: [
-                    CircleAvatar(
+                    const CircleAvatar(
                       radius: 40,
                       backgroundImage:
                           AssetImage('assets/person.png'), // Profil fotoğrafı
@@ -106,16 +106,16 @@ class _ProfilDetayPageState extends State<ProfilDetayPage> {
                 ),
                 const SizedBox(height: 16),
                 const Divider(),
-                Text('İsim',
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                const Text('İsim',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(userData['name'] ?? 'İsim Yok'),
                 const Divider(),
-                Text('Telefon Numarası',
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                const Text('Telefon Numarası',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(userData['phone'] ?? 'Telefon Yok'),
                 const Divider(),
-                Text('E-Posta',
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                const Text('E-Posta',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(userData['email'] ?? 'E-Posta Yok'),
                 const Spacer(),
                 Center(

@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
     });
 
     // Splash ekranını birkaç saniye gösterdikten sonra Login ekranına geçiş
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => LoginScreen()),
@@ -35,14 +35,14 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             // Logo veya animasyon
             Image.asset('assets/daire.png', width: 100, height: 100),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Yükleme göstergesi
-            CircularProgressIndicator(
+            const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Uygulama ismi veya mesaj
-            Text(
+            const Text(
               'Yükleniyor...',
               style: TextStyle(color: Colors.blue, fontSize: 18),
             ),

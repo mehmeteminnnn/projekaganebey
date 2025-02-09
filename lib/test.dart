@@ -61,31 +61,31 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('SMS Doğrulama')),
+      appBar: AppBar(title: const Text('SMS Doğrulama')),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
                 'Telefon numarasına doğrulama kodu göndermek için butona tıklayın.'),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _sendSmsCode,
-              child: Text('SMS Gönder'),
+              child: const Text('SMS Gönder'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: _smsController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Doğrulama Kodu',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _submitVerificationCode,
-              child: Text('Doğrula'),
+              child: const Text('Doğrula'),
             ),
           ],
         ),

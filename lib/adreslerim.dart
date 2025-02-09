@@ -43,14 +43,14 @@ class _AdreslerimPageState extends State<AdreslerimPage> {
             children: [
               TextField(
                 controller: TextEditingController(text: baslik),
-                decoration: InputDecoration(labelText: "Adres Başlığı"),
+                decoration: const InputDecoration(labelText: "Adres Başlığı"),
                 onChanged: (value) {
                   baslik = value;
                 },
               ),
               TextField(
                 controller: TextEditingController(text: adres),
-                decoration: InputDecoration(labelText: "Adres"),
+                decoration: const InputDecoration(labelText: "Adres"),
                 maxLines: 2,
                 onChanged: (value) {
                   adres = value;
@@ -61,7 +61,7 @@ class _AdreslerimPageState extends State<AdreslerimPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text("İptal"),
+              child: const Text("İptal"),
             ),
             ElevatedButton(
               onPressed: () {
@@ -97,7 +97,7 @@ class _AdreslerimPageState extends State<AdreslerimPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Adreslerim",
           style: TextStyle(
             fontSize: 16,
@@ -112,7 +112,7 @@ class _AdreslerimPageState extends State<AdreslerimPage> {
           children: [
             Expanded(
               child: adresler.isEmpty
-                  ? Center(
+                  ? const Center(
                       child: Text(
                         "Henüz adres eklemediniz.",
                         style: TextStyle(fontSize: 16, color: Colors.grey),
@@ -126,21 +126,21 @@ class _AdreslerimPageState extends State<AdreslerimPage> {
                           margin: const EdgeInsets.symmetric(vertical: 8),
                           child: ListTile(
                             leading:
-                                Icon(Icons.location_on, color: Colors.blue),
+                                const Icon(Icons.location_on, color: Colors.blue),
                             title: Text(
                               adresler[index]['baslik']!,
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             subtitle: Text(adresler[index]['adres']!),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.edit, color: Colors.orange),
+                                  icon: const Icon(Icons.edit, color: Colors.orange),
                                   onPressed: () => _duzenleAdres(index),
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.delete, color: Colors.red),
+                                  icon: const Icon(Icons.delete, color: Colors.red),
                                   onPressed: () => _silAdres(index),
                                 ),
                               ],
@@ -152,16 +152,16 @@ class _AdreslerimPageState extends State<AdreslerimPage> {
             ),
             ElevatedButton.icon(
               onPressed: _yeniAdresEkle,
-              icon: Icon(
+              icon: const Icon(
                 Icons.add,
                 color: Colors.blue,
               ),
-              label: Text(
+              label: const Text(
                 "Yeni Adres Ekle",
                 style: TextStyle(color: Colors.blue),
               ),
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),

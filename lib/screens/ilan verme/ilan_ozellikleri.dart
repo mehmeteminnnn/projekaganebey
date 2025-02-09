@@ -54,15 +54,15 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
+        title: const Text(
           "İlan Özellikleri",
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, size: 20),
+          icon: const Icon(Icons.arrow_back, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -75,10 +75,10 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Yüklenen Fotoğraflar",
+                const Text("Yüklenen Fotoğraflar",
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 SizedBox(
                   height: 80,
                   child: ListView.builder(
@@ -105,7 +105,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                 ),
               ],
             ),
-            SizedBox(height: 13),
+            const SizedBox(height: 13),
 
             // Material selection
             _buildSelectionField(
@@ -120,7 +120,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
               items: materialOptions,
               isMaterial: true,
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
 
             // Producer selection
             _buildSelectionField(
@@ -135,11 +135,11 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
               items: manufacturers,
               isProducer: true,
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
 
             // Desen selection
             _buildDesenSelectionField(),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
 
             // Color selection
             _buildSelectionField(
@@ -154,41 +154,41 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
               items: colorOptions,
               isColor: true,
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
 
             // Price information
-            Text(
+            const Text(
               'Değerleri girdikten sonra ürün fiyatınız belirlenecektir',
               style: TextStyle(fontSize: 10, color: Colors.orange),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
 
             // Price input field
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(
+                const Text(
                   'Birim Adet Fiyatı:',
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 SizedBox(
                   width: 100,
                   child: TextField(
                     controller: _FiyatController,
                     decoration: InputDecoration(
                       hintText: '0',
-                      hintStyle: TextStyle(fontSize: 17),
+                      hintStyle: const TextStyle(fontSize: 17),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide(color: Colors.grey.shade400),
                       ),
                       contentPadding:
-                          EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                          const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                     ),
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12),
+                    style: const TextStyle(fontSize: 12),
                     onChanged: (value) {
                       _validateInputs();
                     },
@@ -196,7 +196,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Continue button
             Center(
@@ -206,7 +206,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 ),
                 onPressed: isInputValid
                     ? () {
@@ -231,7 +231,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                                     id: widget.id)));
                       }
                     : null,
-                child: Text(
+                child: const Text(
                   'Devam et',
                   style: TextStyle(color: Colors.white),
                 ),
@@ -257,8 +257,8 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-        SizedBox(height: 4),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+        const SizedBox(height: 4),
         GestureDetector(
           onTap: () => isMaterial
               ? _malzemeSec()
@@ -268,7 +268,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                       ? _renkSec()
                       : null,
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(6),
@@ -276,8 +276,8 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(selectedValue ?? hint, style: TextStyle(fontSize: 12)),
-                Icon(Icons.arrow_drop_down),
+                Text(selectedValue ?? hint, style: const TextStyle(fontSize: 12)),
+                const Icon(Icons.arrow_drop_down),
               ],
             ),
           ),
@@ -297,8 +297,8 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(12.0),
+              const Padding(
+                padding: EdgeInsets.all(12.0),
                 child: Text(
                   'Malzeme',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -312,10 +312,10 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                   itemBuilder: (BuildContext context, int index) {
                     return ListTile(
                       dense: true, // Öğeler arasındaki boşluğu azaltmak için
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                       title: Text(
                         materialOptions[index],
-                        style: TextStyle(fontSize: 14),
+                        style: const TextStyle(fontSize: 14),
                       ),
                       onTap: () {
                         setState(() {
@@ -327,17 +327,17 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                   },
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text('Vazgeç', style: TextStyle(color: Colors.red)),
+                  child: const Text('Vazgeç', style: TextStyle(color: Colors.red)),
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
             ],
           ),
         );
@@ -349,15 +349,15 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Boyut, Miktar, Desen',
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         GestureDetector(
           onTap: _boyutMiktarDesenSec, // Renk seçim modalini açar
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(10),
@@ -370,9 +370,9 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                   //boyutGenislik != null && boyutYukseklik != null && miktar != null
                   "[$boyutGenislik][$boyutYukseklik]*$miktar",
                   // : selectedColor ?? 'Seçim yapınız', // Eğer herhangi biri null ise sadece selectedColor yazdır
-                  style: TextStyle(fontSize: 12),
+                  style: const TextStyle(fontSize: 12),
                 ),
-                Icon(Icons.arrow_drop_down),
+                const Icon(Icons.arrow_drop_down),
               ],
             ),
           ),
@@ -395,71 +395,71 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
           ),
           child: SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
+                  const Center(
                     child: Text(
                       'Boyut, Miktar, Desen',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   // Boyut Alanı
-                  Text('Boyut', style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(
+                  const Text('Boyut', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text(
                     'Ürün boyutlarını giriniz',
                     style: TextStyle(fontSize: 12, color: Colors.grey),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
 
                   Row(
                     children: [
                       Expanded(
                         child: TextField(
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Yükseklik',
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 4, horizontal: 8),
                           ),
                           keyboardType: TextInputType.number,
-                          style: TextStyle(fontSize: 14),
+                          style: const TextStyle(fontSize: 14),
                           onChanged: (value) {
                             boyutYukseklik = value; // Yükseklik değeri kaydet
                           },
                         ),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: TextField(
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Genişlik',
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 4, horizontal: 8),
                           ),
                           keyboardType: TextInputType.number,
-                          style: TextStyle(fontSize: 14),
+                          style: const TextStyle(fontSize: 14),
                           onChanged: (value) {
                             boyutGenislik = value; // Genişlik değeri kaydet
                           },
                         ),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: TextField(
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'En',
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 4, horizontal: 8),
                           ),
                           keyboardType: TextInputType.number,
-                          style: TextStyle(fontSize: 14),
+                          style: const TextStyle(fontSize: 14),
                           onChanged: (value) {
                             boyutEn = value; // En değeri kaydet
                           },
@@ -468,35 +468,35 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                     ],
                   ),
 
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   // Miktar Alanı
-                  Text('Miktar', style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(
+                  const Text('Miktar', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text(
                     'Ürün miktarını girin',
                     style: TextStyle(fontSize: 12, color: Colors.grey),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   TextField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Miktar',
                       border: OutlineInputBorder(),
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                     ),
                     keyboardType: TextInputType.number,
-                    style: TextStyle(fontSize: 14),
+                    style: const TextStyle(fontSize: 14),
                     onChanged: (value) {
                       miktar = value; // Miktar değeri kaydet
                     },
                   ),
 
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   // Desen Seçimi
                   Row(
                     children: [
-                      Text('Desen Olacak Mı?',
+                      const Text('Desen Olacak Mı?',
                           style: TextStyle(fontWeight: FontWeight.bold)),
                       Checkbox(
                         value: isDesenSelected,
@@ -510,16 +510,16 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                   ),
 
                   // Desen Yönü ToggleSwitch
-                  Text('Desen Yönü',
+                  const Text('Desen Yönü',
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   ToggleSwitch(
                     initialLabelIndex: selectedDesenYonu == 'yatay' ? 0 : 1,
                     totalSwitches: 2,
-                    labels: ['Yatay', 'Dikey'],
+                    labels: const ['Yatay', 'Dikey'],
                     activeFgColor: Colors.orange,
                     inactiveBgColor: Colors.grey.shade300,
-                    activeBgColor: [Color(0xFFF8F8F8)],
+                    activeBgColor: const [Color(0xFFF8F8F8)],
                     onToggle: isDesenSelected
                         ? (index) {
                             setState(() {
@@ -530,7 +530,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                         : null, // Desen seçili değilse null atayarak devre dışı bırak
                   ),
 
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
                   // Butonlar
                   Row(
@@ -542,7 +542,7 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                           Navigator.pop(context); // Modalı kapat
                         },
                         child:
-                            Text('Vazgeç', style: TextStyle(color: Colors.red)),
+                            const Text('Vazgeç', style: TextStyle(color: Colors.red)),
                       ),
                       // Onayla Butonu
                       TextButton(
@@ -563,13 +563,13 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                           } else {
                             // Kullanıcıya eksik bilgi uyarısı
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text('Lütfen tüm bilgileri doldurun!'),
                               ),
                             );
                           }
                         },
-                        child: Text(
+                        child: const Text(
                           'Onayla',
                           style: TextStyle(color: Colors.green),
                         ),
@@ -596,8 +596,8 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(12.0),
+              const Padding(
+                padding: EdgeInsets.all(12.0),
                 child: Text(
                   'Üretici',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -611,10 +611,10 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                   itemBuilder: (BuildContext context, int index) {
                     return ListTile(
                       dense: true, // Öğeler arasındaki boşluğu azaltmak için
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                       title: Text(
                         manufacturers[index],
-                        style: TextStyle(fontSize: 14),
+                        style: const TextStyle(fontSize: 14),
                       ),
                       onTap: () {
                         setState(() {
@@ -626,14 +626,14 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                   },
                 ),
               ),
-              SizedBox(height: 6),
+              const SizedBox(height: 6),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('Vazgeç', style: TextStyle(color: Colors.red)),
+                child: const Text('Vazgeç', style: TextStyle(color: Colors.red)),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
             ],
           ),
         );
@@ -652,8 +652,8 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(12.0),
+              const Padding(
+                padding: EdgeInsets.all(12.0),
                 child: Text(
                   'Renk',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -667,10 +667,10 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                   itemBuilder: (BuildContext context, int index) {
                     return ListTile(
                       dense: true, // Öğeler arasındaki boşluğu azaltmak için
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                       title: Text(
                         colorOptions[index],
-                        style: TextStyle(fontSize: 14),
+                        style: const TextStyle(fontSize: 14),
                       ),
                       onTap: () {
                         setState(() {
@@ -682,14 +682,14 @@ class _IlanOzellikleriPageState extends State<IlanOzellikleriPage> {
                   },
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('Vazgeç', style: TextStyle(color: Colors.red)),
+                child: const Text('Vazgeç', style: TextStyle(color: Colors.red)),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
             ],
           ),
         );

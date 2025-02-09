@@ -239,7 +239,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(
+            return const Center(
                 //  child: Text('Bir hata oluştu: ${snapshot.error}'),
                 );
           } else if (!snapshot.hasData || !snapshot.data!.exists) {
@@ -470,7 +470,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                                         ),
                                       );
                                     },
-                                    child: Text(
+                                    child: const Text(
                                       'Satıcıyı Gör',
                                       style: TextStyle(
                                         color: Colors.orange,
@@ -495,10 +495,10 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                               ),
                               child: Row(
                                 key: _questionKey,
-                                children: [
-                                  const Icon(Icons.edit, color: Colors.grey),
-                                  const SizedBox(width: 8),
-                                  const Expanded(
+                                children: const [
+                                  Icon(Icons.edit, color: Colors.grey),
+                                  SizedBox(width: 8),
+                                  Expanded(
                                     child: Text(
                                       "Satıcıya soru sor",
                                       style: TextStyle(color: Colors.grey),
@@ -778,7 +778,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
     TextInputType keyboardType = TextInputType.text,
   }) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.grey.shade200, // Hafif gri arka plan
         borderRadius: BorderRadius.circular(12), // Yuvarlak köşeler
@@ -803,7 +803,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
     Function(String?) onChanged,
   ) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.grey.shade200, // Hafif gri arka plan
         borderRadius: BorderRadius.circular(12), // Yuvarlak köşeler
@@ -820,7 +820,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
             value: item,
             child: Text(
               item,
-              style: TextStyle(fontWeight: FontWeight.normal),
+              style: const TextStyle(fontWeight: FontWeight.normal),
             ),
           );
         }).toList(),
@@ -874,7 +874,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
+          title: const Text(
             'İlanı Düzenle',
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -883,27 +883,27 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
             ),
           ),
           contentPadding:
-              EdgeInsets.all(30), // Dialog içeriğine padding ekledik
+              const EdgeInsets.all(30), // Dialog içeriğine padding ekledik
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 _buildTextField(baslikController, 'Başlık'),
-                SizedBox(height: 10), // Alanlar arasında boşluk
+                const SizedBox(height: 10), // Alanlar arasında boşluk
                 _buildTextField(aciklamaController, 'Açıklama', maxLines: 3),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildTextField(fiyatController, 'Fiyat',
                     keyboardType: TextInputType.number),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildTextField(genislikController, 'Genişlik',
                     keyboardType: TextInputType.number),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildTextField(yukseklikController, 'Yükseklik',
                     keyboardType: TextInputType.number),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildTextField(miktarController, 'Miktar',
                     keyboardType: TextInputType.number),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildDropdown(
                     'İl',
                     selectedIl,
@@ -911,7 +911,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                     (value) => setState(() {
                           selectedIl = value!;
                         })),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildDropdown(
                     'İlçe',
                     selectedIlce,
@@ -919,13 +919,13 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
                         .map((district) => district['name'].toString())
                         .toList(),
                     (value) => selectedIlce = value!),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildDropdown(
                     'Üretici',
                     selectedUretici,
                     AppConstants.manufacturers,
                     (value) => selectedUretici = value!),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildDropdown('Renk', selectedRenk, AppConstants.colorOptions,
                     (value) => selectedRenk = value!),
               ],
@@ -934,7 +934,7 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(
+              child: const Text(
                 'İptal',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -965,12 +965,12 @@ class _IlanDetayPageState extends State<IlanDetayPage> {
 
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  const SnackBar(
                       content: Text('İlan başarıyla güncellendi',
                           style: TextStyle(fontWeight: FontWeight.bold))),
                 );
               },
-              child: Text(
+              child: const Text(
                 'Kaydet',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,

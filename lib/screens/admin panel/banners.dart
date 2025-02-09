@@ -16,7 +16,7 @@ class _BannerPageState extends State<BannerPage> {
 
   Widget _buildBannerCard(String bannerUrl, int index) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -25,7 +25,7 @@ class _BannerPageState extends State<BannerPage> {
             color: Colors.grey.withOpacity(0.1),
             spreadRadius: 2,
             blurRadius: 8,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -40,7 +40,7 @@ class _BannerPageState extends State<BannerPage> {
                 fit: BoxFit.cover,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 },
               ),
             ),
@@ -53,7 +53,7 @@ class _BannerPageState extends State<BannerPage> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
+                  icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () => _showDeleteDialog(bannerUrl),
                 ),
               ),
@@ -72,15 +72,15 @@ class _BannerPageState extends State<BannerPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          title: Text('Banner\'ı Sil'),
-          content: Text('Bu banner\'ı silmek istediğinizden emin misiniz?'),
+          title: const Text('Banner\'ı Sil'),
+          content: const Text('Bu banner\'ı silmek istediğinizden emin misiniz?'),
           actions: [
             TextButton(
-              child: Text('İptal'),
+              child: const Text('İptal'),
               onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
-              child: Text('Sil', style: TextStyle(color: Colors.red)),
+              child: const Text('Sil', style: TextStyle(color: Colors.red)),
               onPressed: () {
                 Navigator.of(context).pop();
                 _deleteBanner(bannerUrl);
@@ -122,7 +122,7 @@ class _BannerPageState extends State<BannerPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Yeni Banner Ekle'),
+          title: const Text('Yeni Banner Ekle'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -134,18 +134,18 @@ class _BannerPageState extends State<BannerPage> {
                     imageFile = File(pickedFile.path);
                   }
                 },
-                child: Text('Resim Seç'),
+                child: const Text('Resim Seç'),
               ),
               if (imageFile != null) Text('Seçilen Resim: ${imageFile!.path}'),
             ],
           ),
           actions: [
             TextButton(
-              child: Text('İptal'),
+              child: const Text('İptal'),
               onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
-              child: Text('Ekle'),
+              child: const Text('Ekle'),
               onPressed: () {
                 Navigator.of(context).pop();
                 if (imageFile != null) {
@@ -223,7 +223,7 @@ class _BannerPageState extends State<BannerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Banner Yönetimi",
           style: TextStyle(
             fontSize: 20,
@@ -236,16 +236,16 @@ class _BannerPageState extends State<BannerPage> {
         backgroundColor: Theme.of(context).primaryColor,
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : banners.isEmpty
-              ? Center(
+              ? const Center(
                   child: Text(
                     'Henüz banner eklenmemiş',
                     style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                 )
               : Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount:
@@ -263,7 +263,7 @@ class _BannerPageState extends State<BannerPage> {
         onPressed: () {
           _showAddBannerDialog();
         },
-        child: Icon(
+        child: const Icon(
           Icons.add,
           color: Colors.white,
         ),

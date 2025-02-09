@@ -16,7 +16,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Ahşap Masa', // Statik ürün ismi
           style: TextStyle(
             fontSize: 14,
@@ -27,7 +27,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -53,13 +53,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.share, color: Colors.white),
+                      icon: const Icon(Icons.share, color: Colors.white),
                       onPressed: () {
                         // Paylaş işlevi
                       },
                     ),
                     IconButton(
-                      icon: Icon(Icons.bookmark_border, color: Colors.white),
+                      icon: const Icon(Icons.bookmark_border, color: Colors.white),
                       onPressed: () {
                         // Kaydet işlevi
                       },
@@ -73,13 +73,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 left: 0,
                 right: 0,
                 child: Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
+                  padding: const EdgeInsets.all(16),
+                  decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(16)),
                   ),
-                  child: Column(
+                  child: const Column(
                     children: [
                       Text(
                         '1.200,00 TL', // Statik fiyat bilgisi
@@ -99,7 +99,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
           // Ürün Özellikleri
           Padding(
@@ -107,11 +107,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Ürün Özellikleri',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -123,7 +123,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               ],
             ),
           ),
-          Spacer(),
+          const Spacer(),
 
           // İlanı Paylaş Butonu
           Padding(
@@ -137,9 +137,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: EdgeInsets.symmetric(vertical: 14),
+                padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              child: Center(
+              child: const Center(
                 child: Text(
                   'İlanı Paylaş',
                   style: TextStyle(color: Colors.white, fontSize: 16),
@@ -160,16 +160,16 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           label,
           style: TextStyle(color: Colors.grey[600], fontSize: 14),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
             color: Colors.grey[200],
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
             value,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
         ),
       ],

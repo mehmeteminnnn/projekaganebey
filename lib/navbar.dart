@@ -43,19 +43,19 @@ class MainScreen extends StatelessWidget {
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.view_list),
+        icon: const Icon(Icons.view_list),
         title: ("İlanlar"),
         activeColorPrimary: Colors.blue,
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.search),
+        icon: const Icon(Icons.search),
         title: ("Arama"),
         activeColorPrimary: Colors.blue,
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.add_circle),
+        icon: const Icon(Icons.add_circle),
         title: ("Depota Yükle"),
         activeColorPrimary: Colors.white,
         inactiveColorPrimary: Colors.grey,
@@ -63,13 +63,13 @@ class MainScreen extends StatelessWidget {
         activeColorSecondary: Colors.blue,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.favorite),
+        icon: const Icon(Icons.favorite),
         title: ("Favorilerim"),
         activeColorPrimary: Colors.blue,
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.person),
+        icon: const Icon(Icons.person),
         title: ("Profil"),
         activeColorPrimary: Colors.blue,
         inactiveColorPrimary: Colors.grey,
@@ -94,7 +94,7 @@ class MainScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(15.0),
         colorBehindNavBar: Colors.white,
       ),
-      animationSettings: NavBarAnimationSettings(
+      animationSettings: const NavBarAnimationSettings(
           navBarItemAnimation: ItemAnimationSettings(
             duration: Duration(milliseconds: 200),
             curve: Curves.easeInOut,

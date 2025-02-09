@@ -117,7 +117,7 @@ class _IlanVerPageState extends State<IlanVerPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
+        title: const Text(
           "Fotoğraf",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
@@ -137,10 +137,10 @@ class _IlanVerPageState extends State<IlanVerPage> {
                       color: Colors.orange,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(Icons.add, color: Colors.white),
+                    child: const Icon(Icons.add, color: Colors.white),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Expanded(
                   child: SizedBox(
                     height: 60,
@@ -185,8 +185,8 @@ class _IlanVerPageState extends State<IlanVerPage> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 30.0),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 30.0),
             child: Column(
               children: [
                 Icon(Icons.camera_alt, size: 64, color: Colors.grey),
@@ -203,7 +203,7 @@ class _IlanVerPageState extends State<IlanVerPage> {
               ],
             ),
           ),
-          Spacer(),
+          const Spacer(),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
@@ -211,12 +211,12 @@ class _IlanVerPageState extends State<IlanVerPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor:
                     _images.isNotEmpty ? Colors.orange : Colors.grey,
-                minimumSize: Size(double.infinity, 50),
+                minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25),
                 ),
               ),
-              child: Text('Devam et', style: TextStyle(color: Colors.white)),
+              child: const Text('Devam et', style: TextStyle(color: Colors.white)),
             ),
           ),
         ],

@@ -9,7 +9,7 @@ class AyarlarPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'Ayarlar',
           style: TextStyle(
             fontSize: 16,
@@ -17,7 +17,7 @@ class AyarlarPage extends StatelessWidget {
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -93,12 +93,12 @@ class AyarlarPage extends StatelessWidget {
         ),
         title: Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
         ),
-        trailing: Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
         onTap: onTap,
       ),
     );
@@ -114,23 +114,23 @@ class AyarlarPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Şifremi Değiştir'),
+          title: const Text('Şifremi Değiştir'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: oldPasswordController,
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Mevcut Şifre',
                   border: OutlineInputBorder(),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: newPasswordController,
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Yeni Şifre',
                   border: OutlineInputBorder(),
                 ),
@@ -142,7 +142,7 @@ class AyarlarPage extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('İptal'),
+              child: const Text('İptal'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -151,7 +151,7 @@ class AyarlarPage extends StatelessWidget {
 
                 if (oldPassword.isEmpty || newPassword.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Tüm alanları doldurun.')),
+                    const SnackBar(content: Text('Tüm alanları doldurun.')),
                   );
                   return;
                 }
@@ -178,17 +178,17 @@ class AyarlarPage extends StatelessWidget {
                         });
 
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                               content: Text('Şifre başarıyla güncellendi.')),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Mevcut şifre yanlış.')),
+                          const SnackBar(content: Text('Mevcut şifre yanlış.')),
                         );
                       }
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Kullanıcı bulunamadı.')),
+                        const SnackBar(content: Text('Kullanıcı bulunamadı.')),
                       );
                     }
                   }
@@ -200,7 +200,7 @@ class AyarlarPage extends StatelessWidget {
 
                 Navigator.pop(context);
               },
-              child: Text('Kaydet'),
+              child: const Text('Kaydet'),
             ),
           ],
         );
@@ -216,14 +216,14 @@ void _showDeleteAccountDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Hesabımı Kapat'),
-        content: Text('Hesabınızı silmek istediğinizden emin misiniz?'),
+        title: const Text('Hesabımı Kapat'),
+        content: const Text('Hesabınızı silmek istediğinizden emin misiniz?'),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text('İptal'),
+            child: const Text('İptal'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -233,7 +233,7 @@ void _showDeleteAccountDialog(BuildContext context) {
                 if (user != null) {
                   await user.delete();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Hesabınız başarıyla silindi.')),
+                    const SnackBar(content: Text('Hesabınız başarıyla silindi.')),
                   );
                   Navigator.pop(context);
                 }
@@ -243,7 +243,7 @@ void _showDeleteAccountDialog(BuildContext context) {
                 );
               }
             },
-            child: Text('Sil'),
+            child: const Text('Sil'),
           ),
         ],
       );
@@ -256,9 +256,9 @@ class FaturaBilgilerimPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Fatura Bilgilerim'),
+        title: const Text('Fatura Bilgilerim'),
       ),
-      body: Center(
+      body: const Center(
         child: Text(
           'Fatura bilgilerim ekranı burada olacak.',
           style: TextStyle(fontSize: 18),

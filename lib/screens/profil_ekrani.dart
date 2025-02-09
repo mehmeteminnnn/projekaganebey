@@ -1,7 +1,7 @@
 import 'package:Depot/yayinda_olmayan.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
-import 'package:Depot/ilanlar%C4%B1m.dart';
+import 'package:Depot/ilanlarim.dart';
 import 'package:Depot/screens/profilim_detay.dart';
 import 'package:Depot/screens/settings.dart';
 import 'package:Depot/screens/giris_ekrani.dart';

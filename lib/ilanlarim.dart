@@ -84,19 +84,19 @@ class _IlanlarimPageState extends State<IlanlarimPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'İlanlarım',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator()) // Yükleniyor göstergesi
+          ? const Center(child: CircularProgressIndicator()) // Yükleniyor göstergesi
           : _ilanlar.isEmpty
-              ? Center(child: Text("Henüz ilanınız yok."))
+              ? const Center(child: Text("Henüz ilanınız yok."))
               : GridView.builder(
-                  padding: EdgeInsets.all(8.0),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  padding: const EdgeInsets.all(8.0),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     mainAxisSpacing: 8.0,
                     crossAxisSpacing: 8.0,

@@ -73,7 +73,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
     // Başarılı güncelleme mesajı gösterebilirsiniz
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Admin bilgileri güncellendi.")),
+      const SnackBar(content: Text("Admin bilgileri güncellendi.")),
     );
   }
 
@@ -90,7 +90,7 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout, color: Colors.red),
+            icon: const Icon(Icons.logout, color: Colors.red),
             onPressed: _logout,
             tooltip: "Çıkış Yap",
           ),
@@ -170,18 +170,18 @@ class _DashboardPageState extends State<DashboardPage> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: Text("Admin Bilgilerini Güncelle"),
+                          title: const Text("Admin Bilgilerini Güncelle"),
                           content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               TextField(
                                 controller: _usernameController,
                                 decoration:
-                                    InputDecoration(labelText: "Kullanıcı Adı"),
+                                    const InputDecoration(labelText: "Kullanıcı Adı"),
                               ),
                               TextField(
                                 controller: _passwordController,
-                                decoration: InputDecoration(labelText: "Şifre"),
+                                decoration: const InputDecoration(labelText: "Şifre"),
                                 obscureText: true,
                               ),
                             ],
@@ -192,13 +192,13 @@ class _DashboardPageState extends State<DashboardPage> {
                                 _updateAdminInfo();
                                 Navigator.of(context).pop();
                               },
-                              child: Text("Güncelle"),
+                              child: const Text("Güncelle"),
                             ),
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: Text("İptal"),
+                              child: const Text("İptal"),
                             ),
                           ],
                         );

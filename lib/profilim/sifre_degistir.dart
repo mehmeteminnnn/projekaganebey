@@ -15,16 +15,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Şifre Değiştir'),
+        title: const Text('Şifre Değiştir'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
               TextFormField(
-                decoration: InputDecoration(labelText: 'Mevcut Şifre'),
+                decoration: const InputDecoration(labelText: 'Mevcut Şifre'),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -37,7 +37,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Yeni Şifre'),
+                decoration: const InputDecoration(labelText: 'Yeni Şifre'),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -52,7 +52,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Yeni Şifre (Tekrar)'),
+                decoration: const InputDecoration(labelText: 'Yeni Şifre (Tekrar)'),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -66,18 +66,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   _confirmPassword = value!;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     // Şifre değiştirme işlemini buradan gerçekleştirebilirsin
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Şifre başarıyla güncellendi')),
+                      const SnackBar(content: Text('Şifre başarıyla güncellendi')),
                     );
                   }
                 },
-                child: Text('Şifreyi Güncelle'),
+                child: const Text('Şifreyi Güncelle'),
               ),
             ],
           ),

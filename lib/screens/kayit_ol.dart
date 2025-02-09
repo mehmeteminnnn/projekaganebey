@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:Depot/sms.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
   final _phoneController = TextEditingController();
+
   final _nameController = TextEditingController();
+
   final _emailController = TextEditingController();
+
   final _passwordController = TextEditingController();
+
   final _confirmPasswordController = TextEditingController();
+
+  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'Kayıt Ol',
-          style: TextStyle(
+          style: const TextStyle(
+            color: Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
@@ -23,7 +35,7 @@ class RegisterScreen extends StatelessWidget {
         backgroundColor: Colors.blueAccent,
       ),
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -31,65 +43,83 @@ class RegisterScreen extends StatelessWidget {
               controller: _nameController,
               decoration: InputDecoration(
                 labelText: 'Ad Soyad',
-                labelStyle: TextStyle(color: Colors.grey),
+                labelStyle: const TextStyle(color: Colors.grey),
                 filled: true,
                 fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
                 ),
-                prefixIcon: Icon(Icons.person, color: Colors.blueAccent),
+                prefixIcon: const Icon(Icons.person, color: Colors.blueAccent),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
                 labelText: 'E-posta',
-                labelStyle: TextStyle(color: Colors.grey),
+                labelStyle: const TextStyle(color: Colors.grey),
                 filled: true,
                 fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
                 ),
-                prefixIcon: Icon(Icons.email, color: Colors.blueAccent),
+                prefixIcon: const Icon(Icons.email, color: Colors.blueAccent),
               ),
               keyboardType: TextInputType.emailAddress,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: _passwordController,
-              obscureText: true,
+              obscureText: _obscureText,
               decoration: InputDecoration(
                 labelText: 'Şifre',
-                labelStyle: TextStyle(color: Colors.grey),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                      _obscureText ? Icons.visibility_off : Icons.visibility),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                ),
+                labelStyle: const TextStyle(color: Colors.grey),
                 filled: true,
                 fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
                 ),
-                prefixIcon: Icon(Icons.lock, color: Colors.blueAccent),
+                prefixIcon: const Icon(Icons.lock, color: Colors.blueAccent),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: _confirmPasswordController,
-              obscureText: true,
+              obscureText: _obscureText,
               decoration: InputDecoration(
                 labelText: 'Şifreyi Doğrula',
-                labelStyle: TextStyle(color: Colors.grey),
+                labelStyle: const TextStyle(color: Colors.grey),
                 filled: true,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                      _obscureText ? Icons.visibility_off : Icons.visibility),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                ),
                 fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
                 ),
-                prefixIcon: Icon(Icons.lock, color: Colors.blueAccent),
+                prefixIcon: const Icon(Icons.lock, color: Colors.blueAccent),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               children: [
                 Container(
@@ -97,33 +127,33 @@ class RegisterScreen extends StatelessWidget {
                     color: Colors.grey[200],
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
-                  child: Text(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+                  child: const Text(
                     '+90',
                     style: TextStyle(fontSize: 16, color: Colors.black),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Expanded(
                   child: TextField(
                     controller: _phoneController,
                     decoration: InputDecoration(
                       labelText: 'Cep Telefonu',
-                      labelStyle: TextStyle(color: Colors.grey),
+                      labelStyle: const TextStyle(color: Colors.grey),
                       filled: true,
                       fillColor: Colors.grey[200],
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
                       ),
-                      prefixIcon: Icon(Icons.phone, color: Colors.blueAccent),
+                      prefixIcon: const Icon(Icons.phone, color: Colors.blueAccent),
                     ),
                     keyboardType: TextInputType.phone,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -141,7 +171,7 @@ class RegisterScreen extends StatelessWidget {
                       confirmPassword.isEmpty ||
                       phoneNumber.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Lütfen tüm alanları doldurun.')),
+                      const SnackBar(content: Text('Lütfen tüm alanları doldurun.')),
                     );
                     return;
                   }
@@ -149,7 +179,7 @@ class RegisterScreen extends StatelessWidget {
                   // Şifre doğrulaması
                   if (password != confirmPassword) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Şifreler uyuşmuyor!')),
+                      const SnackBar(content: Text('Şifreler uyuşmuyor!')),
                     );
                     return;
                   }
@@ -182,9 +212,9 @@ class RegisterScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 15),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
                 ),
-                child: Text(
+                child: const Text(
                   'Kayıt Ol',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),

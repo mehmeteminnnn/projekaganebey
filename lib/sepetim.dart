@@ -263,12 +263,12 @@ class _SepetimPageState extends State<SepetimPage> {
                 ],
               ),
               const SizedBox(height: 8),
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Alıcı Koruma Hizmeti:',
+                  Text('Alıcı Koruma Hizmeti:',
                       style: TextStyle(fontSize: 16)),
-                  const Text('₺25.00', style: TextStyle(fontSize: 16)),
+                  Text('₺25.00', style: TextStyle(fontSize: 16)),
                 ],
               ),
               const Divider(height: 32, thickness: 1),
@@ -360,7 +360,7 @@ class _SepetimPageState extends State<SepetimPage> {
                         ),
                         title: Text(
                           urunler[index].baslik ?? '',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -378,7 +378,7 @@ class _SepetimPageState extends State<SepetimPage> {
                                     // Satıcı Adı
                                     Text(
                                       "Satıcı: ${urunler[index].saticiAdi}",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14,
                                         color: Colors.black,
@@ -386,24 +386,24 @@ class _SepetimPageState extends State<SepetimPage> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                     height:
                                         1), // Satıcı adı ile puan arasına boşluk ekledik
                                 // Satıcı Puanı
                                 Row(
                                   children: [
                                     // Yıldız ikonu
-                                    Icon(
+                                    const Icon(
                                       Icons.star,
                                       color: Colors.orange,
                                       size: 16,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                         width:
                                             4), // Yıldız ve puan arasında boşluk
                                     Text(
                                       "${urunler[index].saticiPuan} / 5",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Colors.orange,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
@@ -464,8 +464,8 @@ class _SepetimPageState extends State<SepetimPage> {
                           children: [
                             GestureDetector(
                               onTap: _showDetailModal, // Detay modali açılır
-                              child: Row(
-                                children: const [
+                              child: const Row(
+                                children: [
                                   Icon(Icons.info_outline,
                                       color: Colors.grey), // Detay ikonu
                                 ],

@@ -69,17 +69,17 @@ class _FilterPageState extends State<FilterProductPage> {
         centerTitle: true,
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: const CircularProgressIndicator())
           : ListView(
               children: [
                 ListTile(
                   title: Text(
                     'Tüm "${widget.title.toUpperCase()}" İlanları',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   trailing: Text(
                     '(${_counts.values.fold(0, (sum, count) => sum + count)}) >',
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,
                         fontSize: 16),
@@ -94,14 +94,14 @@ class _FilterPageState extends State<FilterProductPage> {
                                 hepsimi: true)));
                   },
                 ),
-                Divider(),
+                const Divider(),
                 ...producers.map((producer) {
                   return ListTile(
                     title: Text(producer,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                     trailing: Text('(${_counts[producer] ?? 0}) >',
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 14)),
                     onTap: () {
                       Navigator.pushReplacement(
